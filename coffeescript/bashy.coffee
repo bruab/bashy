@@ -16,3 +16,7 @@ jQuery ->
 
 	bashy_himself.src = "assets/B@shy.64x64.png"
 
+	## CREATE TERMINAL ##
+	term_func = (command, term) ->
+		command  ## equivalent to "echo" command
+	$('#terminal').terminal(term_func, { prompt: '>', name: 'test' })
