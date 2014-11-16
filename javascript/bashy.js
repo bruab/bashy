@@ -25,6 +25,7 @@
     os = new BashyOS();
     os.handleTerminalInput('foo');
     return $('#terminal').terminal(os.handleTerminalInput, {
+      greetings: "",
       prompt: '> ',
       name: 'test'
     });

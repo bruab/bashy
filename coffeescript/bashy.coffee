@@ -24,5 +24,5 @@ jQuery ->
 	os.handleTerminalInput('foo')
 
 	# Create terminal, hand pass its input to the OS
-	$('#terminal').terminal(os.handleTerminalInput, { prompt: '> ', name: 'test' })
+	$('#terminal').terminal(os.handleTerminalInput, { greetings: "", prompt: '> ', name: 'test' })
 
