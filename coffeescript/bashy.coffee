@@ -1,6 +1,6 @@
 class BashyOS
-	handleTerminalInput = (input) ->
-		input  # this fn aka 'echo'
+	handleTerminalInput: (input) ->
+		"> " + input + "\n" + input
 
 
 jQuery ->
@@ -21,7 +21,8 @@ jQuery ->
 
 	# Create darling little OS
 	os = new BashyOS()
+	os.handleTerminalInput('foo')
 
 	# Create terminal, hand pass its input to the OS
-	$('#terminal').terminal(os.handleTerminalInput, { prompt: '>', name: 'test' })
+	$('#terminal').terminal(os.handleTerminalInput, { prompt: '> ', name: 'test' })
 

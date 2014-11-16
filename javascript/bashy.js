@@ -3,12 +3,10 @@
   var BashyOS;
 
   BashyOS = (function() {
-    var handleTerminalInput;
-
     function BashyOS() {}
 
-    handleTerminalInput = function(input) {
-      return input;
+    BashyOS.prototype.handleTerminalInput = function(input) {
+      return "> " + input + "\n" + input;
     };
 
     return BashyOS;
@@ -25,8 +23,9 @@
     };
     bashy_himself.src = "assets/B@shy.64x64.png";
     os = new BashyOS();
+    os.handleTerminalInput('foo');
     return $('#terminal').terminal(os.handleTerminalInput, {
-      prompt: '>',
+      prompt: '> ',
       name: 'test'
     });
   });
