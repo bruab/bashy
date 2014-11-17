@@ -21,18 +21,14 @@ class BashySprite
 			
 
 class BashyOS
-	handleTerminalInput: (input) ->
+	constructor: (@bashy_sprite) ->
+
+	handleTerminalInput: (input) =>
+		@bashy_sprite.moveRight()
 		"> " + input + "\n" + input
 
 
 jQuery ->
-	# Create darling little OS
-	os = new BashyOS()
-	os.handleTerminalInput('foo')
-
-	# Create terminal, hand pass its input to the OS
-	$('#terminal').terminal(os.handleTerminalInput, { greetings: "", prompt: '> ', name: 'test' })
-
 	# Create canvas and stage, animate
 	# TODO create CanvasObject class and all;
 	#   this is just so i can say i hit iteration 0.1
@@ -66,7 +62,7 @@ jQuery ->
 		sprite.gotoAndPlay "walking"
 		sprite.currentFrame = 0
 		stage.addChild(sprite)
-		#bashy_sprite = new BashySprite(sprite)
+		bashy_sprite = new BashySprite(sprite)
 		
 		# we want to do some work before we update the canvas,
 		# otherwise we could use Ticker.addListener(stage)
@@ -75,5 +71,9 @@ jQuery ->
 		createjs.Ticker.useRAF = true
 		createjs.Ticker.setFPS(5)
 
+		# Create darling little OS
+		os = new BashyOS(bashy_sprite)
 
+		# Create terminal, hand pass its input to the OS
+		$('#terminal').terminal(os.handleTerminalInput, { greetings: "", prompt: '> ', name: 'test' })
 
