@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-
-<html>
+<!doctype html>
+<html class="no-js" lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="stylesheets/foundation.min.css" />
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/jquery.terminal.css">
+    <script src="javascript/vendor/modernizr.js"></script>
     <script src="javascript/jquery-1.11.1.js"></script>
     <script src="javascript/jquery.terminal-0.8.8.js"></script>
     <script src="javascript/easeljs-0.7.1.min.js"></script>
@@ -19,31 +21,56 @@
     ga('send', 'pageview');
 
     </script>
-    <title>B@shy</title>
+    <title>B@shy | Command Line Adventures</title>
   </head>
   <body>
-    <h1>B@shy</h1>    
-
-    <div id="menu">
-	    <ul>
-		    <li>Zone 1</li>
-		    <ul>
-			    <li>Task 1</li>
-			    <li>Task 2</li>
-		    </ul>
-		    <li>Zone 2</li>
-	    </ul>
+    
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>B@shy</h1>
+      </div>
     </div>
+    
+    <div class="row">
+      <div class="large-12">
 
-    <div id="canvas_div">
-	    <canvas id="bashy_canvas" width="500" height="300" style="border: 3px coral solid;"></canvas>
+        <div class="row">
+          <div class="large-4 medium-4 small-4 columns">
+            <div class="callout panel">
+		    <div id="menu">
+			    <ul>
+				    <li>Zone 1</li>
+				    <ul>
+					    <li>Task 1</li>
+					    <li>Task 2</li>
+				    </ul>
+				    <li>Zone 2</li>
+			    </ul>
+		    </div>
+
+		    <hr />
+
+		    <div id="terminal">
+			    <!-- stick jqueryterm in here -->
+		    </div>
+            </div>
+          </div>
+
+          <div class="large-8 medium-8 small-8 columns">
+            <div class="callout panel">
+		    <div id="canvas_div">
+			    <canvas id="bashy_canvas" width="500" height="300" style="border: 3px coral solid;"></canvas>
+		    </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-
-    <div id="terminal">
-	    <!-- stick jqueryterm in here -->
-    </div>
-
-    <div id="footer"></div>
-
+        
+    <script src="javascript/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+    </script>
   </body>
 </html>
