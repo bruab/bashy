@@ -17,7 +17,7 @@ task 'build', 'Build single application file from source files', ->
   process = ->
     fs.writeFile 'coffeescript/bashy.coffee', appContents.join('\n\n'), 'utf8', (err) ->
       throw err if err
-      exec 'coffee -o javascript/ -cw coffeescript/', (err, stdout, stderr) ->
+      exec 'coffee -o javascript/ --compile coffeescript/bashy.coffee', (err, stdout, stderr) ->
         throw err if err
         console.log stdout + stderr
         fs.unlink 'coffeescript/bashy.coffee', (err) ->

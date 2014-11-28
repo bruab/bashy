@@ -20,6 +20,7 @@ class BashySprite
 			@sprite.y += 48
 			
 class @BashyOS
+class @FileSystem
 
 jQuery ->
 	# Create canvas and stage, animate

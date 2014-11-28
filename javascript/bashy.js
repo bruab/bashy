@@ -64,6 +64,13 @@
 
   })();
 
+  this.FileSystem = (function() {
+    function FileSystem() {}
+
+    return FileSystem;
+
+  })();
+
   jQuery(function() {
     var bashy_himself, canvas, stage, startGame, tick;
     canvas = $("#bashy_canvas")[0];
