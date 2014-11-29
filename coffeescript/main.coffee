@@ -19,6 +19,15 @@ jQuery ->
 
 	startGame = () ->
 
+		## DRAW FILE SYSTEM MAP ##
+		#
+		text = new createjs.Text("Hello World", "20px Arial", "black")
+		text.x = text.y = 200
+		text.textBaseline = "alphabetic"
+		stage.addChild(text)
+
+
+		## CREATE CHARACTER SPRITE ##
 		bashySpriteSheet = new createjs.SpriteSheet({
 			# image to use
 			images: [bashy_himself],
@@ -26,6 +35,7 @@ jQuery ->
 			frames: {width: 64, height: 64},
 			animations: {
 			    walking: [0, 4, "walking"],
+			    standing: [0, 0, "standing"],
 			}
 		})
 
@@ -45,9 +55,7 @@ jQuery ->
 		createjs.Ticker.useRAF = true
 		createjs.Ticker.setFPS(5)
 
-		# Create darling little OS
+		## CREATE OS AND TERMINAL OBJECTS ##
 		os = new BashyOS(bashy_sprite)
-
-		# Create terminal, hand pass its input to the OS
 		$('#terminal').terminal(os.handleTerminalInput, { greetings: "", prompt: '> ', name: 'test' })
 

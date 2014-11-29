@@ -93,7 +93,11 @@
       return stage.update();
     };
     return startGame = function() {
-      var bashySpriteSheet, bashy_sprite, os, sprite;
+      var bashySpriteSheet, bashy_sprite, os, sprite, text;
+      text = new createjs.Text("Hello World", "20px Arial", "black");
+      text.x = text.y = 200;
+      text.textBaseline = "alphabetic";
+      stage.addChild(text);
       bashySpriteSheet = new createjs.SpriteSheet({
         images: [bashy_himself],
         frames: {
@@ -101,7 +105,8 @@
           height: 64
         },
         animations: {
-          walking: [0, 4, "walking"]
+          walking: [0, 4, "walking"],
+          standing: [0, 0, "standing"]
         }
       });
       sprite = new createjs.Sprite(bashySpriteSheet, 0);
