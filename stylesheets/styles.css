@@ -1,6 +1,6 @@
 
 body {
-  background-color: #F8F8F8;
+  background-color: coral;
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
   font-weight: normal;
@@ -9,6 +9,6 @@ body {
 }
 
 .terminal {
-  height: 100px;
+  height: 120px;
 }
 
