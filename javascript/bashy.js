@@ -94,8 +94,9 @@
     };
     return startGame = function() {
       var bashySpriteSheet, bashy_sprite, os, sprite, text;
-      text = new createjs.Text("Hello World", "20px Arial", "black");
-      text.x = text.y = 200;
+      text = new createjs.Text("/", "20px Arial", "black");
+      text.x = 250;
+      text.y = 20;
       text.textBaseline = "alphabetic";
       stage.addChild(text);
       bashySpriteSheet = new createjs.SpriteSheet({
