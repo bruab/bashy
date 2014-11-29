@@ -18,8 +18,6 @@
 
   })();
 
-  window.BashyOS = BashyOS;
-
   BashySprite = (function() {
     function BashySprite(sprite) {
       this.sprite = sprite;
@@ -57,10 +55,21 @@
 
   })();
 
+  window.BashyOS = BashyOS;
+
+  window.BashySprite = BashySprite;
+
   this.BashyOS = (function() {
     function BashyOS() {}
 
     return BashyOS;
+
+  })();
+
+  this.BashySprite = (function() {
+    function BashySprite() {}
+
+    return BashySprite;
 
   })();
 
