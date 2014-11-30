@@ -1,6 +1,7 @@
 class @BashyOS
 class @BashySprite
 class @FileSystem
+class @DisplayManager
 
 jQuery ->
 	# Create canvas and stage, animate
@@ -85,7 +86,15 @@ jQuery ->
 		createjs.Ticker.useRAF = true
 		createjs.Ticker.setFPS(5)
 
-		## CREATE OS AND TERMINAL OBJECTS ##
-		os = new BashyOS(bashy_sprite)
-		$('#terminal').terminal(os.handleTerminalInput, { greetings: "", prompt: '> ', name: 'test' })
+		## CREATE A BUNCH OF OBJECTS ##
+		os = new BashyOS()
+		display_mgr = new DisplayManager(bashy_sprite)
+		handleInput = (input) ->
+			[cwd, stdout, stderr] = os.handleTerminalInput(input)
+			display_mgr.update(cwd)
+			# error_mgr.update(stderr)
+			# task_mgr.update()
+			stdout
+
+		$('#terminal').terminal(handleInput, { greetings: "", prompt: '> ', name: 'test' })
 

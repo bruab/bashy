@@ -1,16 +1,18 @@
 class BashyOS
-	constructor: (@bashy_sprite) ->
+	constructor: () ->
 
 	handleTerminalInput: (input) =>
-		@bashy_sprite.moveRight()
-		input
+		# returns [cwd, stdout, stderr]
+		["", input, ""]
 
-class MapManager
+class DisplayManager
 	constructor: (@bashy_sprite) ->
 	
 	update: (new_dir) =>
+		# TODO um, actually do stuff?
+		# check if new_dir is valid
+		# compose and play animation to move to new_dir
 		@bashy_sprite.moveRight()
-		"> " + input + "\n" + input
 
 class BashySprite
 	constructor: (@sprite) ->
@@ -36,3 +38,4 @@ class BashySprite
 
 window.BashyOS = BashyOS
 window.BashySprite = BashySprite
+window.DisplayManager = DisplayManager
