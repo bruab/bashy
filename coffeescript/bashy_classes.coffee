@@ -3,6 +3,13 @@ class BashyOS
 
 	handleTerminalInput: (input) =>
 		@bashy_sprite.moveRight()
+		input
+
+class MapManager
+	constructor: (@bashy_sprite) ->
+	
+	update: (new_dir) =>
+		@bashy_sprite.moveRight()
 		"> " + input + "\n" + input
 
 class BashySprite
