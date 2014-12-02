@@ -29,13 +29,13 @@ jQuery ->
 		rootText.textBaseline = "alphabetic"
 		stage.addChild(rootText)
 
-		homeText = new createjs.Text("home", "20px Arial", "black")
+		homeText = new createjs.Text("/home", "20px Arial", "black")
 		homeText.x = 140
 		homeText.y = 235
 		homeText.textBaseline = "alphabetic"
 		stage.addChild(homeText)
 
-		mediaText = new createjs.Text("media", "20px Arial", "black")
+		mediaText = new createjs.Text("/media", "20px Arial", "black")
 		mediaText.x = 340
 		mediaText.y = 235
 		mediaText.textBaseline = "alphabetic"

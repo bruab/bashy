@@ -1,9 +1,13 @@
 class BashyOS
+	cwd: '/'
+
 	constructor: () ->
 
 	handleTerminalInput: (input) =>
+		# TODO validate!
+		@cwd = input
 		# returns [cwd, stdout, stderr]
-		["", input, ""]
+		[@cwd, input, ""]
 
 class DisplayManager
 	constructor: (@bashy_sprite) ->
