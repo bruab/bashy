@@ -5,8 +5,6 @@ class @DisplayManager
 
 jQuery ->
 	# Create canvas and stage, animate
-	# TODO create CanvasObject class and all;
-	#   this is just so i can say i hit iteration 0.1
 	canvas = $("#bashy_canvas")[0]
 	stage = new createjs.Stage(canvas)
 

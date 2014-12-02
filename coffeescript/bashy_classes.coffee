@@ -5,6 +5,7 @@ class BashyOS
 
 	handleTerminalInput: (input) =>
 		# TODO validate!
+		# think "if input.split()[0] == 'cd' then do stuff...
 		@cwd = input
 		# returns [cwd, stdout, stderr]
 		[@cwd, input, ""]
