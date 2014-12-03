@@ -7,12 +7,36 @@
     BashyOS.prototype.cwd = '/';
 
     function BashyOS() {
+      this.pwd = __bind(this.pwd, this);
+      this.cd = __bind(this.cd, this);
       this.handleTerminalInput = __bind(this.handleTerminalInput, this);
     }
 
     BashyOS.prototype.handleTerminalInput = function(input) {
-      this.cwd = input;
-      return [this.cwd, input, ""];
+      var fields, stderr, stdout, _ref;
+      _ref = ["", ""], stdout = _ref[0], stderr = _ref[1];
+      fields = input.split(/\s+/);
+      if (fields.length >= 1) {
+        if (fields[0] === 'cd') {
+          this.cd(fields);
+        } else if (fields[0] === 'pwd') {
+          stdout = this.pwd;
+        }
+      }
+      return [this.cwd, stdout, stderr];
+    };
+
+    BashyOS.prototype.cd = function(args) {
+      alert("cd called");
+      if (args.length === 1) {
+        return this.cwd = '/home';
+      } else if (args.length > 1) {
+        return this.cwd = args[1];
+      }
+    };
+
+    BashyOS.prototype.pwd = function() {
+      return this.cwd;
     };
 
     return BashyOS;

@@ -4,11 +4,28 @@ class BashyOS
 	constructor: () ->
 
 	handleTerminalInput: (input) =>
-		# TODO validate!
-		# think "if input.split()[0] == 'cd' then do stuff...
-		@cwd = input
+		[stdout, stderr] = ["", ""]
+		fields = input.split /\s+/
+		if fields.length >= 1
+			if fields[0] == 'cd'
+				@cd fields
+			else if fields[0] == 'pwd'
+				stdout = @pwd
 		# returns [cwd, stdout, stderr]
-		[@cwd, input, ""]
+		[@cwd, stdout, stderr]
+
+	cd: (args) =>
+		# TODO
+		alert "cd called"
+		if args.length == 1
+			# TODO
+			@cwd = '/home'
+		else if args.length > 1
+			# TODO relative paths
+			@cwd = args[1]
+
+	pwd: () =>
+		@cwd
 
 class DisplayManager
 	constructor: (@bashy_sprite) ->
