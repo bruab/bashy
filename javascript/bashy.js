@@ -27,7 +27,6 @@
     };
 
     BashyOS.prototype.cd = function(args) {
-      alert("cd called");
       if (args.length === 1) {
         return this.cwd = '/home';
       } else if (args.length > 1) {
@@ -50,7 +49,7 @@
     }
 
     DisplayManager.prototype.update = function(new_dir) {
-      return this.bashy_sprite.moveRight();
+      return this.bashy_sprite.goToDir(new_dir);
     };
 
     return DisplayManager;
@@ -60,7 +59,34 @@
   BashySprite = (function() {
     function BashySprite(sprite) {
       this.sprite = sprite;
+      this.sprite.x = 200;
+      this.sprite.y = 50;
     }
+
+    BashySprite.prototype.goToDir = function(dir) {
+      if (dir === "/") {
+        return this.goRoot();
+      } else if (dir === "/home") {
+        return this.goHome();
+      } else if (dir === "/media") {
+        return this.goMedia();
+      }
+    };
+
+    BashySprite.prototype.goRoot = function() {
+      this.sprite.x = 200;
+      return this.sprite.y = 50;
+    };
+
+    BashySprite.prototype.goHome = function() {
+      this.sprite.x = 80;
+      return this.sprite.y = 180;
+    };
+
+    BashySprite.prototype.goMedia = function() {
+      this.sprite.x = 390;
+      return this.sprite.y = 180;
+    };
 
     BashySprite.prototype.moveLeft = function() {
       if (this.sprite.x > 0) {
@@ -88,6 +114,11 @@
       if (this.sprite.y < limit) {
         return this.sprite.y += 48;
       }
+    };
+
+    BashySprite.prototype.moveTo = function(x, y) {
+      this.sprite.x = x;
+      return this.sprite.y = y;
     };
 
     return BashySprite;

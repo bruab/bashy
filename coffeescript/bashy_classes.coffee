@@ -15,8 +15,7 @@ class BashyOS
 		[@cwd, stdout, stderr]
 
 	cd: (args) =>
-		# TODO
-		alert "cd called"
+		# TODO hecka validation
 		if args.length == 1
 			# TODO
 			@cwd = '/home'
@@ -31,13 +30,35 @@ class DisplayManager
 	constructor: (@bashy_sprite) ->
 	
 	update: (new_dir) =>
-		# TODO um, actually do stuff?
-		# check if new_dir is valid
-		# compose and play animation to move to new_dir
-		@bashy_sprite.moveRight()
+		# TODO check if new_dir is valid
+		# TODO compose and play animation to move to new_dir
+		@bashy_sprite.goToDir(new_dir)
 
 class BashySprite
 	constructor: (@sprite) ->
+		# home is 200, 50
+		@sprite.x = 200
+		@sprite.y = 50
+
+	goToDir: (dir) ->
+		if dir == "/"
+			@goRoot()
+		else if dir == "/home"
+			@goHome()
+		else if dir == "/media"
+			@goMedia()
+
+	goRoot: ->
+		@sprite.x = 200
+		@sprite.y = 50
+
+	goHome: ->
+		@sprite.x = 80
+		@sprite.y = 180
+
+	goMedia: ->
+		@sprite.x = 390
+		@sprite.y = 180
 
 	moveLeft: ->
 		if @sprite.x > 0
@@ -56,6 +77,10 @@ class BashySprite
 		limit = 288 - @sprite.getBounds().height
 		if @sprite.y < limit
 			@sprite.y += 48
+
+	moveTo: (x, y) ->
+		@sprite.x = x
+		@sprite.y = y
 			
 
 window.BashyOS = BashyOS
