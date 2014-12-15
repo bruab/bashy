@@ -3,7 +3,36 @@ class @BashySprite
 class @FileSystem
 class @DisplayManager
 
+[firstMenuHover, firstCanvasHover, firstTerminalHover]  = [true, true, true]
+doMenuUnhover = () ->
+doMenuHover = () ->
+	if firstMenuHover
+		menuString = "This is the Menu. It tells you about Tasks you've completed "
+		menuString += "and what Tasks are next. Close this window and click "
+		menuString += "the Menu for more info."
+		alert menuString
+		firstMenuHover = false
+doCanvasHover = () ->
+	if firstCanvasHover
+		canvasString = "This is the Map. It shows you where you are and where you can go."
+		canvasString += " After you close this window, you can click the Map for more info."
+		alert canvasString
+		firstCanvasHover = false
+doCanvasUnhover = () ->
+doTerminalHover = () ->
+	if firstTerminalHover
+		terminalString = "This is the Terminal. It's where you control Bashy. Type a "
+		terminalString += "command, press Enter, see what happens..."
+		alert terminalString
+		firstTerminalHover = false
+doTerminalUnhover = () ->
+
 jQuery ->
+	# Set hover text
+	$("#menu").hover doMenuHover, doMenuUnhover
+	$("#canvas_div").hover doCanvasHover, doCanvasUnhover
+	$("#terminal").hover doTerminalHover, doTerminalUnhover
+
 	# Create canvas and stage, animate
 	canvas = $("#bashy_canvas")[0]
 	stage = new createjs.Stage(canvas)
@@ -12,6 +41,18 @@ jQuery ->
 	bashy_himself.onload = ->
 		startGame()
 	bashy_himself.src = "assets/bashy_sprite_sheet.png"
+
+	## PRELOAD AUDIO ##
+	handleFileLoad = (event) =>
+		console.log("Preloaded:", event.id, event.src)
+
+	playSound = () ->
+		createjs.Sound.play("boing1")
+
+	createjs.Sound.alternateExtensions = ["mp3"]
+	createjs.Sound.addEventListener("fileload", handleFileLoad)
+	createjs.Sound.registerSound("assets/boing1.mp3", "boing1")
+	
 
 	tick = ->
 		stage.update()
@@ -90,6 +131,7 @@ jQuery ->
 		handleInput = (input) ->
 			[cwd, stdout, stderr] = os.handleTerminalInput(input)
 			display_mgr.update(cwd)
+			playSound()
 			# error_mgr.update(stderr)
 			# task_mgr.update()
 			stdout
