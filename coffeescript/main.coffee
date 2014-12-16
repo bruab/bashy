@@ -3,35 +3,21 @@ class @BashySprite
 class @FileSystem
 class @DisplayManager
 
-[firstMenuHover, firstCanvasHover, firstTerminalHover]  = [true, true, true]
-doMenuUnhover = () ->
-doMenuHover = () ->
-	if firstMenuHover
-		menuString = "This is the Menu. It tells you about Tasks you've completed "
-		menuString += "and what Tasks are next. Close this window and click "
-		menuString += "the Menu for more info."
-		alert menuString
-		firstMenuHover = false
-doCanvasHover = () ->
-	if firstCanvasHover
-		canvasString = "This is the Map. It shows you where you are and where you can go."
-		canvasString += " After you close this window, you can click the Map for more info."
-		alert canvasString
-		firstCanvasHover = false
-doCanvasUnhover = () ->
-doTerminalHover = () ->
-	if firstTerminalHover
-		terminalString = "This is the Terminal. It's where you control Bashy. Type a "
-		terminalString += "command, press Enter, see what happens..."
-		alert terminalString
-		firstTerminalHover = false
-doTerminalUnhover = () ->
+helpScreen = () ->
+	alert 'help screen'
+
+playIntro = () ->
+	alert 'intro'
 
 jQuery ->
-	# Set hover text
-	$("#menu").hover doMenuHover, doMenuUnhover
-	$("#canvas_div").hover doCanvasHover, doCanvasUnhover
-	$("#terminal").hover doTerminalHover, doTerminalUnhover
+	# Handle intro/help screen
+	seenIntro = false
+	$("html").click ->
+		if not seenIntro
+			playIntro()
+			seenIntro = true
+		else
+			helpScreen()
 
 	# Create canvas and stage, animate
 	canvas = $("#bashy_canvas")[0]
