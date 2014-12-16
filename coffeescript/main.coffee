@@ -3,14 +3,22 @@ class @BashySprite
 class @FileSystem
 class @DisplayManager
 
-helpScreen = () ->
-	alert 'help screen'
-
-playIntro = () ->
-	alert 'intro'
-
 jQuery ->
 	# Handle intro/help screen
+	helpScreen = () ->
+		help_html = "<h3>B@shy Help</h3>"
+		help_html += "TODO contextual help messages"
+		$('#help_text').html(help_html)
+		$('#helpScreen').foundation('reveal', 'open')
+
+
+	playIntro = () ->
+		intro_html = "<h3>Welcome to B@ashy!</h3>"
+		intro_html += "<p>Use your keyboard to type commands.</p>"
+		intro_html += "<p>Available commands are 'pwd' and 'cd'</p>"
+		$('#help_text').html(intro_html)
+		$('#helpScreen').foundation('reveal', 'open')
+
 	seenIntro = false
 	$("html").click ->
 		if not seenIntro

@@ -1,31 +1,39 @@
 <!doctype html>
+
 <html class="no-js" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="stylesheets/foundation.min.css" />
-    <link rel="stylesheet" href="stylesheets/jquery.terminal.css">
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <script src="javascript/vendor/modernizr.js"></script>
-    <script src="javascript/jquery-1.11.1.js"></script>
-    <script src="javascript/jquery.terminal-0.8.8.js"></script>
-    <script src="javascript/easeljs-0.7.1.min.js"></script>
-    <script src="javascript/soundjs-0.6.0.combined.js"></script>
-    <script src="javascript/bashy.js"></script>
     <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
   ga('create', 'UA-53784915-4', 'auto');
     ga('send', 'pageview');
-
     </script>
+    <script src="javascript/jquery-1.11.1.js"></script>
+    <script src="javascript/jquery.terminal-0.8.8.js"></script>
+    <script src="javascript/easeljs-0.7.1.min.js"></script>
+    <script src="javascript/soundjs-0.6.0.combined.js"></script>
+    <script src="javascript/vendor/modernizr.js"></script>
+    <script src="javascript/foundation.js"></script>
+    <script src="javascript/foundation.reveal.js"></script>
+    <script src="javascript/bashy.js"></script>
+    <link rel="stylesheet" href="stylesheets/normalize.css" />
+    <link rel="stylesheet" href="stylesheets/foundation.min.css" />
+    <link rel="stylesheet" href="stylesheets/jquery.terminal.css">
+    <link rel="stylesheet" href="stylesheets/styles.css">
     <title>B@shy | Command Line Adventures</title>
   </head>
+
   <body>
-    
+
+  <div id="helpScreen" class="reveal-modal" data-reveal>
+	  <div id="help_text"></div>
+	  <a class="close-reveal-modal">&#215;</a> 
+  </div>
+
     <div class="row">
       <div id="header" class="large-12 columns">
         <h1>B@shy</h1>
@@ -69,7 +77,6 @@
       </div>
     </div>
         
-    <script src="javascript/foundation.min.js"></script>
     <script>
       $(document).foundation();
     </script>
