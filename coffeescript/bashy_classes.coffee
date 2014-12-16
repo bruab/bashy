@@ -1,3 +1,10 @@
+validPath = (path) ->
+	if path in ['/', '/home', '/media']
+		return true
+	else
+		return false
+
+
 class BashyOS
 	cwd: '/'
 
@@ -17,11 +24,32 @@ class BashyOS
 	cd: (args) =>
 		# TODO hecka validation
 		if args.length == 1
-			# TODO
 			@cwd = '/home'
 		else if args.length > 1
-			# TODO relative paths
-			@cwd = args[1]
+			path = args[1]
+			if path[0] == "/"
+				# absolute path
+				if validPath(path)
+					@cwd = path
+			else
+				# relative path
+				# TODO deal with '..' and '.'
+				newpath = ""
+				fields = path.split("/")
+				if fields[0] == ".."
+					# TODO next bit only works b/c 1-level tree :(
+					if fields.length == 1
+						@cwd = "/"
+					else
+						newpath = "/"
+						[newpath += x+"/" for x in fields[1..-2]]
+						newpath += fields[-1..]
+						if validPath(newpath)
+							@cwd = newpath
+				else
+					# TODO only works b/c 1-level tree :(
+					if validPath(@cwd + path)
+						@cwd = @cwd + path
 
 	pwd: () =>
 		@cwd
