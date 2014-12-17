@@ -7,6 +7,9 @@ jQuery ->
 	# Start music
 	#
 	# Handle intro/help screen
+	terminalOnBlur = () ->
+		return false
+
 	helpScreen = () ->
 		help_html = "<h3>B@shy Help</h3>"
 		help_html += "TODO contextual help messages"
@@ -28,7 +31,7 @@ jQuery ->
 			seenIntro = true
 		else
 			helpScreen()
-
+	
 	# Create canvas and stage, animate
 	canvas = $("#bashy_canvas")[0]
 	stage = new createjs.Stage(canvas)
@@ -150,5 +153,6 @@ jQuery ->
 			# task_mgr.update()
 			stdout
 
-		$('#terminal').terminal(handleInput, { greetings: "", prompt: '> ', name: 'test' })
+		$('#terminal').terminal(handleInput,
+			{ greetings: "", prompt: '> ', onBlur: terminalOnBlur, name: 'test' })
 

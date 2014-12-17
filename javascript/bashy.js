@@ -204,7 +204,10 @@
   })();
 
   jQuery(function() {
-    var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame, tick;
+    var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame, terminalOnBlur, tick;
+    terminalOnBlur = function() {
+      return false;
+    };
     helpScreen = function() {
       var help_html;
       help_html = "<h3>B@shy Help</h3>";
@@ -335,6 +338,7 @@
       return $('#terminal').terminal(handleInput, {
         greetings: "",
         prompt: '> ',
+        onBlur: terminalOnBlur,
         name: 'test'
       });
     };
