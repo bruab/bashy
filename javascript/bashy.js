@@ -250,7 +250,11 @@
     })(this);
     playSound = function() {
       if (playSounds) {
-        return createjs.Sound.play("boing2");
+        if (Math.random() < 0.5) {
+          return createjs.Sound.play("boing1");
+        } else {
+          return createjs.Sound.play("boing2");
+        }
       }
     };
     playTheme = function() {

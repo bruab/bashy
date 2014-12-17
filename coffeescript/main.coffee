@@ -50,9 +50,11 @@ jQuery ->
 		console.log("Preloaded:", event.id, event.src)
 
 	playSound = () ->
-		# TODO randomly choose a boing
 		if playSounds
-			createjs.Sound.play("boing2")
+			if Math.random() < 0.5
+				createjs.Sound.play("boing1")
+			else
+				createjs.Sound.play("boing2")
 
 	playTheme = () ->
 		createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5)
