@@ -56,6 +56,10 @@ jQuery ->
 			else
 				createjs.Sound.play("boing2")
 
+	playOops = () ->
+		if playSounds
+			createjs.Sound.play("oops")
+
 	playTheme = () ->
 		createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5)
 
@@ -68,6 +72,7 @@ jQuery ->
 	createjs.Sound.registerManifest(
 		    [{id:"boing1", src:"boing1.mp3"},
 		     {id:"boing2", src:"boing2.mp3"},
+		     {id:"oops", src:"oops.mp3"},
 		     {id:"bashy_theme1", src:"bashy_theme1.mp3"}]
 			, "assets/")
 
@@ -150,10 +155,14 @@ jQuery ->
 			# TODO play 'oops' on error
 			[cwd, stdout, stderr] = os.handleTerminalInput(input)
 			display_mgr.update(cwd)
-			playSound()
 			# error_mgr.update(stderr)
 			# task_mgr.update()
-			stdout
+			if stderr
+				playOops()
+				stderr
+			else
+				playSound()
+				undefined
 
 		$('#terminal').terminal(handleInput,
 			{ greetings: "", prompt: '> ', onBlur: terminalOnBlur, name: 'test' })

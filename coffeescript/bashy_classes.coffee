@@ -15,14 +15,14 @@ class BashyOS
 		fields = input.split /\s+/
 		if fields.length >= 1
 			if fields[0] == 'cd'
-				@cd fields
+				[stdout, stderr] = @cd fields
 			else if fields[0] == 'pwd'
 				stdout = @pwd
 		# returns [cwd, stdout, stderr]
 		[@cwd, stdout, stderr]
 
 	cd: (args) =>
-		# TODO hecka validation
+		[stdout, stderr] = ["", ""]
 		if args.length == 1
 			@cwd = '/home'
 		else if args.length > 1
@@ -31,9 +31,11 @@ class BashyOS
 				# absolute path
 				if validPath(path)
 					@cwd = path
+				else
+					stderr = "Invalid path"
 			else
 				# relative path
-				# TODO deal with '..' and '.'
+				# TODO deal with '.'
 				newpath = ""
 				fields = path.split("/")
 				if fields[0] == ".."
@@ -46,10 +48,15 @@ class BashyOS
 						newpath += fields[-1..]
 						if validPath(newpath)
 							@cwd = newpath
+						else
+							stderr = "Invalid path"
 				else
 					# TODO only works b/c 1-level tree :(
 					if validPath(@cwd + path)
 						@cwd = @cwd + path
+					else
+						stderr = "Invalid path"
+		[stdout, stderr]
 
 	pwd: () =>
 		@cwd

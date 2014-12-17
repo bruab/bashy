@@ -21,12 +21,12 @@
     }
 
     BashyOS.prototype.handleTerminalInput = function(input) {
-      var fields, stderr, stdout, _ref;
+      var fields, stderr, stdout, _ref, _ref1;
       _ref = ["", ""], stdout = _ref[0], stderr = _ref[1];
       fields = input.split(/\s+/);
       if (fields.length >= 1) {
         if (fields[0] === 'cd') {
-          this.cd(fields);
+          _ref1 = this.cd(fields), stdout = _ref1[0], stderr = _ref1[1];
         } else if (fields[0] === 'pwd') {
           stdout = this.pwd;
         }
@@ -35,30 +35,33 @@
     };
 
     BashyOS.prototype.cd = function(args) {
-      var fields, newpath, path, x;
+      var fields, newpath, path, stderr, stdout, x, _ref;
+      _ref = ["", ""], stdout = _ref[0], stderr = _ref[1];
       if (args.length === 1) {
-        return this.cwd = '/home';
+        this.cwd = '/home';
       } else if (args.length > 1) {
         path = args[1];
         if (path[0] === "/") {
           if (validPath(path)) {
-            return this.cwd = path;
+            this.cwd = path;
+          } else {
+            stderr = "Invalid path";
           }
         } else {
           newpath = "";
           fields = path.split("/");
           if (fields[0] === "..") {
             if (fields.length === 1) {
-              return this.cwd = "/";
+              this.cwd = "/";
             } else {
               newpath = "/";
               [
                 (function() {
-                  var _i, _len, _ref, _results;
-                  _ref = fields.slice(1, -1);
+                  var _i, _len, _ref1, _results;
+                  _ref1 = fields.slice(1, -1);
                   _results = [];
-                  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    x = _ref[_i];
+                  for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                    x = _ref1[_i];
                     _results.push(newpath += x + "/");
                   }
                   return _results;
@@ -66,16 +69,21 @@
               ];
               newpath += fields.slice(-1);
               if (validPath(newpath)) {
-                return this.cwd = newpath;
+                this.cwd = newpath;
+              } else {
+                stderr = "Invalid path";
               }
             }
           } else {
             if (validPath(this.cwd + path)) {
-              return this.cwd = this.cwd + path;
+              this.cwd = this.cwd + path;
+            } else {
+              stderr = "Invalid path";
             }
           }
         }
       }
+      return [stdout, stderr];
     };
 
     BashyOS.prototype.pwd = function() {
@@ -204,7 +212,7 @@
   })();
 
   jQuery(function() {
-    var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame, terminalOnBlur, tick;
+    var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playOops, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame, terminalOnBlur, tick;
     terminalOnBlur = function() {
       return false;
     };
@@ -257,6 +265,11 @@
         }
       }
     };
+    playOops = function() {
+      if (playSounds) {
+        return createjs.Sound.play("oops");
+      }
+    };
     playTheme = function() {
       return createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5);
     };
@@ -273,6 +286,9 @@
       }, {
         id: "boing2",
         src: "boing2.mp3"
+      }, {
+        id: "oops",
+        src: "oops.mp3"
       }, {
         id: "bashy_theme1",
         src: "bashy_theme1.mp3"
@@ -336,8 +352,13 @@
         var cwd, stderr, stdout, _ref;
         _ref = os.handleTerminalInput(input), cwd = _ref[0], stdout = _ref[1], stderr = _ref[2];
         display_mgr.update(cwd);
-        playSound();
-        return stdout;
+        if (stderr) {
+          playOops();
+          return stderr;
+        } else {
+          playSound();
+          return void 0;
+        }
       };
       return $('#terminal').terminal(handleInput, {
         greetings: "",
