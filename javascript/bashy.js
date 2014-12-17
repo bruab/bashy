@@ -221,7 +221,7 @@
       return $('#helpScreen').foundation('reveal', 'open');
     };
     seenIntro = false;
-    $("html").click(function() {
+    $("#playScreen").click(function() {
       if (!seenIntro) {
         playIntro();
         return seenIntro = true;

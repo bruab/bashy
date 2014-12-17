@@ -22,7 +22,7 @@ jQuery ->
 		$('#helpScreen').foundation('reveal', 'open')
 
 	seenIntro = false
-	$("html").click ->
+	$("#playScreen").click ->
 		if not seenIntro
 			playIntro()
 			seenIntro = true
