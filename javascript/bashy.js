@@ -204,7 +204,7 @@
   })();
 
   jQuery(function() {
-    var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playSound, seenIntro, stage, startGame, tick;
+    var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame, tick;
     helpScreen = function() {
       var help_html;
       help_html = "<h3>B@shy Help</h3>";
@@ -236,22 +236,45 @@
       return startGame();
     };
     bashy_himself.src = "assets/bashy_sprite_sheet.png";
+    tick = function() {
+      return stage.update();
+    };
+    playSounds = true;
     handleFileLoad = (function(_this) {
       return function(event) {
         return console.log("Preloaded:", event.id, event.src);
       };
     })(this);
     playSound = function() {
-      return createjs.Sound.play("boing1");
+      if (playSounds) {
+        return createjs.Sound.play("boing2");
+      }
     };
-    createjs.Sound.alternateExtensions = ["mp3"];
+    playTheme = function() {
+      return createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5);
+    };
+    soundOff = function() {
+      playSounds = false;
+      return createjs.Sound.stop();
+    };
     createjs.Sound.addEventListener("fileload", handleFileLoad);
-    createjs.Sound.registerSound("assets/boing1.mp3", "boing1");
-    tick = function() {
-      return stage.update();
-    };
+    createjs.Sound.alternateExtensions = ["mp3"];
+    createjs.Sound.registerManifest([
+      {
+        id: "boing1",
+        src: "boing1.mp3"
+      }, {
+        id: "boing2",
+        src: "boing2.mp3"
+      }, {
+        id: "bashy_theme1",
+        src: "bashy_theme1.mp3"
+      }
+    ], "assets/");
+    $("#audio_off").click(soundOff);
     return startGame = function() {
       var bashySpriteSheet, bashy_sprite, display_mgr, handleInput, homeText, line1, line2, mediaText, os, rootText, sprite;
+      playTheme();
       rootText = new createjs.Text("/", "20px Arial", "black");
       rootText.x = 250;
       rootText.y = 120;

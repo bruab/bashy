@@ -4,6 +4,8 @@ class @FileSystem
 class @DisplayManager
 
 jQuery ->
+	# Start music
+	#
 	# Handle intro/help screen
 	helpScreen = () ->
 		help_html = "<h3>B@shy Help</h3>"
@@ -36,22 +38,39 @@ jQuery ->
 		startGame()
 	bashy_himself.src = "assets/bashy_sprite_sheet.png"
 
+	tick = ->
+		stage.update()
+
 	## PRELOAD AUDIO ##
+	playSounds = true
 	handleFileLoad = (event) =>
 		console.log("Preloaded:", event.id, event.src)
 
 	playSound = () ->
-		createjs.Sound.play("boing1")
+		# TODO randomly choose a boing
+		if playSounds
+			createjs.Sound.play("boing2")
 
-	createjs.Sound.alternateExtensions = ["mp3"]
+	playTheme = () ->
+		createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5)
+
+	soundOff = () ->
+		playSounds = false
+		createjs.Sound.stop()
+
 	createjs.Sound.addEventListener("fileload", handleFileLoad)
-	createjs.Sound.registerSound("assets/boing1.mp3", "boing1")
-	
+	createjs.Sound.alternateExtensions = ["mp3"]
+	createjs.Sound.registerManifest(
+		    [{id:"boing1", src:"boing1.mp3"},
+		     {id:"boing2", src:"boing2.mp3"},
+		     {id:"bashy_theme1", src:"bashy_theme1.mp3"}]
+			, "assets/")
 
-	tick = ->
-		stage.update()
+	# Listen for 'turn off sound' button
+	$("#audio_off").click soundOff
 
 	startGame = () ->
+		playTheme()
 
 		## DRAW FILE SYSTEM MAP ##
 		#
@@ -123,6 +142,7 @@ jQuery ->
 		os = new BashyOS()
 		display_mgr = new DisplayManager(bashy_sprite)
 		handleInput = (input) ->
+			# TODO play 'oops' on error
 			[cwd, stdout, stderr] = os.handleTerminalInput(input)
 			display_mgr.update(cwd)
 			playSound()
