@@ -162,7 +162,10 @@ jQuery ->
 				stderr
 			else
 				playSound()
-				undefined
+				if stdout
+					stdout
+				else
+					undefined
 
 		$('#terminal').terminal(handleInput,
 			{ greetings: "", prompt: '> ', onBlur: terminalOnBlur, name: 'test' })

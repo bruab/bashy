@@ -357,7 +357,11 @@
           return stderr;
         } else {
           playSound();
-          return void 0;
+          if (stdout) {
+            return stdout;
+          } else {
+            return void 0;
+          }
         }
       };
       return $('#terminal').terminal(handleInput, {
