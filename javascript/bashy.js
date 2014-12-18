@@ -212,23 +212,20 @@
   })();
 
   jQuery(function() {
-    var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playOops, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame, terminalOnBlur, tick;
-    terminalOnBlur = function() {
-      return false;
-    };
-    helpScreen = function() {
-      var help_html;
-      help_html = "<h3>B@shy Help</h3>";
-      help_html += "TODO contextual help messages";
-      $('#help_text').html(help_html);
-      return $('#helpScreen').foundation('reveal', 'open');
-    };
+    var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playOops, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame, tick;
     playIntro = function() {
       var intro_html;
       intro_html = "<h3>Welcome to B@ashy!</h3>";
       intro_html += "<p>Use your keyboard to type commands.</p>";
       intro_html += "<p>Available commands are 'pwd' and 'cd'</p>";
       $('#help_text').html(intro_html);
+      return $('#helpScreen').foundation('reveal', 'open');
+    };
+    helpScreen = function() {
+      var help_html;
+      help_html = "<h3>B@shy Help</h3>";
+      help_html += "TODO contextual help messages";
+      $('#help_text').html(help_html);
       return $('#helpScreen').foundation('reveal', 'open');
     };
     seenIntro = false;
@@ -299,8 +296,7 @@
     ], "assets/");
     $("#audio_off").click(soundOff);
     return startGame = function() {
-      var bashySpriteSheet, bashy_sprite, display_mgr, handleInput, homeText, line1, line2, mediaText, os, rootText, sprite;
-      playTheme();
+      var bashySpriteSheet, bashy_sprite, display_mgr, handleInput, homeText, line1, line2, mediaText, os, rootText, sprite, terminalOnBlur;
       rootText = new createjs.Text("/", "20px Arial", "black");
       rootText.x = 250;
       rootText.y = 120;
@@ -366,6 +362,9 @@
             return void 0;
           }
         }
+      };
+      terminalOnBlur = function() {
+        return false;
       };
       return $('#terminal').terminal(handleInput, {
         greetings: "",

@@ -4,9 +4,13 @@ class @FileSystem
 class @DisplayManager
 
 jQuery ->
-	# Handle intro/help screen
-	terminalOnBlur = () ->
-		return false
+	## INTRO AND HELP SCREEN MODALS ##
+	playIntro = () ->
+		intro_html = "<h3>Welcome to B@ashy!</h3>"
+		intro_html += "<p>Use your keyboard to type commands.</p>"
+		intro_html += "<p>Available commands are 'pwd' and 'cd'</p>"
+		$('#help_text').html(intro_html)
+		$('#helpScreen').foundation('reveal', 'open')
 
 	helpScreen = () ->
 		help_html = "<h3>B@shy Help</h3>"
@@ -15,13 +19,7 @@ jQuery ->
 		$('#helpScreen').foundation('reveal', 'open')
 
 
-	playIntro = () ->
-		intro_html = "<h3>Welcome to B@ashy!</h3>"
-		intro_html += "<p>Use your keyboard to type commands.</p>"
-		intro_html += "<p>Available commands are 'pwd' and 'cd'</p>"
-		$('#help_text').html(intro_html)
-		$('#helpScreen').foundation('reveal', 'open')
-
+	# play intro on first click; show help screen on subsequent clicks
 	seenIntro = false
 	$("#playScreen").click ->
 		if not seenIntro
@@ -81,7 +79,6 @@ jQuery ->
 	$("#audio_off").click soundOff
 
 	startGame = () ->
-		playTheme()
 
 		## DRAW FILE SYSTEM MAP ##
 		#
@@ -168,6 +165,7 @@ jQuery ->
 				else
 					undefined
 
+		terminalOnBlur = () -> return false
 		$('#terminal').terminal(handleInput,
 			{ greetings: "", prompt: '> ', onBlur: terminalOnBlur, name: 'test' })
 
