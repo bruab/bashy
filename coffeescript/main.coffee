@@ -61,7 +61,7 @@ jQuery ->
 
 	handleFileLoad = (event) =>
 		console.log("Preloaded:", event.id, event.src)
-		if event.id = "bashy_theme1"
+		if event.id == "bashy_theme1"
 			playTheme
 
 	soundOff = () ->

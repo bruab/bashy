@@ -271,7 +271,9 @@
     handleFileLoad = (function(_this) {
       return function(event) {
         console.log("Preloaded:", event.id, event.src);
-        if (event.id = "bashy_theme1") {
+        alert(event.id);
+        if (event.id === "bashy_theme1") {
+          alert('match');
           return playTheme;
         }
       };
