@@ -17,6 +17,7 @@
     function BashyOS() {
       this.pwd = __bind(this.pwd, this);
       this.cd = __bind(this.cd, this);
+      this.cd_relative_path = __bind(this.cd_relative_path, this);
       this.handleTerminalInput = __bind(this.handleTerminalInput, this);
     }
 
@@ -24,18 +25,55 @@
       var fields, stderr, stdout, _ref, _ref1;
       _ref = ["", ""], stdout = _ref[0], stderr = _ref[1];
       fields = input.split(/\s+/);
-      if (fields.length >= 1) {
-        if (fields[0] === 'cd') {
-          _ref1 = this.cd(fields), stdout = _ref1[0], stderr = _ref1[1];
-        } else if (fields[0] === 'pwd') {
-          stdout = this.pwd;
-        }
+      if (fields[0] === 'cd') {
+        _ref1 = this.cd(fields), stdout = _ref1[0], stderr = _ref1[1];
+      } else if (fields[0] === 'pwd') {
+        stdout = this.pwd;
       }
       return [this.cwd, stdout, stderr];
     };
 
+    BashyOS.prototype.cd_relative_path = function(path) {
+      var fields, newpath, stderr, stdout, x, _ref;
+      _ref = ["", ""], stdout = _ref[0], stderr = _ref[1];
+      newpath = "";
+      fields = path.split("/");
+      if (fields[0] === "..") {
+        if (fields.length === 1) {
+          this.cwd = "/";
+        } else {
+          newpath = "/";
+          [
+            (function() {
+              var _i, _len, _ref1, _results;
+              _ref1 = fields.slice(1, -1);
+              _results = [];
+              for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                x = _ref1[_i];
+                _results.push(newpath += x + "/");
+              }
+              return _results;
+            })()
+          ];
+          newpath += fields.slice(-1);
+          if (validPath(newpath)) {
+            this.cwd = newpath;
+          } else {
+            stderr = "Invalid path";
+          }
+        }
+      } else {
+        if (validPath(this.cwd + path)) {
+          this.cwd = this.cwd + path;
+        } else {
+          stderr = "Invalid path";
+        }
+      }
+      return [stdout, stderr];
+    };
+
     BashyOS.prototype.cd = function(args) {
-      var fields, newpath, path, stderr, stdout, x, _ref;
+      var path, stderr, stdout, _ref, _ref1;
       _ref = ["", ""], stdout = _ref[0], stderr = _ref[1];
       if (args.length === 1) {
         this.cwd = '/home';
@@ -48,39 +86,7 @@
             stderr = "Invalid path";
           }
         } else {
-          newpath = "";
-          fields = path.split("/");
-          if (fields[0] === "..") {
-            if (fields.length === 1) {
-              this.cwd = "/";
-            } else {
-              newpath = "/";
-              [
-                (function() {
-                  var _i, _len, _ref1, _results;
-                  _ref1 = fields.slice(1, -1);
-                  _results = [];
-                  for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                    x = _ref1[_i];
-                    _results.push(newpath += x + "/");
-                  }
-                  return _results;
-                })()
-              ];
-              newpath += fields.slice(-1);
-              if (validPath(newpath)) {
-                this.cwd = newpath;
-              } else {
-                stderr = "Invalid path";
-              }
-            }
-          } else {
-            if (validPath(this.cwd + path)) {
-              this.cwd = this.cwd + path;
-            } else {
-              stderr = "Invalid path";
-            }
-          }
+          _ref1 = this.cd_relative_path(path), stdout = _ref1[0], stderr = _ref1[1];
         }
       }
       return [stdout, stderr];
@@ -215,7 +221,7 @@
     var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playOops, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame;
     playIntro = function() {
       var intro_html;
-      intro_html = "<h3>Welcome to B@ashy!</h3>";
+      intro_html = "<h3>Welcome to B@shy!</h3>";
       intro_html += "<p>Use your keyboard to type commands.</p>";
       intro_html += "<p>Available commands are 'pwd' and 'cd'</p>";
       $('#help_text').html(intro_html);
@@ -293,7 +299,7 @@
     ], "assets/");
     $("#audio_off").click(soundOff);
     return startGame = function() {
-      var bashySpriteSheet, bashy_sprite, display_mgr, handleInput, homeText, line1, line2, mediaText, os, rootText, sprite, terminalOnBlur, tick;
+      var bashySpriteSheet, bashy_sprite, display_mgr, handleInput, homeText, line1, line2, mediaText, os, rootText, sprite, tick;
       rootText = new createjs.Text("/", "20px Arial", "black");
       rootText.x = 250;
       rootText.y = 120;
@@ -363,13 +369,10 @@
           }
         }
       };
-      terminalOnBlur = function() {
-        return false;
-      };
       return $('#terminal').terminal(handleInput, {
         greetings: "",
         prompt: '> ',
-        onBlur: terminalOnBlur,
+        onBlur: false,
         name: 'test'
       });
     };

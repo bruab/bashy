@@ -1,61 +1,82 @@
+# Utility function to determine if path exists in file system
 validPath = (path) ->
 	if path in ['/', '/home', '/media']
 		return true
 	else
 		return false
 
-
+# OS class in charge of file system, processing user input
 class BashyOS
+	# Start user off at root (for now)
 	cwd: '/'
 
+	# Nothing to see here
+	# TODO instantiate with a FileSystem object
 	constructor: () ->
 
+	# Function called every time a user types a command
+	# Takes input string, returns context, stdout and stderr
+	# (for now 'context' = 'cwd')
 	handleTerminalInput: (input) =>
+		# No output by default
 		[stdout, stderr] = ["", ""]
+		# Split up args
 		fields = input.split /\s+/
-		if fields.length >= 1
-			if fields[0] == 'cd'
-				[stdout, stderr] = @cd fields
-			else if fields[0] == 'pwd'
-				stdout = @pwd
-		# returns [cwd, stdout, stderr]
+		# Call method according to user command
+		# TODO have all methods return stdout and stderr
+		# even if they're empty
+		if fields[0] == 'cd'
+			[stdout, stderr] = @cd fields
+		else if fields[0] == 'pwd'
+			stdout = @pwd
+		# Return context, stdout, stderr
 		[@cwd, stdout, stderr]
 
+	cd_relative_path: (path) =>
+		[stdout, stderr] = ["", ""]
+		# TODO deal with '.'
+		newpath = ""
+		fields = path.split("/")
+		if fields[0] == ".."
+			# TODO next bit only works b/c 1-level tree :(
+			if fields.length == 1
+				@cwd = "/"
+			else
+				newpath = "/"
+				[newpath += x+"/" for x in fields[1..-2]]
+				newpath += fields[-1..]
+				if validPath(newpath)
+					@cwd = newpath
+				else
+					stderr = "Invalid path"
+		else
+			# TODO only works b/c 1-level tree :(
+			if validPath(@cwd + path)
+				@cwd = @cwd + path
+			else
+				stderr = "Invalid path"
+		# Return stdout, stderr
+		[stdout, stderr]
+
 	cd: (args) =>
+		# No output by default
 		[stdout, stderr] = ["", ""]
 		if args.length == 1
+			# The user typed "cd" with no additional args
 			@cwd = '/home'
 		else if args.length > 1
-			path = args[1]
+			path = args[1] # not handling options/flags yet
+			# Determine if absolute or relative path
+			# based on first character
 			if path[0] == "/"
-				# absolute path
+				# Absolute path
 				if validPath(path)
 					@cwd = path
 				else
 					stderr = "Invalid path"
 			else
-				# relative path
-				# TODO deal with '.'
-				newpath = ""
-				fields = path.split("/")
-				if fields[0] == ".."
-					# TODO next bit only works b/c 1-level tree :(
-					if fields.length == 1
-						@cwd = "/"
-					else
-						newpath = "/"
-						[newpath += x+"/" for x in fields[1..-2]]
-						newpath += fields[-1..]
-						if validPath(newpath)
-							@cwd = newpath
-						else
-							stderr = "Invalid path"
-				else
-					# TODO only works b/c 1-level tree :(
-					if validPath(@cwd + path)
-						@cwd = @cwd + path
-					else
-						stderr = "Invalid path"
+				[stdout, stderr] = @cd_relative_path(path)
+		# Return stdout, stderr
 		[stdout, stderr]
 
 	pwd: () =>

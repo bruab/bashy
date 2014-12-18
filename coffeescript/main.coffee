@@ -7,7 +7,7 @@ jQuery ->
 	## INTRO AND HELP SCREEN MODALS ##
 	# Functions for Intro and Help screens
 	playIntro = () ->
-		intro_html = "<h3>Welcome to B@ashy!</h3>"
+		intro_html = "<h3>Welcome to B@shy!</h3>"
 		intro_html += "<p>Use your keyboard to type commands.</p>"
 		intro_html += "<p>Available commands are 'pwd' and 'cd'</p>"
 		$('#help_text').html(intro_html)
@@ -152,15 +152,23 @@ jQuery ->
 		createjs.Ticker.useRAF = true
 		createjs.Ticker.setFPS(5)
 
-		## CREATE A BUNCH OF OBJECTS ##
+
+		## CREATE OBJECTS, DEFINE FUNCTION CALLED ON INPUT ##
+		# Create OS, Display Manager
 		os = new BashyOS()
 		display_mgr = new DisplayManager(bashy_sprite)
+
+		# Function called each time user types a command
+		# Takes user input string, updates system, returns text to terminal
 		handleInput = (input) ->
-			# TODO play 'oops' on error
+			# BashyOS updates and returns context, stdout, stderr
+			# (for now 'cwd' is all the context we need)
 			[cwd, stdout, stderr] = os.handleTerminalInput(input)
+
+			# DisplayManager updates character position on the map
 			display_mgr.update(cwd)
-			# error_mgr.update(stderr)
-			# task_mgr.update()
+			
+			# Return text to terminal
 			if stderr
 				playOops()
 				stderr
@@ -169,9 +177,11 @@ jQuery ->
 				if stdout
 					stdout
 				else
+					# Returning 'undefined' means no terminal output
 					undefined
 
-		terminalOnBlur = () -> return false
+		# Create Terminal object
+		# 'onBlur: false' guarantees the terminal always stays in focus
 		$('#terminal').terminal(handleInput,
-			{ greetings: "", prompt: '> ', onBlur: terminalOnBlur, name: 'test' })
+			{ greetings: "", prompt: '> ', onBlur: false, name: 'test' })
 
