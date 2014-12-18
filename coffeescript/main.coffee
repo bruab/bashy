@@ -4,8 +4,6 @@ class @FileSystem
 class @DisplayManager
 
 jQuery ->
-	# Start music
-	#
 	# Handle intro/help screen
 	terminalOnBlur = () ->
 		return false
@@ -48,6 +46,8 @@ jQuery ->
 	playSounds = true
 	handleFileLoad = (event) =>
 		console.log("Preloaded:", event.id, event.src)
+		if event.id = "bashy_theme1"
+			playTheme
 
 	playSound = () ->
 		if playSounds

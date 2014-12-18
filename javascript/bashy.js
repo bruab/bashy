@@ -253,7 +253,10 @@
     playSounds = true;
     handleFileLoad = (function(_this) {
       return function(event) {
-        return console.log("Preloaded:", event.id, event.src);
+        console.log("Preloaded:", event.id, event.src);
+        if (event.id = "bashy_theme1") {
+          return playTheme;
+        }
       };
     })(this);
     playSound = function() {
