@@ -272,7 +272,6 @@
       return function(event) {
         console.log("Preloaded:", event.id, event.src);
         if (event.id = "bashy_theme1") {
-          alert('got it');
           return playTheme;
         }
       };
