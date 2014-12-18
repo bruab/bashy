@@ -5,6 +5,7 @@ class @DisplayManager
 
 jQuery ->
 	## INTRO AND HELP SCREEN MODALS ##
+	# Functions for Intro and Help screens
 	playIntro = () ->
 		intro_html = "<h3>Welcome to B@ashy!</h3>"
 		intro_html += "<p>Use your keyboard to type commands.</p>"
@@ -18,8 +19,7 @@ jQuery ->
 		$('#help_text').html(help_html)
 		$('#helpScreen').foundation('reveal', 'open')
 
-
-	# play intro on first click; show help screen on subsequent clicks
+	# Play intro on first click; show help screen on subsequent clicks
 	seenIntro = false
 	$("#playScreen").click ->
 		if not seenIntro
@@ -28,21 +28,24 @@ jQuery ->
 		else
 			helpScreen()
 	
-	# Create canvas and stage, animate
+
+	## EASELJS SETUP CANVAS, STAGE, ANIMATIONS ##
+	# Create canvas and stage
 	canvas = $("#bashy_canvas")[0]
 	stage = new createjs.Stage(canvas)
 
+	# Load spritesheet image; start game when it's loaded
 	bashy_himself = new Image()
 	bashy_himself.onload = ->
 		startGame()
 	bashy_himself.src = "assets/bashy_sprite_sheet.png"
 
-	tick = ->
-		stage.update()
 
-	## PRELOAD AUDIO ##
+	## SOUNDJS FUNCTIONS TO LOAD AND PLAY SFX AND THEME ##
+	# Be noisy by default
 	playSounds = true
 
+	# Function to play sound effect after each successful user command
 	playSound = () ->
 		if playSounds
 			if Math.random() < 0.5
@@ -50,22 +53,27 @@ jQuery ->
 			else
 				createjs.Sound.play("boing2")
 
+	# Function to play sound effect after erroneous command
 	playOops = () ->
 		if playSounds
 			createjs.Sound.play("oops")
 
+	# Function to play theme song
 	playTheme = () ->
 		createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5)
 
+	# Event listener for loading audio files -- play theme song once it's loaded
 	handleFileLoad = (event) =>
 		console.log("Preloaded:", event.id, event.src)
 		if event.id == "bashy_theme1"
 			playTheme()
 
+	# Function to turn off sound when it gets annoying
 	soundOff = () ->
 		playSounds = false
 		createjs.Sound.stop()
 
+	# Load sounds and fire handleFileLoad when they're in memory
 	createjs.Sound.addEventListener("fileload", handleFileLoad)
 	createjs.Sound.alternateExtensions = ["mp3"]
 	createjs.Sound.registerManifest(
@@ -78,11 +86,11 @@ jQuery ->
 	# Listen for 'turn off sound' button
 	$("#audio_off").click soundOff
 
+	## MAIN GAME SETUP AND LOOP CODE ##
 	startGame = () ->
 
 		## DRAW FILE SYSTEM MAP ##
-		#
-		# Write text for available folders
+		# Write text for available folders -- /, /home and /media
 		rootText = new createjs.Text("/", "20px Arial", "black")
 		rootText.x = 250
 		rootText.y = 120
@@ -118,30 +126,28 @@ jQuery ->
 		line2.graphics.endStroke()
 		stage.addChild(line2)
 
-		## CREATE CHARACTER SPRITE ##
+
+		## CREATE AND INITIALIZE CHARACTER SPRITE ##
+		# Create SpriteSheet first
 		bashySpriteSheet = new createjs.SpriteSheet({
-			# image to use
 			images: [bashy_himself],
-			# width, height & registration point of each sprite
 			frames: {width: 64, height: 64},
 			animations: {
 			    walking: [0, 4, "walking"],
 			    standing: [0, 0, "standing"],
 			}
 		})
-
-		# create a sprite
+		# Now create Sprite
 		sprite = new createjs.Sprite(bashySpriteSheet, 0)
 
-		# start playing the first sequence:
+		# Start playing the first sequence:
 		sprite.gotoAndPlay "walking"
 		sprite.currentFrame = 0
 		stage.addChild(sprite)
 		bashy_sprite = new BashySprite(sprite)
 		
-		# we want to do some work before we update the canvas,
-		# otherwise we could use Ticker.addListener(stage)
-		# (not sure what that means. -bdh)
+		# Set up Ticker, frame rate
+		tick = -> stage.update()
 		createjs.Ticker.addEventListener("tick", tick)
 		createjs.Ticker.useRAF = true
 		createjs.Ticker.setFPS(5)

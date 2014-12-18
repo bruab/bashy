@@ -212,7 +212,7 @@
   })();
 
   jQuery(function() {
-    var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playOops, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame, tick;
+    var bashy_himself, canvas, handleFileLoad, helpScreen, playIntro, playOops, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame;
     playIntro = function() {
       var intro_html;
       intro_html = "<h3>Welcome to B@ashy!</h3>";
@@ -244,9 +244,6 @@
       return startGame();
     };
     bashy_himself.src = "assets/bashy_sprite_sheet.png";
-    tick = function() {
-      return stage.update();
-    };
     playSounds = true;
     playSound = function() {
       if (playSounds) {
@@ -296,7 +293,7 @@
     ], "assets/");
     $("#audio_off").click(soundOff);
     return startGame = function() {
-      var bashySpriteSheet, bashy_sprite, display_mgr, handleInput, homeText, line1, line2, mediaText, os, rootText, sprite, terminalOnBlur;
+      var bashySpriteSheet, bashy_sprite, display_mgr, handleInput, homeText, line1, line2, mediaText, os, rootText, sprite, terminalOnBlur, tick;
       rootText = new createjs.Text("/", "20px Arial", "black");
       rootText.x = 250;
       rootText.y = 120;
@@ -342,6 +339,9 @@
       sprite.currentFrame = 0;
       stage.addChild(sprite);
       bashy_sprite = new BashySprite(sprite);
+      tick = function() {
+        return stage.update();
+      };
       createjs.Ticker.addEventListener("tick", tick);
       createjs.Ticker.useRAF = true;
       createjs.Ticker.setFPS(5);
