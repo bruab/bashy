@@ -23,38 +23,55 @@ class BashyOS
 		# Split up args
 		fields = input.split /\s+/
 		# Call method according to user command
-		# TODO have all methods return stdout and stderr
 		# even if they're empty
 		if fields[0] == 'cd'
 			[stdout, stderr] = @cd fields
 		else if fields[0] == 'pwd'
-			stdout = @pwd
+			[stdout, stderr] = @pwd()
 		# Return context, stdout, stderr
 		[@cwd, stdout, stderr]
 
 	cd_relative_path: (path) =>
+		# No output by default
 		[stdout, stderr] = ["", ""]
 		# TODO deal with '.'
 		newpath = ""
 		fields = path.split("/")
 		if fields[0] == ".."
 			# TODO next bit only works b/c 1-level tree :(
+			# (should be finding parent directory from @cwd)
 			if fields.length == 1
+				# Parent is root
 				@cwd = "/"
 			else
+				# Build path starting at root
 				newpath = "/"
 				[newpath += x+"/" for x in fields[1..-2]]
+				# Add last directory separately to avoid trailing slash
 				newpath += fields[-1..]
+				# Verify and update path (or generate error)
 				if validPath(newpath)
 					@cwd = newpath
 				else
 					stderr = "Invalid path"
 		else
 			# TODO only works b/c 1-level tree :(
+			# Target is child of @cwd
+			# Verify and update path (or generate error)
 			if validPath(@cwd + path)
 				@cwd = @cwd + path
 			else
 				stderr = "Invalid path"
+		# Return stdout, stderr
+		[stdout, stderr]
+
+	cd_absolute_path: (path) =>
+		# No output by default
+		[stdout, stderr] = ["", ""]
+		if validPath(path)
+			@cwd = path
+		else
+			stderr = "Invalid path"
 		# Return stdout, stderr
 		[stdout, stderr]
 
@@ -69,27 +86,28 @@ class BashyOS
 			# Determine if absolute or relative path
 			# based on first character
 			if path[0] == "/"
-				# Absolute path
-				if validPath(path)
-					@cwd = path
-				else
-					stderr = "Invalid path"
+				[stdout, stderr] = @cd_absolute_path(path)
 			else
 				[stdout, stderr] = @cd_relative_path(path)
 		# Return stdout, stderr
 		[stdout, stderr]
 
 	pwd: () =>
-		@cwd
+		# Return @cwd as stdout, nothing as stderr
+		[stdout, stderr] = ["", ""]
+		stdout = @cwd
+		return [stdout, stderr]
 
+# Class to handle updating map, character sprite
 class DisplayManager
+	# TODO instantiate with FileSystem instance
 	constructor: (@bashy_sprite) ->
 	
 	update: (new_dir) =>
 		# TODO check if new_dir is valid
-		# TODO compose and play animation to move to new_dir
 		@bashy_sprite.goToDir(new_dir)
 
+# Wrapper for Sprite object, facilitates movement and animation
 class BashySprite
 	constructor: (@sprite) ->
 		# home is 200, 50
@@ -97,6 +115,8 @@ class BashySprite
 		@sprite.y = 50
 
 	goToDir: (dir) ->
+		# TODO eventually DisplayManager will determine route,
+		# simply send destination indices based on map
 		if dir == "/"
 			@goRoot()
 		else if dir == "/home"
@@ -104,6 +124,7 @@ class BashySprite
 		else if dir == "/media"
 			@goMedia()
 
+	## METHODS TO TRAVEL TO SPECIFIC DIRECTORIES ##
 	goRoot: ->
 		@sprite.x = 200
 		@sprite.y = 50
@@ -116,29 +137,13 @@ class BashySprite
 		@sprite.x = 390
 		@sprite.y = 180
 
-	moveLeft: ->
-		if @sprite.x > 0
-			@sprite.x -= 48
-		
-	moveRight: ->
-		limit = 288 - @sprite.getBounds().width
-		if @sprite.x < limit
-			@sprite.x += 48
-		
-	moveUp: ->
-		if @sprite.y > 0
-			@sprite.y -= 48
-		
-	moveDown: ->
-		limit = 288 - @sprite.getBounds().height
-		if @sprite.y < limit
-			@sprite.y += 48
-
+	# Generic movement method
 	moveTo: (x, y) ->
 		@sprite.x = x
 		@sprite.y = y
 			
 
+# Attach objects to window so they can be accessed by code in other file
 window.BashyOS = BashyOS
 window.BashySprite = BashySprite
 window.DisplayManager = DisplayManager

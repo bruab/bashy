@@ -17,18 +17,19 @@
     function BashyOS() {
       this.pwd = __bind(this.pwd, this);
       this.cd = __bind(this.cd, this);
+      this.cd_absolute_path = __bind(this.cd_absolute_path, this);
       this.cd_relative_path = __bind(this.cd_relative_path, this);
       this.handleTerminalInput = __bind(this.handleTerminalInput, this);
     }
 
     BashyOS.prototype.handleTerminalInput = function(input) {
-      var fields, stderr, stdout, _ref, _ref1;
+      var fields, stderr, stdout, _ref, _ref1, _ref2;
       _ref = ["", ""], stdout = _ref[0], stderr = _ref[1];
       fields = input.split(/\s+/);
       if (fields[0] === 'cd') {
         _ref1 = this.cd(fields), stdout = _ref1[0], stderr = _ref1[1];
       } else if (fields[0] === 'pwd') {
-        stdout = this.pwd;
+        _ref2 = this.pwd(), stdout = _ref2[0], stderr = _ref2[1];
       }
       return [this.cwd, stdout, stderr];
     };
@@ -72,28 +73,38 @@
       return [stdout, stderr];
     };
 
+    BashyOS.prototype.cd_absolute_path = function(path) {
+      var stderr, stdout, _ref;
+      _ref = ["", ""], stdout = _ref[0], stderr = _ref[1];
+      if (validPath(path)) {
+        this.cwd = path;
+      } else {
+        stderr = "Invalid path";
+      }
+      return [stdout, stderr];
+    };
+
     BashyOS.prototype.cd = function(args) {
-      var path, stderr, stdout, _ref, _ref1;
+      var path, stderr, stdout, _ref, _ref1, _ref2;
       _ref = ["", ""], stdout = _ref[0], stderr = _ref[1];
       if (args.length === 1) {
         this.cwd = '/home';
       } else if (args.length > 1) {
         path = args[1];
         if (path[0] === "/") {
-          if (validPath(path)) {
-            this.cwd = path;
-          } else {
-            stderr = "Invalid path";
-          }
+          _ref1 = this.cd_absolute_path(path), stdout = _ref1[0], stderr = _ref1[1];
         } else {
-          _ref1 = this.cd_relative_path(path), stdout = _ref1[0], stderr = _ref1[1];
+          _ref2 = this.cd_relative_path(path), stdout = _ref2[0], stderr = _ref2[1];
         }
       }
       return [stdout, stderr];
     };
 
     BashyOS.prototype.pwd = function() {
-      return this.cwd;
+      var stderr, stdout, _ref;
+      _ref = ["", ""], stdout = _ref[0], stderr = _ref[1];
+      stdout = this.cwd;
+      return [stdout, stderr];
     };
 
     return BashyOS;
@@ -144,34 +155,6 @@
     BashySprite.prototype.goMedia = function() {
       this.sprite.x = 390;
       return this.sprite.y = 180;
-    };
-
-    BashySprite.prototype.moveLeft = function() {
-      if (this.sprite.x > 0) {
-        return this.sprite.x -= 48;
-      }
-    };
-
-    BashySprite.prototype.moveRight = function() {
-      var limit;
-      limit = 288 - this.sprite.getBounds().width;
-      if (this.sprite.x < limit) {
-        return this.sprite.x += 48;
-      }
-    };
-
-    BashySprite.prototype.moveUp = function() {
-      if (this.sprite.y > 0) {
-        return this.sprite.y -= 48;
-      }
-    };
-
-    BashySprite.prototype.moveDown = function() {
-      var limit;
-      limit = 288 - this.sprite.getBounds().height;
-      if (this.sprite.y < limit) {
-        return this.sprite.y += 48;
-      }
     };
 
     BashySprite.prototype.moveTo = function(x, y) {
