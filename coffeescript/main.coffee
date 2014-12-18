@@ -44,10 +44,6 @@ jQuery ->
 
 	## PRELOAD AUDIO ##
 	playSounds = true
-	handleFileLoad = (event) =>
-		console.log("Preloaded:", event.id, event.src)
-		if event.id = "bashy_theme1"
-			playTheme
 
 	playSound = () ->
 		if playSounds
@@ -62,6 +58,11 @@ jQuery ->
 
 	playTheme = () ->
 		createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5)
+
+	handleFileLoad = (event) =>
+		console.log("Preloaded:", event.id, event.src)
+		if event.id = "bashy_theme1"
+			playTheme
 
 	soundOff = () ->
 		playSounds = false

@@ -251,14 +251,6 @@
       return stage.update();
     };
     playSounds = true;
-    handleFileLoad = (function(_this) {
-      return function(event) {
-        console.log("Preloaded:", event.id, event.src);
-        if (event.id = "bashy_theme1") {
-          return playTheme;
-        }
-      };
-    })(this);
     playSound = function() {
       if (playSounds) {
         if (Math.random() < 0.5) {
@@ -276,6 +268,15 @@
     playTheme = function() {
       return createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5);
     };
+    handleFileLoad = (function(_this) {
+      return function(event) {
+        console.log("Preloaded:", event.id, event.src);
+        if (event.id = "bashy_theme1") {
+          alert('got it');
+          return playTheme;
+        }
+      };
+    })(this);
     soundOff = function() {
       playSounds = false;
       return createjs.Sound.stop();
