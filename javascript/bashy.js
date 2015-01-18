@@ -172,15 +172,31 @@
     }
 
     TaskManager.prototype.update = function(os) {
-      var task, _i, _len, _ref;
+      var command, completed, task, value, _i, _len, _ref, _ref1, _results;
       _ref = this.tasks;
+      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         task = _ref[_i];
         if (!task.completed) {
-          alert("uncompleted task: " + task.name);
+          completed = true;
+          _ref1 = task.tests;
+          for (command in _ref1) {
+            value = _ref1[command];
+            if (os[command] !== value) {
+              completed = false;
+            }
+          }
+          if (completed) {
+            task.completed = true;
+            _results.push(alert("completed task: " + task.name));
+          } else {
+            _results.push(alert("uncompleted task: " + task.name));
+          }
+        } else {
+          _results.push(void 0);
         }
       }
-      return alert("task manager here. your cwd is " + os.cwd);
+      return _results;
     };
 
     return TaskManager;
@@ -378,9 +394,10 @@
       createjs.Ticker.setFPS(5);
       os = new BashyOS();
       display_mgr = new DisplayManager(bashy_sprite);
-      my_task = new Task("foo task", "", "");
+      my_task = new Task("navigate to home", ["type 'cd' and press enter"], {
+        "cwd": "/home"
+      });
       task_mgr = new TaskManager([my_task]);
-      alert(task_mgr.tasks);
       handleInput = function(input) {
         var cwd, stderr, stdout, _ref;
         _ref = os.handleTerminalInput(input), cwd = _ref[0], stdout = _ref[1], stderr = _ref[2];

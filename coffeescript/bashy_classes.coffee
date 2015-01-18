@@ -150,14 +150,22 @@ class TaskManager
 		# Check for newly-completed tasks
 		for task in @tasks
 			if not task.completed
-				alert "uncompleted task: " + task.name
-		alert "task manager here. your cwd is " + os.cwd
+				completed = true
+				for command, value of task.tests
+					if os[command] != value
+						completed = false
+				if completed
+					task.completed = true
+					alert "completed task: " + task.name
+				else
+					alert "uncompleted task: " + task.name
 
 # Task class encapsulates a task name, hint(s) and any number of 
 # os queries and the desired responses
 class Task
 	constructor: (@name, @hints, @tests) ->
 		@completed = false
+
 
 # Attach objects to window so they can be accessed by code in other file
 window.BashyOS = BashyOS

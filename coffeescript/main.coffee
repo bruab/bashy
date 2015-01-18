@@ -161,9 +161,9 @@ jQuery ->
 		os = new BashyOS()
 		display_mgr = new DisplayManager(bashy_sprite)
 		# TODO create Tasks for real, from file even...
-		my_task = new Task("foo task", "", "") # name, hints, tests
+		my_task = new Task("navigate to home", ["type 'cd' and press enter"],\
+			{"cwd": "/home"}) # name, hints, tests
 		task_mgr = new TaskManager([my_task])
-		alert(task_mgr.tasks)
 
 		# Function called each time user types a command
 		# Takes user input string, updates system, returns text to terminal
