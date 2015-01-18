@@ -142,8 +142,25 @@ class BashySprite
 		@sprite.x = x
 		@sprite.y = y
 			
+# TaskManager class keeps track of Tasks, updates Menu (?)
+class TaskManager
+	constructor: (@tasks) ->
+
+	update: (os) ->
+		# Check for newly-completed tasks
+		for task in @tasks
+			if not task.completed
+				alert "uncompleted task: " + task.name
+		alert "task manager here. your cwd is " + os.cwd
+
+# Task class encapsulates a task name, hint(s) and any number of 
+# os queries and the desired responses
+class Task
+	constructor: (@name, @hints, @tests) ->
+		@completed = false
 
 # Attach objects to window so they can be accessed by code in other file
 window.BashyOS = BashyOS
 window.BashySprite = BashySprite
 window.DisplayManager = DisplayManager
+window.TaskManager = TaskManager

@@ -2,6 +2,7 @@ class @BashyOS
 class @BashySprite
 class @FileSystem
 class @DisplayManager
+class @TaskManager
 
 jQuery ->
 	## INTRO AND HELP SCREEN MODALS ##
@@ -66,7 +67,9 @@ jQuery ->
 	handleFileLoad = (event) =>
 		console.log("Preloaded:", event.id, event.src)
 		if event.id == "bashy_theme1"
-			playTheme()
+			# uncomment to have theme on startup
+			#playTheme()
+			soundOff()
 
 	# Function to turn off sound when it gets annoying
 	soundOff = () ->
@@ -157,6 +160,10 @@ jQuery ->
 		# Create OS, Display Manager
 		os = new BashyOS()
 		display_mgr = new DisplayManager(bashy_sprite)
+		# TODO create Tasks for real, from file even...
+		my_task = new Task("foo task", "", "") # name, hints, tests
+		task_mgr = new TaskManager([my_task])
+		alert(task_mgr.tasks)
 
 		# Function called each time user types a command
 		# Takes user input string, updates system, returns text to terminal
@@ -164,6 +171,9 @@ jQuery ->
 			# BashyOS updates and returns context, stdout, stderr
 			# (for now 'cwd' is all the context we need)
 			[cwd, stdout, stderr] = os.handleTerminalInput(input)
+
+			# TaskManager checks for completed tasks
+			task_mgr.update(os)
 
 			# DisplayManager updates character position on the map
 			display_mgr.update(cwd)
