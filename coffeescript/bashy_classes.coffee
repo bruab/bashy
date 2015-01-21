@@ -142,9 +142,20 @@ class BashySprite
 		@sprite.x = x
 		@sprite.y = y
 			
+# MenuManager updates "current task" menu
+class MenuManager
+	constructor: () ->
+
+	showTask: (task) ->
+		$("#menu").html(task.name)
+
+
 # TaskManager class keeps track of Tasks, updates Menu (?)
 class TaskManager
-	constructor: (@tasks) ->
+	constructor: (@menu_mgr, @tasks) ->
+		@menu_mgr.showTask(@tasks[0])
+		# try update menu
+
 
 	update: (os) ->
 		# Check for newly-completed tasks
@@ -172,3 +183,4 @@ window.BashyOS = BashyOS
 window.BashySprite = BashySprite
 window.DisplayManager = DisplayManager
 window.TaskManager = TaskManager
+window.MenuManager = MenuManager

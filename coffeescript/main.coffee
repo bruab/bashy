@@ -3,6 +3,7 @@ class @BashySprite
 class @FileSystem
 class @DisplayManager
 class @TaskManager
+class @MenuManager
 
 jQuery ->
 	## INTRO AND HELP SCREEN MODALS ##
@@ -28,7 +29,6 @@ jQuery ->
 			seenIntro = true
 		else
 			helpScreen()
-	
 
 	## EASELJS SETUP CANVAS, STAGE, ANIMATIONS ##
 	# Create canvas and stage
@@ -163,7 +163,8 @@ jQuery ->
 		# TODO create Tasks for real, from file even...
 		my_task = new Task("navigate to home", ["type 'cd' and press enter"],\
 			{"cwd": "/home"}) # name, hints, tests
-		task_mgr = new TaskManager([my_task])
+		menu_mgr = new MenuManager()
+		task_mgr = new TaskManager(menu_mgr, [my_task])
 
 		# Function called each time user types a command
 		# Takes user input string, updates system, returns text to terminal
