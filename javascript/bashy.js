@@ -362,7 +362,7 @@
     ], "assets/");
     $("#audio_off").click(soundOff);
     return startGame = function() {
-      var bashySpriteSheet, bashy_sprite, display_mgr, handleInput, homeText, line1, line2, mediaText, menu_mgr, my_task, os, rootText, sprite, task_mgr, tick;
+      var bashySpriteSheet, bashy_sprite, display_mgr, handleInput, homeText, line1, line2, mediaText, menu_mgr, os, rootText, sprite, task1, task2, task3, task_mgr, tick;
       rootText = new createjs.Text("/", "20px Arial", "black");
       rootText.x = 250;
       rootText.y = 120;
@@ -416,11 +416,17 @@
       createjs.Ticker.setFPS(5);
       os = new BashyOS();
       display_mgr = new DisplayManager(bashy_sprite);
-      my_task = new Task("navigate to home", ["type 'cd' and press enter"], {
+      task1 = new Task("navigate to home", ["type 'cd' and press enter"], {
         "cwd": "/home"
       });
+      task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"], {
+        "cwd": "/media"
+      });
+      task3 = new Task("navigate to root", ["type 'cd /' and press enter"], {
+        "cwd": "/"
+      });
       menu_mgr = new MenuManager();
-      task_mgr = new TaskManager(menu_mgr, [my_task]);
+      task_mgr = new TaskManager(menu_mgr, [task1, task2, task3]);
       handleInput = function(input) {
         var cwd, stderr, stdout, _ref;
         _ref = os.handleTerminalInput(input), cwd = _ref[0], stdout = _ref[1], stderr = _ref[2];
