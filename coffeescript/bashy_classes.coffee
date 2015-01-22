@@ -147,14 +147,16 @@ class MenuManager
 	constructor: () ->
 
 	showTask: (task) ->
-		$("#menu").html(task.name)
+		# TODO this seems ghetto, i just want 'append'
+		current_html = $("#menu").html()
+		$("#menu").html(current_html + "<p>" + task.name + "</p>")
 
 
 # TaskManager class keeps track of Tasks, updates Menu (?)
 class TaskManager
 	constructor: (@menu_mgr, @tasks) ->
-		@current_task = @tasks[0]
-		@menu_mgr.showTask(@current_task)
+		for task in @tasks
+			@menu_mgr.showTask(task)
 
 	update: (os) ->
 		# Check for newly-completed tasks

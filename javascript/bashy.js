@@ -170,7 +170,9 @@
     function MenuManager() {}
 
     MenuManager.prototype.showTask = function(task) {
-      return $("#menu").html(task.name);
+      var current_html;
+      current_html = $("#menu").html();
+      return $("#menu").html(current_html + "<p>" + task.name + "</p>");
     };
 
     return MenuManager;
@@ -179,10 +181,14 @@
 
   TaskManager = (function() {
     function TaskManager(menu_mgr, tasks) {
+      var task, _i, _len, _ref;
       this.menu_mgr = menu_mgr;
       this.tasks = tasks;
-      this.current_task = this.tasks[0];
-      this.menu_mgr.showTask(this.current_task);
+      _ref = this.tasks;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        task = _ref[_i];
+        this.menu_mgr.showTask(task);
+      }
     }
 
     TaskManager.prototype.update = function(os) {
