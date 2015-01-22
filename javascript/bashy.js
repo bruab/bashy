@@ -181,13 +181,14 @@
     function TaskManager(menu_mgr, tasks) {
       this.menu_mgr = menu_mgr;
       this.tasks = tasks;
-      this.menu_mgr.showTask(this.tasks[0]);
+      this.current_task = this.tasks[0];
+      this.menu_mgr.showTask(this.current_task);
     }
 
     TaskManager.prototype.update = function(os) {
-      var command, completed, task, value, _i, _len, _ref, _ref1, _results;
+      var all_complete, command, completed, task, value, _i, _len, _ref, _ref1;
+      all_complete = true;
       _ref = this.tasks;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         task = _ref[_i];
         if (!task.completed) {
@@ -201,15 +202,16 @@
           }
           if (completed) {
             task.completed = true;
-            _results.push(alert("completed task: " + task.name));
+            alert("completed task: " + task.name);
           } else {
-            _results.push(alert("uncompleted task: " + task.name));
+            all_complete = false;
+            alert("uncompleted task: " + task.name);
           }
-        } else {
-          _results.push(void 0);
         }
       }
-      return _results;
+      if (all_complete) {
+        return alert("you win");
+      }
     };
 
     return TaskManager;

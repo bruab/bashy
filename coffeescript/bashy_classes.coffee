@@ -153,12 +153,12 @@ class MenuManager
 # TaskManager class keeps track of Tasks, updates Menu (?)
 class TaskManager
 	constructor: (@menu_mgr, @tasks) ->
-		@menu_mgr.showTask(@tasks[0])
-		# try update menu
-
+		@current_task = @tasks[0]
+		@menu_mgr.showTask(@current_task)
 
 	update: (os) ->
 		# Check for newly-completed tasks
+		all_complete = true
 		for task in @tasks
 			if not task.completed
 				completed = true
@@ -169,7 +169,10 @@ class TaskManager
 					task.completed = true
 					alert "completed task: " + task.name
 				else
+					all_complete = false
 					alert "uncompleted task: " + task.name
+		if all_complete
+			alert "you win"
 
 # Task class encapsulates a task name, hint(s) and any number of 
 # os queries and the desired responses
