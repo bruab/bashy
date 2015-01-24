@@ -179,6 +179,14 @@
 
   })();
 
+  window.BashyOS = BashyOS;
+
+  window.BashySprite = BashySprite;
+
+  window.DisplayManager = DisplayManager;
+
+  window.MenuManager = MenuManager;
+
   TaskManager = (function() {
     function TaskManager(menu_mgr, tasks) {
       var task, _i, _len, _ref;
@@ -236,15 +244,7 @@
 
   })();
 
-  window.BashyOS = BashyOS;
-
-  window.BashySprite = BashySprite;
-
-  window.DisplayManager = DisplayManager;
-
   window.TaskManager = TaskManager;
-
-  window.MenuManager = MenuManager;
 
   this.BashyOS = (function() {
     function BashyOS() {}
