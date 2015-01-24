@@ -160,15 +160,9 @@ jQuery ->
 		# Create OS, Display Manager
 		os = new BashyOS()
 		display_mgr = new DisplayManager(bashy_sprite)
-		# TODO create Tasks for real, from file even...
-		task1 = new Task("navigate to home", ["type 'cd' and press enter"],\
-			{"cwd": "/home"}) # name, hints, tests
-		task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"],\
-			{"cwd": "/media"}) # name, hints, tests
-		task3 = new Task("navigate to root", ["type 'cd /' and press enter"],\
-			{"cwd": "/"}) # name, hints, tests
+
 		menu_mgr = new MenuManager()
-		task_mgr = new TaskManager(menu_mgr, [task1, task2, task3])
+		task_mgr = new TaskManager(menu_mgr)
 
 		# Function called each time user types a command
 		# Takes user input string, updates system, returns text to terminal
