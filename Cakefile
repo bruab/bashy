@@ -6,6 +6,8 @@ appFiles  = [
   'bashy_classes'
   'tasks'
   'help_screen'
+  'map'
+  'sprite'
   'main'
 ]
 

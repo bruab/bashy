@@ -276,48 +276,6 @@
     return $('#helpScreen').foundation('reveal', 'open');
   };
 
-  this.BashyOS = (function() {
-    function BashyOS() {}
-
-    return BashyOS;
-
-  })();
-
-  this.BashySprite = (function() {
-    function BashySprite() {}
-
-    return BashySprite;
-
-  })();
-
-  this.FileSystem = (function() {
-    function FileSystem() {}
-
-    return FileSystem;
-
-  })();
-
-  this.DisplayManager = (function() {
-    function DisplayManager() {}
-
-    return DisplayManager;
-
-  })();
-
-  this.TaskManager = (function() {
-    function TaskManager() {}
-
-    return TaskManager;
-
-  })();
-
-  this.MenuManager = (function() {
-    function MenuManager() {}
-
-    return MenuManager;
-
-  })();
-
   showRootText = function(stage) {
     var rootText;
     rootText = new createjs.Text("/", "20px Arial", "black");
@@ -399,6 +357,48 @@
     createjs.Ticker.useRAF = true;
     return createjs.Ticker.setFPS(5);
   };
+
+  this.BashyOS = (function() {
+    function BashyOS() {}
+
+    return BashyOS;
+
+  })();
+
+  this.BashySprite = (function() {
+    function BashySprite() {}
+
+    return BashySprite;
+
+  })();
+
+  this.FileSystem = (function() {
+    function FileSystem() {}
+
+    return FileSystem;
+
+  })();
+
+  this.DisplayManager = (function() {
+    function DisplayManager() {}
+
+    return DisplayManager;
+
+  })();
+
+  this.TaskManager = (function() {
+    function TaskManager() {}
+
+    return TaskManager;
+
+  })();
+
+  this.MenuManager = (function() {
+    function MenuManager() {}
+
+    return MenuManager;
+
+  })();
 
   jQuery(function() {
     var bashy_himself, canvas, handleFileLoad, playOops, playSound, playSounds, playTheme, seenIntro, soundOff, stage, startGame;
