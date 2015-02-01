@@ -259,6 +259,23 @@
 
   window.TaskManager = TaskManager;
 
+  playIntro = function() {
+    var intro_html;
+    intro_html = "<h3>Welcome to B@shy!</h3>";
+    intro_html += "<p>Use your keyboard to type commands.</p>";
+    intro_html += "<p>Available commands are 'pwd' and 'cd'</p>";
+    $('#help_text').html(intro_html);
+    return $('#helpScreen').foundation('reveal', 'open');
+  };
+
+  helpScreen = function() {
+    var help_html;
+    help_html = "<h3>B@shy Help</h3>";
+    help_html += "TODO contextual help messages";
+    $('#help_text').html(help_html);
+    return $('#helpScreen').foundation('reveal', 'open');
+  };
+
   this.BashyOS = (function() {
     function BashyOS() {}
 
@@ -300,23 +317,6 @@
     return MenuManager;
 
   })();
-
-  playIntro = function() {
-    var intro_html;
-    intro_html = "<h3>Welcome to B@shy!</h3>";
-    intro_html += "<p>Use your keyboard to type commands.</p>";
-    intro_html += "<p>Available commands are 'pwd' and 'cd'</p>";
-    $('#help_text').html(intro_html);
-    return $('#helpScreen').foundation('reveal', 'open');
-  };
-
-  helpScreen = function() {
-    var help_html;
-    help_html = "<h3>B@shy Help</h3>";
-    help_html += "TODO contextual help messages";
-    $('#help_text').html(help_html);
-    return $('#helpScreen').foundation('reveal', 'open');
-  };
 
   showRootText = function(stage) {
     var rootText;

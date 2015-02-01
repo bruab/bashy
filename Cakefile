@@ -5,6 +5,7 @@ appFiles  = [
   # omit src/ and .coffee to make the below lines a little shorter
   'bashy_classes'
   'tasks'
+  'help_screen'
   'main'
 ]
 
