@@ -5,31 +5,95 @@ class @DisplayManager
 class @TaskManager
 class @MenuManager
 
+# Functions for Intro and Help screens
+playIntro = () ->
+	intro_html = "<h3>Welcome to B@shy!</h3>"
+	intro_html += "<p>Use your keyboard to type commands.</p>"
+	intro_html += "<p>Available commands are 'pwd' and 'cd'</p>"
+	$('#help_text').html(intro_html)
+	$('#helpScreen').foundation('reveal', 'open')
+
+helpScreen = () ->
+	help_html = "<h3>B@shy Help</h3>"
+	help_html += "TODO contextual help messages"
+	$('#help_text').html(help_html)
+	$('#helpScreen').foundation('reveal', 'open')
+
+# Functions to draw map
+showRootText = (stage) ->
+	rootText = new createjs.Text("/", "20px Arial", "black")
+	rootText.x = 250
+	rootText.y = 120
+	rootText.textBaseline = "alphabetic"
+	stage.addChild(rootText)
+
+showHomeText = (stage) ->
+	homeText = new createjs.Text("/home", "20px Arial", "black")
+	homeText.x = 140
+	homeText.y = 235
+	homeText.textBaseline = "alphabetic"
+	stage.addChild(homeText)
+
+showMediaText = (stage) ->
+	mediaText = new createjs.Text("/media", "20px Arial", "black")
+	mediaText.x = 340
+	mediaText.y = 235
+	mediaText.textBaseline = "alphabetic"
+	stage.addChild(mediaText)
+
+drawLines = (stage) ->
+	# Draw lines from root to children
+	line1 = new createjs.Shape()
+	line1.graphics.setStrokeStyle(1)
+	line1.graphics.beginStroke("gray")
+	line1.graphics.moveTo(255, 125)
+	line1.graphics.lineTo(350, 220)
+	line1.graphics.endStroke()
+	stage.addChild(line1)
+
+	line2 = new createjs.Shape()
+	line2.graphics.setStrokeStyle(1)
+	line2.graphics.beginStroke("gray")
+	line2.graphics.moveTo(245, 125)
+	line2.graphics.lineTo(150, 220)
+	line2.graphics.endStroke()
+	stage.addChild(line2)
+
+drawFileSystemMap = (stage) ->
+	showRootText(stage)
+	showHomeText(stage)
+	showMediaText(stage)
+	drawLines(stage)
+
+# Functions to create sprite
+createBashySprite = (bashy_himself, stage) ->
+	## CREATE AND INITIALIZE CHARACTER SPRITE ##
+	# Create SpriteSheet first
+	bashySpriteSheet = new createjs.SpriteSheet({
+		images: [bashy_himself],
+		frames: {width: 64, height: 64},
+		animations: {
+		    walking: [0, 4, "walking"],
+		    standing: [0, 0, "standing"],
+		}
+	})
+	# Now create Sprite
+	sprite = new createjs.Sprite(bashySpriteSheet, 0)
+	# Start playing the first sequence:
+	sprite.gotoAndPlay "walking"
+	sprite.currentFrame = 0
+	stage.addChild(sprite)
+	bashy_sprite = new BashySprite(sprite)
+
+startTicker = (stage) ->
+	# Set up Ticker, frame rate
+	tick = -> stage.update()
+	createjs.Ticker.addEventListener("tick", tick)
+	createjs.Ticker.useRAF = true
+	createjs.Ticker.setFPS(5)
+
+
 jQuery ->
-	## INTRO AND HELP SCREEN MODALS ##
-	# Functions for Intro and Help screens
-	playIntro = () ->
-		intro_html = "<h3>Welcome to B@shy!</h3>"
-		intro_html += "<p>Use your keyboard to type commands.</p>"
-		intro_html += "<p>Available commands are 'pwd' and 'cd'</p>"
-		$('#help_text').html(intro_html)
-		$('#helpScreen').foundation('reveal', 'open')
-
-	helpScreen = () ->
-		help_html = "<h3>B@shy Help</h3>"
-		help_html += "TODO contextual help messages"
-		$('#help_text').html(help_html)
-		$('#helpScreen').foundation('reveal', 'open')
-
-	# Play intro on first click; show help screen on subsequent clicks
-	seenIntro = false
-	$("#playScreen").click ->
-		if not seenIntro
-			playIntro()
-			seenIntro = true
-		else
-			helpScreen()
-
 	## EASELJS SETUP CANVAS, STAGE, ANIMATIONS ##
 	# Create canvas and stage
 	canvas = $("#bashy_canvas")[0]
@@ -42,9 +106,19 @@ jQuery ->
 	bashy_himself.src = "assets/bashy_sprite_sheet.png"
 
 
+
+	###################################################
+	#################### SOUND ########################
+	###################################################
+	
 	## SOUNDJS FUNCTIONS TO LOAD AND PLAY SFX AND THEME ##
 	# Be noisy by default
 	playSounds = true
+
+	# Function to turn off sound when it gets annoying
+	soundOff = () ->
+		playSounds = false
+		createjs.Sound.stop()
 
 	# Function to play sound effect after each successful user command
 	playSound = () ->
@@ -62,19 +136,12 @@ jQuery ->
 	# Function to play theme song
 	playTheme = () ->
 		createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5)
-
 	# Event listener for loading audio files -- play theme song once it's loaded
 	handleFileLoad = (event) =>
 		console.log("Preloaded:", event.id, event.src)
 		if event.id == "bashy_theme1"
-			# uncomment to have theme on startup
-			#playTheme()
-			soundOff()
-
-	# Function to turn off sound when it gets annoying
-	soundOff = () ->
-		playSounds = false
-		createjs.Sound.stop()
+			playTheme()
+			soundOff() # delete this line to turn sound back on at start
 
 	# Load sounds and fire handleFileLoad when they're in memory
 	createjs.Sound.addEventListener("fileload", handleFileLoad)
@@ -89,78 +156,33 @@ jQuery ->
 	# Listen for 'turn off sound' button
 	$("#audio_off").click soundOff
 
-	## MAIN GAME SETUP AND LOOP CODE ##
+
+	###################################################
+	################ HELP SCREEN ######################
+	###################################################
+	
+	# Play intro on first click; show help screen on subsequent clicks
+	seenIntro = false
+	$("#playScreen").click ->
+		if not seenIntro
+			playIntro()
+			seenIntro = true
+		else
+			helpScreen()
+
+	###################################################
+	########### MAIN GAME SETUP AND LOOP ##############
+	###################################################
 	startGame = () ->
 
-		## DRAW FILE SYSTEM MAP ##
-		# Write text for available folders -- /, /home and /media
-		rootText = new createjs.Text("/", "20px Arial", "black")
-		rootText.x = 250
-		rootText.y = 120
-		rootText.textBaseline = "alphabetic"
-		stage.addChild(rootText)
-
-		homeText = new createjs.Text("/home", "20px Arial", "black")
-		homeText.x = 140
-		homeText.y = 235
-		homeText.textBaseline = "alphabetic"
-		stage.addChild(homeText)
-
-		mediaText = new createjs.Text("/media", "20px Arial", "black")
-		mediaText.x = 340
-		mediaText.y = 235
-		mediaText.textBaseline = "alphabetic"
-		stage.addChild(mediaText)
-
-		# Draw lines from root to children
-		line1 = new createjs.Shape()
-		line1.graphics.setStrokeStyle(1)
-		line1.graphics.beginStroke("gray")
-		line1.graphics.moveTo(255, 125)
-		line1.graphics.lineTo(350, 220)
-		line1.graphics.endStroke()
-		stage.addChild(line1)
-
-		line2 = new createjs.Shape()
-		line2.graphics.setStrokeStyle(1)
-		line2.graphics.beginStroke("gray")
-		line2.graphics.moveTo(245, 125)
-		line2.graphics.lineTo(150, 220)
-		line2.graphics.endStroke()
-		stage.addChild(line2)
-
-
-		## CREATE AND INITIALIZE CHARACTER SPRITE ##
-		# Create SpriteSheet first
-		bashySpriteSheet = new createjs.SpriteSheet({
-			images: [bashy_himself],
-			frames: {width: 64, height: 64},
-			animations: {
-			    walking: [0, 4, "walking"],
-			    standing: [0, 0, "standing"],
-			}
-		})
-		# Now create Sprite
-		sprite = new createjs.Sprite(bashySpriteSheet, 0)
-
-		# Start playing the first sequence:
-		sprite.gotoAndPlay "walking"
-		sprite.currentFrame = 0
-		stage.addChild(sprite)
-		bashy_sprite = new BashySprite(sprite)
-		
-		# Set up Ticker, frame rate
-		tick = -> stage.update()
-		createjs.Ticker.addEventListener("tick", tick)
-		createjs.Ticker.useRAF = true
-		createjs.Ticker.setFPS(5)
-
+		drawFileSystemMap(stage)
+		bashy_sprite = createBashySprite(bashy_himself, stage)
+		startTicker(stage)
 
 		## CREATE OBJECTS, DEFINE FUNCTION CALLED ON INPUT ##
 		# Create OS, Display Manager
 		os = new BashyOS()
 		display_mgr = new DisplayManager(bashy_sprite)
-
 		menu_mgr = new MenuManager()
 		task_mgr = new TaskManager(menu_mgr)
 
