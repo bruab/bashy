@@ -164,3 +164,4 @@ window.BashyOS = BashyOS
 window.BashySprite = BashySprite
 window.DisplayManager = DisplayManager
 window.MenuManager = MenuManager
+window.FileSystem = FileSystem

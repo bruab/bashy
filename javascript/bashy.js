@@ -204,6 +204,8 @@
 
   window.MenuManager = MenuManager;
 
+  window.FileSystem = FileSystem;
+
   get_tasks = function() {
     var task1, task1_fn, task2, task2_fn, task3, task3_fn;
     task1_fn = function(os) {
