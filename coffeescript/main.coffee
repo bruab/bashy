@@ -93,8 +93,9 @@ jQuery ->
 
 		## CREATE OBJECTS, DEFINE FUNCTION CALLED ON INPUT ##
 		# Create OS, Display Manager
-		os = new BashyOS()
-		display_mgr = new DisplayManager(bashy_sprite)
+		file_system = new FileSystem()
+		os = new BashyOS(file_system)
+		display_mgr = new DisplayManager(bashy_sprite, file_system)
 		menu_mgr = new MenuManager()
 		task_mgr = new TaskManager(menu_mgr)
 

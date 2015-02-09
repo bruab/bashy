@@ -5,14 +5,20 @@ validPath = (path) ->
 	else
 		return false
 
+# FileSystem class stores and answers questions about directories and files
+class FileSystem
+	constructor: () ->
+
+	toString: () -> "file system here..."
+
+	isValidPath: (cwd, path) -> true # TODO obviously
+
 # OS class in charge of file system, processing user input
 class BashyOS
+	constructor: (@file_system) ->
+
 	# Start user off at root (for now)
 	cwd: '/'
-
-	# Nothing to see here
-	# TODO instantiate with a FileSystem object
-	constructor: () ->
 
 	# Function called every time a user types a command
 	# Takes input string, returns context, stdout and stderr
@@ -76,6 +82,8 @@ class BashyOS
 		[stdout, stderr]
 
 	cd: (args) =>
+		# TODO this should call @file_system.isValidPath(@cwd, path)
+		# then fail or update @cwd accordingly
 		# No output by default
 		[stdout, stderr] = ["", ""]
 		if args.length == 1
@@ -100,8 +108,7 @@ class BashyOS
 
 # Class to handle updating map, character sprite
 class DisplayManager
-	# TODO instantiate with FileSystem instance
-	constructor: (@bashy_sprite) ->
+	constructor: (@bashy_sprite, @file_system) ->
 	
 	update: (new_dir) =>
 		# TODO check if new_dir is valid
