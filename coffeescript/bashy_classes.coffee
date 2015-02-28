@@ -13,6 +13,25 @@ class FileSystem
 
 	isValidPath: (cwd, path) -> true # TODO obviously
 
+###
+
+# FileSystem continued ...
+#
+# needs children or children()
+# needs needs coords
+# oh wait no, needs root
+# root needs children
+# so we're talkin 'File' here, or 'Dir' or whatever.
+# let's just say Dirs for now.
+# 
+# a big question is how to construct -- pass in children and
+# parent or add them in? i spose it doesnt matter
+#
+class Directory
+	constructor: (@name, @coords, @children) ->
+	
+###
+
 # OS class in charge of file system, processing user input
 class BashyOS
 	constructor: (@file_system) ->
