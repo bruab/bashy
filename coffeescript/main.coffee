@@ -87,7 +87,8 @@ jQuery ->
 	###################################################
 	startGame = () ->
 
-		drawFileSystemMap(stage)
+		## SET UP GRAPHICS
+		drawFileSystemMap(stage, file_system)
 		bashy_sprite = createBashySprite(bashy_himself, stage)
 		startTicker(stage)
 
@@ -95,7 +96,7 @@ jQuery ->
 		# Create OS, Display Manager
 		file_system = new FileSystem()
 		os = new BashyOS(file_system)
-		display_mgr = new DisplayManager(bashy_sprite, file_system)
+		display_mgr = new DisplayManager(bashy_sprite)
 		menu_mgr = new MenuManager()
 		task_mgr = new TaskManager(menu_mgr)
 
@@ -104,13 +105,14 @@ jQuery ->
 		handleInput = (input) ->
 			# BashyOS updates and returns context, stdout, stderr
 			# (for now 'cwd' is all the context we need)
+			fs = os.file_system
 			[cwd, stdout, stderr] = os.handleTerminalInput(input)
 
 			# TaskManager checks for completed tasks
 			task_mgr.update(os)
 
 			# DisplayManager updates character position on the map
-			display_mgr.update(cwd)
+			display_mgr.update(fs, cwd)
 			
 			# Return text to terminal
 			if stderr

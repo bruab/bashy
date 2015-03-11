@@ -38,7 +38,7 @@ drawLines = (stage) ->
 	line2.graphics.endStroke()
 	stage.addChild(line2)
 
-drawFileSystemMap = (stage) ->
+drawFileSystemMap = (stage, fs) ->
 	showRootText(stage)
 	showHomeText(stage)
 	showMediaText(stage)

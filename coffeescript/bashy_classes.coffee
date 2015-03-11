@@ -26,12 +26,10 @@ class FileSystem
 # 
 # a big question is how to construct -- pass in children and
 # parent or add them in? i spose it doesnt matter
-#
-class Directory
+###
+class File
 	constructor: (@name, @coords, @children) ->
 	
-###
-
 # OS class in charge of file system, processing user input
 class BashyOS
 	constructor: (@file_system) ->
@@ -125,14 +123,6 @@ class BashyOS
 		stdout = @cwd
 		return [stdout, stderr]
 
-# Class to handle updating map, character sprite
-class DisplayManager
-	constructor: (@bashy_sprite, @file_system) ->
-	
-	update: (new_dir) =>
-		# TODO check if new_dir is valid
-		@bashy_sprite.goToDir(new_dir)
-
 # Wrapper for Sprite object, facilitates movement and animation
 class BashySprite
 	constructor: (@sprite) ->
@@ -168,6 +158,13 @@ class BashySprite
 		@sprite.x = x
 		@sprite.y = y
 			
+# Class to handle updating map, character sprite
+class DisplayManager
+	constructor: (@bashy_sprite) ->
+	
+	update: (fs, new_dir) =>
+		@bashy_sprite.goToDir(new_dir)
+
 # MenuManager updates "current task" menu
 class MenuManager
 	constructor: () ->

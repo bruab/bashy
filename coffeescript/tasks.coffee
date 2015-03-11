@@ -22,7 +22,7 @@ class TaskManager
 		all_complete = true
 		for task in @tasks
 			if not task.done(os)
-				alert "uncompleted task: " + task.name
+				#alert "uncompleted task: " + task.name
 				all_complete = false
 		if all_complete
 			alert "you win"
