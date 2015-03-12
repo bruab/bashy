@@ -38,11 +38,32 @@ drawLines = (stage) ->
 	line2.graphics.endStroke()
 	stage.addChild(line2)
 
+calculateChildCoords = (count, parentX, parentY) ->
+	coords = []
+	startingX = parentX - 100
+	y = parentY + 100
+	for i in [0..count-1]
+		x = startingX + i*100
+		# TODO this should obviously depend on the #children
+		coords.push( [x, y] )
+	coords
+
+drawFile = (stage, file, x, y) ->
+	text = new createjs.Text(file.path, "20px Arial", "black")
+	[text.x, text.y] = [x, y]
+	text.textBaseline = "alphabetic"
+	stage.addChild(text)
+
 drawFileSystem = (stage, fs) ->
-	showRootText(stage)
-	showHomeText(stage)
-	showMediaText(stage)
-	drawLines(stage)
+	[rootX, rootY] = [250, 120]
+	drawFile(stage, fs.root, rootX, rootY)
+	numChildren = fs.root.children.length
+	childCoords = calculateChildCoords(numChildren, rootX, rootY)
+	for i in [0..numChildren-1]
+		child = fs.root.children[i]
+		x = childCoords[i][0]
+		y = childCoords[i][1]
+		drawFile(stage, child, x, y)
 
 ###
 
