@@ -9,8 +9,14 @@ class File
 			len = splitPath.length
 			splitPath[len-1]
 
-	toString: () -> @path + " with children " + @children
-	
+	toString: () -> "File object with path=" + @path
+
+	getChild: (name) ->
+		for child in @children
+			if child.name() == name
+				return child
+		return ""
+
 # FileSystem class stores and answers questions about directories and files
 class FileSystem
 	constructor: () ->
@@ -26,26 +32,57 @@ class FileSystem
 		home.children.push(bashy)
 		@root.children.push(home)
 
-	isValidPath: (cwd, path) -> true # TODO obviously
+	isValidPath: (path) ->
+		# Takes absolute path, returns boolean
+		if path == "/"
+			return true
+		splitPath = path.split "/"
+		currentParent = @root
+		for dirName in splitPath[1..]
+			dir = currentParent.getChild dirName
+			if not dir
+				return false
+			else
+				currentParent = dir
+		return true
 
+	getFile: (path) ->
+		if path == "/"
+			return @root
+		currentParent = @root
+		splitPath = path.split "/"
+		for dirName in splitPath[1..]
+			currentParent = currentParent.getChild(dirName)
+		return currentParent
+
+cleanPath = (path) ->
+	alert 'cleanpath here'
+	alert path
+	splitPath = path.split "/"
+	alert splitPath
+	newPath = ""
+	for dir in splitPath
+		if dir != ""
+			newPath = newPath + "/" + dir
+	alert newPath
+	newPath
+	
 # helper function for path parsing
 getParentPath = (dir) ->
-	if dir.path = "/"
+	if dir.path == "/"
 		"/"
 	else
 		splitPath = dir.path.split "/"
 		len = splitPath.length
 		parentPath = ""
-		for i in [0..len-1]
+		for i in [0..len-2]
 			parentPath = parentPath + "/" + splitPath[i]
 		parentPath
 
 # OS class in charge of file system, processing user input
 class BashyOS
 	constructor: (@file_system) ->
-
-	# Start user off at root (for now)
-	cwd: '/'
+		@cwd = @file_system.root
 
 	# This feels ghetto but works for now
 	validCommands: () ->
@@ -78,39 +115,46 @@ class BashyOS
 					absolutePath = absolutePath + field
 				else
 					absolutePath = absolutePath + "/" + field
+			absolutePath = cleanPath(absolutePath)
 			if @file_system.isValidPath(absolutePath)
-				@cwd = absolutePath
+				@cwd = @file_system.getFile(absolutePath)
 			else
-				stderr = "Invalid path"
+				stderr = "Invalid path: " + absolutePath
 		else if fields[0] == "."
 			# Build absolute path
 			if @cwd == "/"
-				newPath = @cwd + path[2..]
+				absolutePath = @cwd + path[2..]
 			else
-				newPath = @cwd + "/" + path[2..]
-			if @file_system.isValidPath(newPath)
-				@cwd = newPath
+				absolutePath = @cwd + "/" + path[2..]
+			absolutePath = cleanPath(absolutePath)
+			if @file_system.isValidPath(absolutePath)
+				@cwd = @file_system.getFile(absolutePath)
 			else
-				stderr = "Invalid path"
+				stderr = "Invalid path: " + absolutePath
 			
 		else
 			# Build absolute path
-			if @cwd == "/"
-				newPath = @cwd + path
+			if @cwd == @file_system.root
+				absolutePath = @cwd.path + path
 			else
-				newPath = @cwd + "/" + path
-			if @file_system.isValidPath(newPath)
-				@cwd = newPath
+				absolutePath = @cwd.path + "/" + path
+			alert 'b4'
+			alert absolutePath
+			absolutePath = cleanPath(absolutePath)
+			alert 'after'
+			if @file_system.isValidPath(absolutePath)
+				@cwd = @file_system.getFile(absolutePath)
 			else
-				stderr = "Invalid path"
+				stderr = "Invalid path: " + absolutePath
 		# Return stdout, stderr
 		[stdout, stderr]
 
 	cd_absolute_path: (path) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
+		absolutePath = cleanPath(path)
 		if @file_system.isValidPath(path)
-			@cwd = path
+			@cwd = @file_system.getFile(path)
 		else
 			stderr = "Invalid path"
 		# Return stdout, stderr
@@ -121,7 +165,7 @@ class BashyOS
 		[stdout, stderr] = ["", ""]
 		if args.length == 0
 			# The user typed "cd" with no additional args
-			@cwd = '/home'
+			@cwd = @file_system.getFile("/home")
 		else if args.length > 0
 			path = args[0] # not handling options/flags yet
 			# Determine if absolute or relative path
