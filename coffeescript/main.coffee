@@ -6,6 +6,9 @@ class @TaskManager
 class @MenuManager
 
 jQuery ->
+	###################################################
+	################## CANVAS, ETC. ###################
+	###################################################
 	## EASELJS SETUP CANVAS, STAGE, ANIMATIONS ##
 	# Create canvas and stage
 	canvas = $("#bashy_canvas")[0]
@@ -16,7 +19,6 @@ jQuery ->
 	bashy_himself.onload = ->
 		startGame()
 	bashy_himself.src = "assets/bashy_sprite_sheet.png"
-
 
 
 	###################################################
@@ -103,23 +105,27 @@ jQuery ->
 		# Function called each time user types a command
 		# Takes user input string, updates system, returns text to terminal
 		handleInput = (input) ->
-			# BashyOS updates and returns context, stdout, stderr
-			# (for now 'cwd' is all the context we need)
+			# Get a copy of the current file system
 			fs = os.file_system
+			# BashyOS updates and returns context, stdout, stderr
 			[cwd, stdout, stderr] = os.handleTerminalInput(input)
 
 			# TaskManager checks for completed tasks
 			task_mgr.update(os)
 
-			# DisplayManager updates character position on the map
+			# DisplayManager updates map
 			display_mgr.update(fs, cwd)
 			
-			# Return text to terminal
+			# Handle sound effects
 			if stderr
 				playOops()
-				stderr
 			else
 				playSound()
+
+			# Return text to terminal
+			if stderr
+				stderr
+			else
 				if stdout
 					stdout
 				else
@@ -129,5 +135,5 @@ jQuery ->
 		# Create Terminal object
 		# 'onBlur: false' guarantees the terminal always stays in focus
 		$('#terminal').terminal(handleInput,
-			{ greetings: "", prompt: '> ', onBlur: false, name: 'test' })
+			{ greetings: "", prompt: '> ', onBlur: false, name: 'bashy_terminal' })
 

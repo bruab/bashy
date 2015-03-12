@@ -573,9 +573,12 @@
         display_mgr.update(fs, cwd);
         if (stderr) {
           playOops();
-          return stderr;
         } else {
           playSound();
+        }
+        if (stderr) {
+          return stderr;
+        } else {
           if (stdout) {
             return stdout;
           } else {
@@ -587,7 +590,7 @@
         greetings: "",
         prompt: '> ',
         onBlur: false,
-        name: 'test'
+        name: 'bashy_terminal'
       });
     };
   });
