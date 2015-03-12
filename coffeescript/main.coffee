@@ -5,6 +5,17 @@ class @DisplayManager
 class @TaskManager
 class @MenuManager
 
+parseCommand = (input) ->
+	splitInput = input.split /\s+/
+	command = splitInput[0]
+	args = []
+	len = splitInput.length
+	if len > 1
+		for i in [1..len-1]
+			args.push(splitInput[i])
+	[command, args]
+
+
 jQuery ->
 	###################################################
 	################## CANVAS, ETC. ###################
@@ -96,45 +107,52 @@ jQuery ->
 		# Set up graphics
 		drawFileSystem(stage, os.file_system)
 		# TODO reintroduce sprite
-		#bashy_sprite = createBashySprite(bashy_himself, stage)
+		bashy_sprite = createBashySprite(bashy_himself, stage)
 		startTicker(stage)
 
 		# Create other objects
-		#display_mgr = new DisplayManager(bashy_sprite) # TODO really need this?
+		display_mgr = new DisplayManager(bashy_sprite) # TODO really need this?
 		menu_mgr = new MenuManager()
 		task_mgr = new TaskManager(menu_mgr)
 
 		# Function called each time user types a command
 		# Takes user input string, updates system, returns text to terminal
 		handleInput = (input) ->
-			# Get a copy of the current file system
-			fs = os.file_system
-
-			# BashyOS updates and returns context, stdout, stderr
-			[cwd, stdout, stderr] = os.handleTerminalInput(input)
-
-			# TaskManager checks for completed tasks
-			task_mgr.update(os)
-
-			# DisplayManager updates map
-			# TODO re-implement
-			#display_mgr.update(fs, cwd)
-			
-			# Handle sound effects
-			if stderr
-				playOops()
+			# Strip leading and trailing whitespace
+			input = input.replace /^\s+|\s+$/g, ""
+			# Parse input and check for invalid command
+			[command, args] = parseCommand(input)
+			if command not in os.validCommands()
+				"Invalid command: " + command
 			else
-				playSound()
+				# Get a copy of the current file system
+				fs = os.file_system
 
-			# Return text to terminal
-			if stderr
-				stderr
-			else
-				if stdout
-					stdout
+				# BashyOS updates and returns context, stdout, stderr
+				[cwd, stdout, stderr] = os.runCommand(command, args)
+
+				# TaskManager checks for completed tasks
+				task_mgr.update(os)
+
+				# DisplayManager updates map
+				# TODO re-implement
+				#display_mgr.update(fs, cwd)
+				
+				# Handle sound effects
+				if stderr
+					playOops()
 				else
-					# Returning 'undefined' means no terminal output
-					undefined
+					playSound()
+
+				# Return text to terminal
+				if stderr
+					stderr
+				else
+					if stdout
+						stdout
+					else
+						# Returning 'undefined' means no terminal output
+						undefined
 
 		# Create Terminal object
 		# 'onBlur: false' guarantees the terminal always stays in focus

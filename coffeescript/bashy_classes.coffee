@@ -22,29 +22,19 @@ class File
 class FileSystem
 	constructor: () ->
 		@root = new File("/")
+
 		media = new File("/media")
+		pics = new File("/media/pics")
+		media.children.push(pics)
+		@root.children.push(media)
+
 		home = new File("/home")
 		bashy = new File("/home/bashy")
 		home.children.push(bashy)
 		@root.children.push(home)
-		@root.children.push(media)
 
 	isValidPath: (cwd, path) -> true # TODO obviously
 
-###
-
-# FileSystem continued ...
-#
-# needs children or children()
-# needs needs coords
-# oh wait no, needs root
-# root needs children
-# so we're talkin 'File' here, or 'Dir' or whatever.
-# let's just say Dirs for now.
-# 
-# a big question is how to construct -- pass in children and
-# parent or add them in? i spose it doesnt matter
-###
 # OS class in charge of file system, processing user input
 class BashyOS
 	constructor: (@file_system) ->
@@ -52,19 +42,19 @@ class BashyOS
 	# Start user off at root (for now)
 	cwd: '/'
 
+	# This feels ghetto but works for now
+	validCommands: () ->
+		["cd", "pwd"]
+
 	# Function called every time a user types a command
 	# Takes input string, returns context, stdout and stderr
 	# (for now 'context' = 'cwd')
-	handleTerminalInput: (input) =>
+	runCommand: (command, args) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
-		# Split up args
-		fields = input.split /\s+/
-		# Call method according to user command
-		# even if they're empty
-		if fields[0] == 'cd'
-			[stdout, stderr] = @cd fields
-		else if fields[0] == 'pwd'
+		if command == 'cd'
+			[stdout, stderr] = @cd args
+		else if command == 'pwd'
 			[stdout, stderr] = @pwd()
 		# Return context, stdout, stderr
 		[@cwd, stdout, stderr]
@@ -118,11 +108,11 @@ class BashyOS
 		# then fail or update @cwd accordingly
 		# No output by default
 		[stdout, stderr] = ["", ""]
-		if args.length == 1
+		if args.length == 0
 			# The user typed "cd" with no additional args
 			@cwd = '/home'
-		else if args.length > 1
-			path = args[1] # not handling options/flags yet
+		else if args.length > 0
+			path = args[0] # not handling options/flags yet
 			# Determine if absolute or relative path
 			# based on first character
 			if path[0] == "/"
