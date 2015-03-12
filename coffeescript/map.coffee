@@ -39,7 +39,7 @@ drawLines = (stage) ->
 	stage.addChild(line2)
 
 calculateChildCoords = (count, parentX, parentY) ->
-	yOffset = 100
+	yOffset = 80
 	xOffset = 100
 	coords = []
 	startingX = parentX - 0.5*count*xOffset
@@ -50,33 +50,39 @@ calculateChildCoords = (count, parentX, parentY) ->
 	coords
 
 drawFile = (stage, file, x, y) ->
-	text = new createjs.Text(file.path, "20px Arial", "black")
+	text = new createjs.Text(file.name(), "20px Arial", "black")
 	[text.x, text.y] = [x, y]
 	text.textBaseline = "alphabetic"
 	stage.addChild(text)
 
-drawFileSystem = (stage, fs) ->
+drawChildren = (stage, parent, parentX, parentY) ->
 	lineOffsetX = 20
 	lineOffsetY = 20
-	[rootX, rootY] = [250, 120]
-	drawFile(stage, fs.root, rootX, rootY)
-	numChildren = fs.root.children.length
-	childCoords = calculateChildCoords(numChildren, rootX, rootY)
+	numChildren = parent.children.length
+	childCoords = calculateChildCoords(numChildren, parentX, parentY)
 	for i in [0..numChildren-1]
 		# Calculate coordinates
-		child = fs.root.children[i]
-		x = childCoords[i][0]
-		y = childCoords[i][1]
+		child = parent.children[i]
+		childX = childCoords[i][0]
+		childY = childCoords[i][1]
+		# Draw children (recursion ftw)
+		if child.children.length > 0
+			drawChildren(stage, child, childX, childY)
 		# Draw text
-		drawFile(stage, child, x, y)
+		drawFile(stage, child, childX, childY)
 		# Draw line
 		# TODO center line under/above text it points to
 		# by calculating length of text, etc. fancy stuff.
 		line = new createjs.Shape()
 		line.graphics.setStrokeStyle(1)
 		line.graphics.beginStroke("gray")
-		line.graphics.moveTo(rootX, rootY+lineOffsetY) # TODO should be generic parentX,Y
-		line.graphics.lineTo(x+lineOffsetX, y-lineOffsetY)
+		line.graphics.moveTo(parentX, parentY+lineOffsetY)
+		line.graphics.lineTo(childX+lineOffsetX, childY-lineOffsetY)
 		line.graphics.endStroke()
 		stage.addChild(line)
+
+drawFileSystem = (stage, fs) ->
+	[rootX, rootY] = [250, 120]
+	drawFile(stage, fs.root, rootX, rootY)
+	drawChildren(stage, fs.root, rootX, rootY)
 

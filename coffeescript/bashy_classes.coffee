@@ -8,6 +8,13 @@ validPath = (path) ->
 class File
 	constructor: (@path) ->
 		@children = []
+	name: () ->
+		if @path == "/"
+			@path
+		else
+			splitPath = @path.split "/"
+			len = splitPath.length
+			splitPath[len-1]
 
 	toString: () -> @path + " with children " + @children
 	
@@ -17,6 +24,8 @@ class FileSystem
 		@root = new File("/")
 		media = new File("/media")
 		home = new File("/home")
+		bashy = new File("/home/bashy")
+		home.children.push(bashy)
 		@root.children.push(home)
 		@root.children.push(media)
 
