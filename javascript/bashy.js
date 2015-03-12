@@ -372,12 +372,14 @@
   };
 
   calculateChildCoords = function(count, parentX, parentY) {
-    var coords, i, j, ref, startingX, x, y;
+    var coords, i, j, ref, startingX, x, xOffset, y, yOffset;
+    yOffset = 100;
+    xOffset = 100;
     coords = [];
-    startingX = parentX - 100;
-    y = parentY + 100;
+    startingX = parentX - 0.5 * count * xOffset;
+    y = parentY + yOffset;
     for (i = j = 0, ref = count - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
-      x = startingX + i * 100;
+      x = startingX + 2 * i * xOffset;
       coords.push([x, y]);
     }
     return coords;
@@ -392,7 +394,9 @@
   };
 
   drawFileSystem = function(stage, fs) {
-    var child, childCoords, i, j, numChildren, ref, ref1, results, rootX, rootY, x, y;
+    var child, childCoords, i, j, line, lineOffsetX, lineOffsetY, numChildren, ref, ref1, results, rootX, rootY, x, y;
+    lineOffsetX = 20;
+    lineOffsetY = 20;
     ref = [250, 120], rootX = ref[0], rootY = ref[1];
     drawFile(stage, fs.root, rootX, rootY);
     numChildren = fs.root.children.length;
@@ -402,54 +406,17 @@
       child = fs.root.children[i];
       x = childCoords[i][0];
       y = childCoords[i][1];
-      results.push(drawFile(stage, child, x, y));
+      drawFile(stage, child, x, y);
+      line = new createjs.Shape();
+      line.graphics.setStrokeStyle(1);
+      line.graphics.beginStroke("gray");
+      line.graphics.moveTo(rootX, rootY + lineOffsetY);
+      line.graphics.lineTo(x + lineOffsetX, y - lineOffsetY);
+      line.graphics.endStroke();
+      results.push(stage.addChild(line));
     }
     return results;
   };
-
-
-  /*
-  
-  drawLine = (stage, startCoords, endCoords) ->
-  	line = new createjs.Shape()
-  	line.graphics.setStrokeStyle(1)
-  	line.graphics.beginStroke("gray")
-  	line.graphics.moveTo(startCoords.x, startCoords.y)
-  	line.graphics.lineTo(endCoords.x, endCoords.y)
-  	line.graphics.endStroke()
-  	stage.addChild(line)
-  
-  drawDirName = (stage, name, coords) ->
-  	text = new createjs.Text(name, "20px Arial", "black")
-  	text.x = coords.x
-  	text.y = coords.y
-  	text.textBaseline = "alphabetic"
-  	stage.addChild(text)
-  
-  drawRoot = (stage) ->
-  	drawDirName("/", (0,0) )
-  
-  drawDir = (stage, dir, parentCoords) ->
-  	 * do stuff with stage and line and whatever the hell
-  	 * like, say
-  	drawDirName(stage, dir.name, dir.coords)
-  	drawLine(stage, coords, parentCoords)
-  	
-  drawChildren = (stage, dir) ->
-  	for child in dir.children
-  		 * do something indexy in this loop to be able
-  		 * to calculate child's coords based on own coords
-  		child.coords = doSomething()
-  		if not child.children
-  			drawDir(stage, child, dir.coords) # pass in child's parents coords
-  		else
-  			drawChildren(stage, child)
-  
-  drawFileSystemMap = (stage, fs) ->
-  	drawRoot()
-  	for dir in fs.root.children
-  		drawChildren(dir)
-   */
 
   createBashySprite = function(bashy_himself, stage) {
     var bashySpriteSheet, bashy_sprite, sprite;
