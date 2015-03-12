@@ -1,10 +1,3 @@
-# Utility function to determine if path exists in file system
-validPath = (path) ->
-	if path in ['/', '/home', '/media']
-		return true
-	else
-		return false
-
 class File
 	constructor: (@path) ->
 		@children = []
@@ -35,6 +28,18 @@ class FileSystem
 
 	isValidPath: (cwd, path) -> true # TODO obviously
 
+# helper function for path parsing
+getParentPath = (dir) ->
+	if dir.path = "/"
+		"/"
+	else
+		splitPath = dir.path.split "/"
+		len = splitPath.length
+		parentPath = ""
+		for i in [0..len-1]
+			parentPath = parentPath + "/" + splitPath[i]
+		parentPath
+
 # OS class in charge of file system, processing user input
 class BashyOS
 	constructor: (@file_system) ->
@@ -60,34 +65,42 @@ class BashyOS
 		[@cwd, stdout, stderr]
 
 	cd_relative_path: (path) =>
+		# TODO hecka code duplication going on here
 		# No output by default
 		[stdout, stderr] = ["", ""]
-		# TODO deal with '.'
 		newpath = ""
 		fields = path.split("/")
 		if fields[0] == ".."
-			# TODO next bit only works b/c 1-level tree :(
-			# (should be finding parent directory from @cwd)
-			if fields.length == 1
-				# Parent is root
-				@cwd = "/"
-			else
-				# Build path starting at root
-				newpath = "/"
-				[newpath += x+"/" for x in fields[1..-2]]
-				# Add last directory separately to avoid trailing slash
-				newpath += fields[-1..]
-				# Verify and update path (or generate error)
-				if validPath(newpath)
-					@cwd = newpath
+			# Build absolute path
+			absolutePath = getParentPath(@cwd)
+			for field in [fields[1..]]
+				if absolutePath == "/"
+					absolutePath = absolutePath + field
 				else
-					stderr = "Invalid path"
+					absolutePath = absolutePath + "/" + field
+			if @file_system.isValidPath(absolutePath)
+				@cwd = absolutePath
+			else
+				stderr = "Invalid path"
+		else if fields[0] == "."
+			# Build absolute path
+			if @cwd == "/"
+				newPath = @cwd + path[2..]
+			else
+				newPath = @cwd + "/" + path[2..]
+			if @file_system.isValidPath(newPath)
+				@cwd = newPath
+			else
+				stderr = "Invalid path"
+			
 		else
-			# TODO only works b/c 1-level tree :(
-			# Target is child of @cwd
-			# Verify and update path (or generate error)
-			if validPath(@cwd + path)
-				@cwd = @cwd + path
+			# Build absolute path
+			if @cwd == "/"
+				newPath = @cwd + path
+			else
+				newPath = @cwd + "/" + path
+			if @file_system.isValidPath(newPath)
+				@cwd = newPath
 			else
 				stderr = "Invalid path"
 		# Return stdout, stderr
@@ -96,7 +109,7 @@ class BashyOS
 	cd_absolute_path: (path) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
-		if validPath(path)
+		if @file_system.isValidPath(path)
 			@cwd = path
 		else
 			stderr = "Invalid path"
@@ -104,8 +117,6 @@ class BashyOS
 		[stdout, stderr]
 
 	cd: (args) =>
-		# TODO this should call @file_system.isValidPath(@cwd, path)
-		# then fail or update @cwd accordingly
 		# No output by default
 		[stdout, stderr] = ["", ""]
 		if args.length == 0
