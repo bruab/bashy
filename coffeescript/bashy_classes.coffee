@@ -5,11 +5,20 @@ validPath = (path) ->
 	else
 		return false
 
+class File
+	constructor: (@path) ->
+		@children = []
+
+	toString: () -> @path + " with children " + @children
+	
 # FileSystem class stores and answers questions about directories and files
 class FileSystem
 	constructor: () ->
-
-	toString: () -> "file system here..."
+		@root = new File("/")
+		media = new File("/media")
+		home = new File("/home")
+		@root.children.push(home)
+		@root.children.push(media)
 
 	isValidPath: (cwd, path) -> true # TODO obviously
 
@@ -27,9 +36,6 @@ class FileSystem
 # a big question is how to construct -- pass in children and
 # parent or add them in? i spose it doesnt matter
 ###
-class File
-	constructor: (@name, @coords, @children) ->
-	
 # OS class in charge of file system, processing user input
 class BashyOS
 	constructor: (@file_system) ->

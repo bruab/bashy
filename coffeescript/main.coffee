@@ -89,16 +89,18 @@ jQuery ->
 	###################################################
 	startGame = () ->
 
-		## SET UP GRAPHICS
-		drawFileSystemMap(stage, file_system)
-		bashy_sprite = createBashySprite(bashy_himself, stage)
-		startTicker(stage)
-
-		## CREATE OBJECTS, DEFINE FUNCTION CALLED ON INPUT ##
-		# Create OS, Display Manager
+		# Create OS
 		file_system = new FileSystem()
 		os = new BashyOS(file_system)
-		display_mgr = new DisplayManager(bashy_sprite)
+
+		# Set up graphics
+		drawFileSystem(stage, os.file_system)
+		# TODO reintroduce sprite
+		#bashy_sprite = createBashySprite(bashy_himself, stage)
+		startTicker(stage)
+
+		# Create other objects
+		#display_mgr = new DisplayManager(bashy_sprite) # TODO really need this?
 		menu_mgr = new MenuManager()
 		task_mgr = new TaskManager(menu_mgr)
 
@@ -107,6 +109,7 @@ jQuery ->
 		handleInput = (input) ->
 			# Get a copy of the current file system
 			fs = os.file_system
+
 			# BashyOS updates and returns context, stdout, stderr
 			[cwd, stdout, stderr] = os.handleTerminalInput(input)
 
@@ -114,7 +117,8 @@ jQuery ->
 			task_mgr.update(os)
 
 			# DisplayManager updates map
-			display_mgr.update(fs, cwd)
+			# TODO re-implement
+			#display_mgr.update(fs, cwd)
 			
 			# Handle sound effects
 			if stderr
