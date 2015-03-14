@@ -1,10 +1,10 @@
 get_tasks = () ->
 	task1_fn = (os) ->
-		return os.cwd == "/home"
+		return os.cwd.path == "/home"
 	task2_fn = (os) ->
-		return os.cwd == "/media"
+		return os.cwd.path == "/media"
 	task3_fn = (os) ->
-		return os.cwd == "/"
+		return os.cwd.path == "/"
 	task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1_fn)
 	task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task2_fn)
 	task3 = new Task("navigate to root", ["type 'cd /' and press enter"], task3_fn)
@@ -22,7 +22,6 @@ class TaskManager
 		all_complete = true
 		for task in @tasks
 			if not task.done(os)
-				#alert "uncompleted task: " + task.name
 				all_complete = false
 		if all_complete
 			alert "you win"

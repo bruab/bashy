@@ -9,6 +9,8 @@ appFiles  = [
   'map'
   'sprite'
   'main'
+  'util'
+  'sound'
 ]
 
 task 'build', 'Build single application file from source files', ->

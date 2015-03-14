@@ -56,15 +56,11 @@ class FileSystem
 		return currentParent
 
 cleanPath = (path) ->
-	alert 'cleanpath here'
-	alert path
 	splitPath = path.split "/"
-	alert splitPath
 	newPath = ""
 	for dir in splitPath
 		if dir != ""
 			newPath = newPath + "/" + dir
-	alert newPath
 	newPath
 	
 # helper function for path parsing
@@ -138,10 +134,7 @@ class BashyOS
 				absolutePath = @cwd.path + path
 			else
 				absolutePath = @cwd.path + "/" + path
-			alert 'b4'
-			alert absolutePath
 			absolutePath = cleanPath(absolutePath)
-			alert 'after'
 			if @file_system.isValidPath(absolutePath)
 				@cwd = @file_system.getFile(absolutePath)
 			else

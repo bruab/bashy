@@ -4,19 +4,13 @@ class @FileSystem
 class @DisplayManager
 class @TaskManager
 class @MenuManager
-
-parseCommand = (input) ->
-	splitInput = input.split /\s+/
-	command = splitInput[0]
-	args = []
-	len = splitInput.length
-	if len > 1
-		for i in [1..len-1]
-			args.push(splitInput[i])
-	[command, args]
-
+class @SoundManager
+class @Util
 
 jQuery ->
+	## LOAD UTILITY FUNCTIONS
+	util = new Util() # TODO how to use static library?
+
 	###################################################
 	################## CANVAS, ETC. ###################
 	###################################################
@@ -27,49 +21,18 @@ jQuery ->
 
 	# Load spritesheet image; start game when it's loaded
 	bashy_himself = new Image()
+	bashy_himself.src = "assets/bashy_sprite_sheet.png"
 	bashy_himself.onload = ->
 		startGame()
-	bashy_himself.src = "assets/bashy_sprite_sheet.png"
-
 
 	###################################################
-	#################### SOUND ########################
+	################ SOUND ############################
 	###################################################
-	
-	## SOUNDJS FUNCTIONS TO LOAD AND PLAY SFX AND THEME ##
-	# Be noisy by default
-	playSounds = true
-
-	# Function to turn off sound when it gets annoying
-	soundOff = () ->
-		playSounds = false
-		createjs.Sound.stop()
-
-	# Function to play sound effect after each successful user command
-	playSound = () ->
-		if playSounds
-			if Math.random() < 0.5
-				createjs.Sound.play("boing1")
-			else
-				createjs.Sound.play("boing2")
-
-	# Function to play sound effect after erroneous command
-	playOops = () ->
-		if playSounds
-			createjs.Sound.play("oops")
-
-	# Function to play theme song
-	playTheme = () ->
-		createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5)
-	# Event listener for loading audio files -- play theme song once it's loaded
-	handleFileLoad = (event) =>
-		console.log("Preloaded:", event.id, event.src)
-		if event.id == "bashy_theme1"
-			playTheme()
-			soundOff() # delete this line to turn sound back on at start
-
-	# Load sounds and fire handleFileLoad when they're in memory
-	createjs.Sound.addEventListener("fileload", handleFileLoad)
+	sound_mgr = new SoundManager()
+	# Listen for 'turn off sound' button
+	$("#audio_off").click sound_mgr.soundOff
+	# Load sounds and fire sound_mgr.handleFileLoad when they're in memory
+	createjs.Sound.addEventListener("fileload", sound_mgr.handleFileLoad)
 	createjs.Sound.alternateExtensions = ["mp3"]
 	createjs.Sound.registerManifest(
 		    [{id:"boing1", src:"boing1.mp3"},
@@ -77,10 +40,6 @@ jQuery ->
 		     {id:"oops", src:"oops.mp3"},
 		     {id:"bashy_theme1", src:"bashy_theme1.mp3"}]
 			, "assets/")
-
-	# Listen for 'turn off sound' button
-	$("#audio_off").click soundOff
-
 
 	###################################################
 	################ HELP SCREEN ######################
@@ -99,6 +58,8 @@ jQuery ->
 	########### MAIN GAME SETUP AND LOOP ##############
 	###################################################
 	startGame = () ->
+		# Turn off sound
+		sound_mgr.soundOff()
 
 		# Create OS
 		file_system = new FileSystem()
@@ -106,7 +67,6 @@ jQuery ->
 
 		# Set up graphics
 		drawFileSystem(stage, os.file_system)
-		# TODO reintroduce sprite
 		bashy_sprite = createBashySprite(bashy_himself, stage)
 		startTicker(stage)
 
@@ -115,44 +75,50 @@ jQuery ->
 		menu_mgr = new MenuManager()
 		task_mgr = new TaskManager(menu_mgr)
 
+		executeCommand = (command, args, os, task_mgr, display_mgr, sound_mgr) ->
+			# Get a copy of the current file system
+			fs = os.file_system
+
+			# BashyOS updates and returns context, stdout, stderr
+			[cwd, stdout, stderr] = os.runCommand(command, args)
+
+			# TaskManager checks for completed tasks
+			task_mgr.update(os)
+
+			# DisplayManager updates map
+			# TODO re-implement
+			#display_mgr.update(fs, cwd)
+			
+			# Handle sound effects
+			# TODO can't seem to turn these off.
+			###
+			if stderr
+				sound_mgr.playOops()
+			else
+				sound_mgr.playBoing()
+			###
+
+			# Return text to terminal
+			if stderr
+				stderr
+			else
+				if stdout
+					stdout
+				else
+					# Returning 'undefined' means no terminal output
+					undefined
+
 		# Function called each time user types a command
 		# Takes user input string, updates system, returns text to terminal
 		handleInput = (input) ->
 			# Strip leading and trailing whitespace
 			input = input.replace /^\s+|\s+$/g, ""
 			# Parse input and check for invalid command
-			[command, args] = parseCommand(input)
+			[command, args] = util.parseCommand(input)
 			if command not in os.validCommands()
 				"Invalid command: " + command
 			else
-				# Get a copy of the current file system
-				fs = os.file_system
-
-				# BashyOS updates and returns context, stdout, stderr
-				[cwd, stdout, stderr] = os.runCommand(command, args)
-
-				# TaskManager checks for completed tasks
-				task_mgr.update(os)
-
-				# DisplayManager updates map
-				# TODO re-implement
-				#display_mgr.update(fs, cwd)
-				
-				# Handle sound effects
-				if stderr
-					playOops()
-				else
-					playSound()
-
-				# Return text to terminal
-				if stderr
-					stderr
-				else
-					if stdout
-						stdout
-					else
-						# Returning 'undefined' means no terminal output
-						undefined
+				executeCommand(command, args, os, task_mgr, display_mgr, sound_mgr)
 
 		# Create Terminal object
 		# 'onBlur: false' guarantees the terminal always stays in focus
