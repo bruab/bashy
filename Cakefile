@@ -9,7 +9,6 @@ appFiles  = [
   'map'
   'sprite'
   'main'
-  'util'
   'sound'
   'controller'
 ]

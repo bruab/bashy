@@ -13,18 +13,21 @@ get_tasks = () ->
 # TaskManager class keeps track of Tasks, updates Menu (?)
 class TaskManager
 	constructor: (@menu_mgr) ->
+		@winner = false
 		@tasks = get_tasks()
 		for task in @tasks
 			@menu_mgr.showTask(task)
 
 	update: (os) ->
-		# Check for newly-completed tasks
-		all_complete = true
-		for task in @tasks
-			if not task.done(os)
-				all_complete = false
-		if all_complete
-			alert "you win"
+		if not @winner
+			# Check for newly-completed tasks
+			all_complete = true
+			for task in @tasks
+				if not task.done(os)
+					all_complete = false
+			if all_complete
+				@winner = true
+				alert "you win"
 
 # Task class encapsulates a task name, hint(s) and any number of 
 # os queries and the desired responses

@@ -1,3 +1,14 @@
+parseCommand = (input) ->
+	splitInput = input.split /\s+/
+	command = splitInput[0]
+	args = []
+	len = splitInput.length
+	if len > 1
+		for i in [1..len-1]
+			args.push(splitInput[i])
+	[command, args]
+
+
 class BashyController
 	constructor: (@os, @task_mgr, @display_mgr, @sound_mgr) ->
 
@@ -33,5 +44,17 @@ class BashyController
 			else
 				# Returning 'undefined' means no terminal output
 				undefined
+
+	# Function called each time user types a command
+	# Takes user input string, updates system, returns text to terminal
+	handleInput: (input) ->
+		# Strip leading and trailing whitespace
+		input = input.replace /^\s+|\s+$/g, ""
+		# Parse input and check for invalid command
+		[command, args] = parseCommand(input)
+		if command not in @os.validCommands()
+			"Invalid command: " + command
+		else
+			@executeCommand(command, args)
 
 window.BashyController = BashyController

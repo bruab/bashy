@@ -173,7 +173,7 @@ class BashyOS
 	pwd: () =>
 		# Return @cwd as stdout, nothing as stderr
 		[stdout, stderr] = ["", ""]
-		stdout = @cwd
+		stdout = @cwd.path
 		return [stdout, stderr]
 
 # Wrapper for Sprite object, facilitates movement and animation

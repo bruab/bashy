@@ -5,17 +5,13 @@ class @FileSystem
 class @DisplayManager
 class @TaskManager
 class @MenuManager
+class @HelpManager
 class @SoundManager
-class @Util
-
 
 ###################################################
 ########### MAIN GAME SETUP AND LOOP ##############
 ###################################################
-startGame = (util, sound_mgr, stage, bashy_himself) ->
-	# Turn off sound
-	sound_mgr.soundOff()
-
+startGame = (sound_mgr, stage, bashy_himself) ->
 	# Create OS
 	file_system = new FileSystem()
 	os = new BashyOS(file_system)
@@ -27,21 +23,21 @@ startGame = (util, sound_mgr, stage, bashy_himself) ->
 
 	# Create other objects
 	menu_mgr = new MenuManager()
+	help_mgr = new HelpManager()
 	task_mgr = new TaskManager(menu_mgr)
 	display_mgr = new DisplayManager(bashy_sprite) # TODO really need this?
 	controller = new BashyController(os, task_mgr, display_mgr, sound_mgr)
 
-	# Function called each time user types a command
-	# Takes user input string, updates system, returns text to terminal
+	# This is here because I can't seem to pass a class method to the terminal
+	# as a callback
 	handleInput = (input) ->
-		# Strip leading and trailing whitespace
-		input = input.replace /^\s+|\s+$/g, ""
-		# Parse input and check for invalid command
-		[command, args] = util.parseCommand(input)
-		if command not in os.validCommands()
-			"Invalid command: " + command
-		else
-			controller.executeCommand(command, args)
+		controller.handleInput(input)
+
+	###################################################
+	################ HELP SCREEN ######################
+	###################################################
+	# Play intro on first click; show help screen on subsequent clicks
+	$("#playScreen").click -> help_mgr.onClick()
 
 	# Create Terminal object
 	# 'onBlur: false' guarantees the terminal always stays in focus
@@ -50,37 +46,13 @@ startGame = (util, sound_mgr, stage, bashy_himself) ->
 
 
 jQuery ->
-	## LOAD UTILITY FUNCTIONS
-	util = new Util() # TODO how to use static library?
-
 	###################################################
 	################ SOUND ############################
 	###################################################
-	sound_mgr = new SoundManager()
+	playSounds = true
+	sound_mgr = new SoundManager(playSounds)
 	# Listen for 'turn off sound' button
 	$("#audio_off").click sound_mgr.soundOff
-	# Load sounds and fire sound_mgr.handleFileLoad when they're in memory
-	createjs.Sound.addEventListener("fileload", sound_mgr.handleFileLoad)
-	createjs.Sound.alternateExtensions = ["mp3"]
-	createjs.Sound.registerManifest(
-		    [{id:"boing1", src:"boing1.mp3"},
-		     {id:"boing2", src:"boing2.mp3"},
-		     {id:"oops", src:"oops.mp3"},
-		     {id:"bashy_theme1", src:"bashy_theme1.mp3"}]
-			, "assets/")
-
-	###################################################
-	################ HELP SCREEN ######################
-	###################################################
-	
-	# Play intro on first click; show help screen on subsequent clicks
-	seenIntro = false
-	$("#playScreen").click ->
-		if not seenIntro
-			playIntro()
-			seenIntro = true
-		else
-			helpScreen()
 
 	###################################################
 	################## CANVAS, ETC. ###################
@@ -94,5 +66,5 @@ jQuery ->
 	bashy_himself = new Image()
 	bashy_himself.src = "assets/bashy_sprite_sheet.png"
 	bashy_himself.onload = ->
-		startGame(util, sound_mgr, stage, bashy_himself)
+		startGame(sound_mgr, stage, bashy_himself)
 

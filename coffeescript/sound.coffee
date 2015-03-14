@@ -1,6 +1,13 @@
 class SoundManager
-	constructor: () ->
-		@playSounds = true
+	constructor: (@playSounds) ->
+		createjs.Sound.addEventListener("fileload", @handleFileLoad)
+		createjs.Sound.alternateExtensions = ["mp3"]
+		createjs.Sound.registerManifest(
+			    [{id:"boing1", src:"boing1.mp3"},
+			     {id:"boing2", src:"boing2.mp3"},
+			     {id:"oops", src:"oops.mp3"},
+			     {id:"bashy_theme1", src:"bashy_theme1.mp3"}]
+				, "assets/")
 
 	soundOff: () ->
 		@playSounds = false
@@ -8,7 +15,7 @@ class SoundManager
 
 	# Function to play sound effect after each successful user command
 	playBoing: () ->
-		if @playSounds == true
+		if @playSounds
 			if Math.random() < 0.5
 				createjs.Sound.play("boing1")
 			else
@@ -16,18 +23,18 @@ class SoundManager
 
 	# Function to play sound effect after erroneous command
 	playOops: () ->
-		if @playSounds == true
+		if @playSounds
 			createjs.Sound.play("oops")
 
 	# Function to play theme song
 	playTheme: () ->
-		createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5)
+		if @playSounds
+			createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5)
 
 	# Event listener for loading audio files -- play theme song once it's loaded
 	handleFileLoad: (event) =>
 		console.log("Preloaded:", event.id, event.src)
 		if event.id == "bashy_theme1"
 			@playTheme()
-			#@soundOff() # delete this line to turn sound back on at start
 
 window.SoundManager = SoundManager
