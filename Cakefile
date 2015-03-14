@@ -11,6 +11,7 @@ appFiles  = [
   'main'
   'util'
   'sound'
+  'controller'
 ]
 
 task 'build', 'Build single application file from source files', ->

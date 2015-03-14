@@ -1,3 +1,4 @@
+class @BashyController
 class @BashyOS
 class @BashySprite
 class @FileSystem
@@ -7,38 +8,6 @@ class @MenuManager
 class @SoundManager
 class @Util
 
-executeCommand = (command, args, os, task_mgr, display_mgr, sound_mgr) ->
-	# Get a copy of the current file system
-	fs = os.file_system
-
-	# BashyOS updates and returns context, stdout, stderr
-	[cwd, stdout, stderr] = os.runCommand(command, args)
-
-	# TaskManager checks for completed tasks
-	task_mgr.update(os)
-
-	# DisplayManager updates map
-	# TODO re-implement
-	#display_mgr.update(fs, cwd)
-	
-	# Handle sound effects
-	# TODO can't seem to turn these off.
-	###
-	if stderr
-		sound_mgr.playOops()
-	else
-		sound_mgr.playBoing()
-	###
-
-	# Return text to terminal
-	if stderr
-		stderr
-	else
-		if stdout
-			stdout
-		else
-			# Returning 'undefined' means no terminal output
-			undefined
 
 ###################################################
 ########### MAIN GAME SETUP AND LOOP ##############
@@ -57,9 +26,10 @@ startGame = (util, sound_mgr, stage, bashy_himself) ->
 	startTicker(stage)
 
 	# Create other objects
-	display_mgr = new DisplayManager(bashy_sprite) # TODO really need this?
 	menu_mgr = new MenuManager()
 	task_mgr = new TaskManager(menu_mgr)
+	display_mgr = new DisplayManager(bashy_sprite) # TODO really need this?
+	controller = new BashyController(os, task_mgr, display_mgr, sound_mgr)
 
 	# Function called each time user types a command
 	# Takes user input string, updates system, returns text to terminal
@@ -71,7 +41,7 @@ startGame = (util, sound_mgr, stage, bashy_himself) ->
 		if command not in os.validCommands()
 			"Invalid command: " + command
 		else
-			executeCommand(command, args, os, task_mgr, display_mgr, sound_mgr)
+			controller.executeCommand(command, args)
 
 	# Create Terminal object
 	# 'onBlur: false' guarantees the terminal always stays in focus
