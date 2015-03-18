@@ -620,24 +620,16 @@
 
   })();
 
-  startGame = function(sound_mgr, stage, bashy_himself) {
-    var bashy_sprite, controller, display_mgr, file_system, handleInput, help_mgr, menu_mgr, os, task_mgr;
-    file_system = new FileSystem();
-    os = new BashyOS(file_system);
+  startGame = function(sound_mgr, stage, bashy_himself, os, task_mgr) {
+    var bashy_sprite, controller, display_mgr, handleInput;
     drawFileSystem(stage, os.file_system);
     bashy_sprite = createBashySprite(bashy_himself, stage);
     startTicker(stage);
-    menu_mgr = new MenuManager();
-    help_mgr = new HelpManager();
-    task_mgr = new TaskManager(menu_mgr);
     display_mgr = new DisplayManager(bashy_sprite);
     controller = new BashyController(os, task_mgr, display_mgr, sound_mgr);
     handleInput = function(input) {
       return controller.handleInput(input);
     };
-    $("#playScreen").click(function() {
-      return help_mgr.onClick();
-    });
     return $('#terminal').terminal(handleInput, {
       greetings: "",
       prompt: '> ',
@@ -647,16 +639,24 @@
   };
 
   jQuery(function() {
-    var bashy_himself, canvas, playSounds, sound_mgr, stage;
-    playSounds = true;
+    var bashy_himself, canvas, file_system, help_mgr, menu_mgr, os, playSounds, sound_mgr, stage, task_mgr;
+    playSounds = false;
     sound_mgr = new SoundManager(playSounds);
     $("#audio_off").click(sound_mgr.soundOff);
     canvas = $("#bashy_canvas")[0];
     stage = new createjs.Stage(canvas);
+    help_mgr = new HelpManager();
+    $("#playScreen").click(function() {
+      return help_mgr.onClick();
+    });
+    file_system = new FileSystem();
+    os = new BashyOS(file_system);
+    menu_mgr = new MenuManager();
+    task_mgr = new TaskManager(menu_mgr);
     bashy_himself = new Image();
     bashy_himself.src = "assets/bashy_sprite_sheet.png";
     return bashy_himself.onload = function() {
-      return startGame(sound_mgr, stage, bashy_himself);
+      return startGame(sound_mgr, stage, bashy_himself, os, task_mgr);
     };
   });
 
