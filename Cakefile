@@ -3,7 +3,7 @@ fs     = require 'fs'
 
 appFiles  = [
   # omit src/ and .coffee to make the below lines a little shorter
-  'bashy_classes'
+  'os'
   'tasks'
   'help_screen'
   'map'

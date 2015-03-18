@@ -1,7 +1,6 @@
 class @BashyController
 class @BashyOS
 class @BashySprite
-class @FileSystem
 class @DisplayManager
 class @TaskManager
 class @MenuManager

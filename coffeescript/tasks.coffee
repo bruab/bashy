@@ -42,5 +42,15 @@ class Task
 			@is_complete = @complete_fn(os)
 			return @is_complete
 
-window.TaskManager = TaskManager
 
+# MenuManager updates "current task" menu
+class MenuManager
+	constructor: () ->
+
+	showTask: (task) ->
+		# TODO this seems ghetto, i just want 'append'
+		current_html = $("#menu").html()
+		$("#menu").html(current_html + "<p>" + task.name + "</p>")
+
+window.TaskManager = TaskManager
+window.MenuManager = MenuManager

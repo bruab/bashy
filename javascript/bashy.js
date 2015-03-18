@@ -237,28 +237,7 @@
 
   })();
 
-  MenuManager = (function() {
-    function MenuManager() {}
-
-    MenuManager.prototype.showTask = function(task) {
-      var current_html;
-      current_html = $("#menu").html();
-      return $("#menu").html(current_html + "<p>" + task.name + "</p>");
-    };
-
-    return MenuManager;
-
-  })();
-
   window.BashyOS = BashyOS;
-
-  window.BashySprite = BashySprite;
-
-  window.DisplayManager = DisplayManager;
-
-  window.MenuManager = MenuManager;
-
-  window.FileSystem = FileSystem;
 
   get_tasks = function() {
     var task1, task1_fn, task2, task2_fn, task3, task3_fn;
@@ -333,7 +312,22 @@
 
   })();
 
+  MenuManager = (function() {
+    function MenuManager() {}
+
+    MenuManager.prototype.showTask = function(task) {
+      var current_html;
+      current_html = $("#menu").html();
+      return $("#menu").html(current_html + "<p>" + task.name + "</p>");
+    };
+
+    return MenuManager;
+
+  })();
+
   window.TaskManager = TaskManager;
+
+  window.MenuManager = MenuManager;
 
   HelpManager = (function() {
     function HelpManager() {
@@ -529,13 +523,6 @@
     function BashySprite() {}
 
     return BashySprite;
-
-  })();
-
-  this.FileSystem = (function() {
-    function FileSystem() {}
-
-    return FileSystem;
 
   })();
 

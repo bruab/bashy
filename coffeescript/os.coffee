@@ -176,19 +176,6 @@ class BashyOS
 		stdout = @cwd.path
 		return [stdout, stderr]
 
-# MenuManager updates "current task" menu
-class MenuManager
-	constructor: () ->
-
-	showTask: (task) ->
-		# TODO this seems ghetto, i just want 'append'
-		current_html = $("#menu").html()
-		$("#menu").html(current_html + "<p>" + task.name + "</p>")
-
 
 # Attach objects to window so they can be accessed by code in other file
 window.BashyOS = BashyOS
-window.BashySprite = BashySprite
-window.DisplayManager = DisplayManager
-window.MenuManager = MenuManager
-window.FileSystem = FileSystem
