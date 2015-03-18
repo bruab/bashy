@@ -574,6 +574,30 @@
 
   })();
 
+  jQuery(function() {
+    var bashy_himself, canvas, file_system, help_mgr, menu_mgr, os, playSounds, sound_mgr, stage, task_mgr;
+    canvas = $("#bashy_canvas")[0];
+    stage = new createjs.Stage(canvas);
+    playSounds = false;
+    sound_mgr = new SoundManager(playSounds);
+    $("#audio_off").click(function() {
+      return sound_mgr.soundOff();
+    });
+    help_mgr = new HelpManager();
+    $("#playScreen").click(function() {
+      return help_mgr.onClick();
+    });
+    file_system = new FileSystem();
+    os = new BashyOS(file_system);
+    menu_mgr = new MenuManager();
+    task_mgr = new TaskManager(menu_mgr);
+    bashy_himself = new Image();
+    bashy_himself.src = "assets/bashy_sprite_sheet.png";
+    return bashy_himself.onload = function() {
+      return startGame(sound_mgr, stage, bashy_himself, os, task_mgr);
+    };
+  });
+
   startGame = function(sound_mgr, stage, bashy_himself, os, task_mgr) {
     var bashy_sprite, controller, display_mgr, handleInput;
     bashy_sprite = createBashySprite(bashy_himself, stage);
@@ -591,28 +615,6 @@
       name: 'bashy_terminal'
     });
   };
-
-  jQuery(function() {
-    var bashy_himself, canvas, file_system, help_mgr, menu_mgr, os, playSounds, sound_mgr, stage, task_mgr;
-    playSounds = false;
-    sound_mgr = new SoundManager(playSounds);
-    $("#audio_off").click(sound_mgr.soundOff);
-    canvas = $("#bashy_canvas")[0];
-    stage = new createjs.Stage(canvas);
-    help_mgr = new HelpManager();
-    $("#playScreen").click(function() {
-      return help_mgr.onClick();
-    });
-    file_system = new FileSystem();
-    os = new BashyOS(file_system);
-    menu_mgr = new MenuManager();
-    task_mgr = new TaskManager(menu_mgr);
-    bashy_himself = new Image();
-    bashy_himself.src = "assets/bashy_sprite_sheet.png";
-    return bashy_himself.onload = function() {
-      return startGame(sound_mgr, stage, bashy_himself, os, task_mgr);
-    };
-  });
 
   SoundManager = (function() {
     function SoundManager(playSounds1) {
@@ -705,13 +707,11 @@
       ref = this.os.runCommand(command, args), cwd = ref[0], stdout = ref[1], stderr = ref[2];
       this.task_mgr.update(this.os);
       this.display_mgr.update(fs, cwd);
-
-      /*
-      		if stderr
-      			@sound_mgr.playOops()
-      		else
-      			@sound_mgr.playBoing()
-       */
+      if (stderr) {
+        this.sound_mgr.playOops();
+      } else {
+        this.sound_mgr.playBoing();
+      }
       if (stderr) {
         return stderr;
       } else {

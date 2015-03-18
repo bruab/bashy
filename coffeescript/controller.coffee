@@ -26,13 +26,10 @@ class BashyController
 		@display_mgr.update(fs, cwd)
 		
 		# Handle sound effects
-		# TODO can't seem to turn these off.
-		###
 		if stderr
 			@sound_mgr.playOops()
 		else
 			@sound_mgr.playBoing()
-		###
 
 		# Return text to terminal
 		if stderr
