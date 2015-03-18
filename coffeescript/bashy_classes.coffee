@@ -211,13 +211,6 @@ class BashySprite
 		@sprite.x = x
 		@sprite.y = y
 			
-# Class to handle updating map, character sprite
-class DisplayManager
-	constructor: (@bashy_sprite) ->
-	
-	update: (fs, new_dir) =>
-		@bashy_sprite.goToDir(new_dir)
-
 # MenuManager updates "current task" menu
 class MenuManager
 	constructor: () ->

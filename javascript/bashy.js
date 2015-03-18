@@ -278,20 +278,6 @@
 
   })();
 
-  DisplayManager = (function() {
-    function DisplayManager(bashy_sprite1) {
-      this.bashy_sprite = bashy_sprite1;
-      this.update = bind(this.update, this);
-    }
-
-    DisplayManager.prototype.update = function(fs, new_dir) {
-      return this.bashy_sprite.goToDir(new_dir);
-    };
-
-    return DisplayManager;
-
-  })();
-
   MenuManager = (function() {
     function MenuManager() {}
 
@@ -426,6 +412,20 @@
   })();
 
   window.HelpManager = HelpManager;
+
+  DisplayManager = (function() {
+    function DisplayManager(bashy_sprite1) {
+      this.bashy_sprite = bashy_sprite1;
+      this.update = bind(this.update, this);
+    }
+
+    DisplayManager.prototype.update = function(fs, new_dir) {
+      return this.bashy_sprite.goToDir(new_dir);
+    };
+
+    return DisplayManager;
+
+  })();
 
   showRootText = function(stage) {
     var rootText;
