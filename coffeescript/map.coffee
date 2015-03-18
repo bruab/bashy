@@ -1,10 +1,4 @@
-# Class to handle updating map, character sprite
-class DisplayManager
-	constructor: (@bashy_sprite) ->
-	
-	update: (fs, new_dir) =>
-		@bashy_sprite.goToDir(new_dir)
-
+		
 # Functions to draw map
 showRootText = (stage) ->
 	rootText = new createjs.Text("/", "20px Arial", "black")
@@ -88,8 +82,15 @@ drawChildren = (stage, parent, parentX, parentY) ->
 		line.graphics.endStroke()
 		stage.addChild(line)
 
-drawFileSystem = (stage, fs) ->
-	[rootX, rootY] = [250, 120]
-	drawFile(stage, fs.root, rootX, rootY)
-	drawChildren(stage, fs.root, rootX, rootY)
+# Class to handle updating map, character sprite
+class DisplayManager
+	constructor: (@bashy_sprite) ->
+		[@rootX, @rootY] = [250, 120]
+	
+	update: (fs, new_dir) =>
+		# TODO this doesn't work anymore
+		@bashy_sprite.goToDir(new_dir)
 
+	drawFileSystem: (stage, fs) ->
+		drawFile(stage, fs.root, @rootX, @rootY)
+		drawChildren(stage, fs.root, @rootX, @rootY)

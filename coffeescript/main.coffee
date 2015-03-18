@@ -13,12 +13,12 @@ class @SoundManager
 ###################################################
 startGame = (sound_mgr, stage, bashy_himself, os, task_mgr) ->
 	# Set up graphics
-	drawFileSystem(stage, os.file_system)
 	bashy_sprite = createBashySprite(bashy_himself, stage)
 	startTicker(stage)
+	display_mgr = new DisplayManager(bashy_sprite)
+	display_mgr.drawFileSystem(stage, os.file_system)
 
 	# Create other objects
-	display_mgr = new DisplayManager(bashy_sprite) # TODO really need this?
 	controller = new BashyController(os, task_mgr, display_mgr, sound_mgr)
 
 	# This is here because I can't seem to pass a class method to the terminal
