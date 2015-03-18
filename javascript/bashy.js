@@ -258,31 +258,24 @@
 
   TaskManager = (function() {
     function TaskManager(menu_mgr1) {
-      var j, len1, ref, task;
       this.menu_mgr = menu_mgr1;
       this.winner = false;
       this.tasks = get_tasks();
-      ref = this.tasks;
-      for (j = 0, len1 = ref.length; j < len1; j++) {
-        task = ref[j];
-        this.menu_mgr.showTask(task);
-      }
+      this.current_task = this.tasks[0];
+      this.menu_mgr.showTask(this.current_task);
     }
 
     TaskManager.prototype.update = function(os) {
-      var all_complete, j, len1, ref, task;
       if (!this.winner) {
-        all_complete = true;
-        ref = this.tasks;
-        for (j = 0, len1 = ref.length; j < len1; j++) {
-          task = ref[j];
-          if (!task.done(os)) {
-            all_complete = false;
+        if (this.current_task.done(os)) {
+          if (this.tasks.length > 1) {
+            this.tasks = this.tasks.slice(1);
+            this.current_task = this.tasks[0];
+            return this.menu_mgr.showTask(this.current_task);
+          } else {
+            this.winner = true;
+            return this.menu_mgr.win();
           }
-        }
-        if (all_complete) {
-          this.winner = true;
-          return alert("you win");
         }
       }
     };
@@ -308,6 +301,10 @@
       }
     };
 
+    Task.prototype.toString = function() {
+      return this.name;
+    };
+
     return Task;
 
   })();
@@ -316,9 +313,11 @@
     function MenuManager() {}
 
     MenuManager.prototype.showTask = function(task) {
-      var current_html;
-      current_html = $("#menu").html();
-      return $("#menu").html(current_html + "<p>" + task.name + "</p>");
+      return $("#menu").html("<p>" + task.name + "</p>");
+    };
+
+    MenuManager.prototype.win = function() {
+      return $("#menu").html("<p>You Win!</p>");
     };
 
     return MenuManager;

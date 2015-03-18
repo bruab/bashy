@@ -15,19 +15,19 @@ class TaskManager
 	constructor: (@menu_mgr) ->
 		@winner = false
 		@tasks = get_tasks()
-		for task in @tasks
-			@menu_mgr.showTask(task)
+		@current_task = @tasks[0]
+		@menu_mgr.showTask(@current_task)
 
 	update: (os) ->
 		if not @winner
-			# Check for newly-completed tasks
-			all_complete = true
-			for task in @tasks
-				if not task.done(os)
-					all_complete = false
-			if all_complete
-				@winner = true
-				alert "you win"
+			if @current_task.done(os)
+				if @tasks.length > 1
+					@tasks = @tasks[1..]
+					@current_task = @tasks[0]
+					@menu_mgr.showTask(@current_task)
+				else
+					@winner = true
+					@menu_mgr.win()
 
 # Task class encapsulates a task name, hint(s) and any number of 
 # os queries and the desired responses
@@ -42,15 +42,19 @@ class Task
 			@is_complete = @complete_fn(os)
 			return @is_complete
 
+	toString: () ->
+		@name
 
 # MenuManager updates "current task" menu
 class MenuManager
 	constructor: () ->
 
 	showTask: (task) ->
-		# TODO this seems ghetto, i just want 'append'
-		current_html = $("#menu").html()
-		$("#menu").html(current_html + "<p>" + task.name + "</p>")
+		$("#menu").html("<p>" + task.name + "</p>")
+	
+	win: () ->
+		$("#menu").html("<p>You Win!</p>")
+
 
 window.TaskManager = TaskManager
 window.MenuManager = MenuManager
