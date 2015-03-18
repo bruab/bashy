@@ -9,12 +9,6 @@ class @SoundManager
 
 jQuery ->
 	###################################################
-	################## CANVAS, ETC. ###################
-	###################################################
-	canvas = $("#bashy_canvas")[0]
-	stage = new createjs.Stage(canvas)
-
-	###################################################
 	################ SOUND ############################
 	###################################################
 	playSounds = false
@@ -40,6 +34,11 @@ jQuery ->
 	menu_mgr = new MenuManager()
 	task_mgr = new TaskManager(menu_mgr)
 
+	###################################################
+	################## CANVAS, ETC. ###################
+	###################################################
+	canvas = $("#bashy_canvas")[0]
+	stage = new createjs.Stage(canvas)
 	# Load spritesheet image; start game when it's loaded
 	bashy_himself = new Image()
 	bashy_himself.src = "assets/bashy_sprite_sheet.png"

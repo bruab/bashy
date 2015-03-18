@@ -563,8 +563,6 @@
 
   jQuery(function() {
     var bashy_himself, canvas, file_system, help_mgr, menu_mgr, os, playSounds, sound_mgr, stage, task_mgr;
-    canvas = $("#bashy_canvas")[0];
-    stage = new createjs.Stage(canvas);
     playSounds = false;
     sound_mgr = new SoundManager(playSounds);
     $("#audio_off").click(function() {
@@ -578,6 +576,8 @@
     os = new BashyOS(file_system);
     menu_mgr = new MenuManager();
     task_mgr = new TaskManager(menu_mgr);
+    canvas = $("#bashy_canvas")[0];
+    stage = new createjs.Stage(canvas);
     bashy_himself = new Image();
     bashy_himself.src = "assets/bashy_sprite_sheet.png";
     return bashy_himself.onload = function() {
