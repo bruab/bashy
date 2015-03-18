@@ -15,8 +15,8 @@ startGame = (sound_mgr, stage, bashy_himself, os, task_mgr) ->
 	# Set up graphics
 	bashy_sprite = createBashySprite(bashy_himself, stage)
 	startTicker(stage)
-	display_mgr = new DisplayManager(bashy_sprite)
-	display_mgr.drawFileSystem(stage, os.file_system)
+	display_mgr = new DisplayManager(stage, bashy_sprite)
+	display_mgr.drawFileSystem(os.file_system)
 
 	# Create other objects
 	controller = new BashyController(os, task_mgr, display_mgr, sound_mgr)

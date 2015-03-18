@@ -23,8 +23,7 @@ class BashyController
 		@task_mgr.update(@os)
 
 		# DisplayManager updates map
-		# TODO re-implement
-		#@display_mgr.update(fs, cwd)
+		@display_mgr.update(fs, cwd)
 		
 		# Handle sound effects
 		# TODO can't seem to turn these off.

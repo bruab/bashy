@@ -84,13 +84,15 @@ drawChildren = (stage, parent, parentX, parentY) ->
 
 # Class to handle updating map, character sprite
 class DisplayManager
-	constructor: (@bashy_sprite) ->
+	constructor: (@stage, @bashy_sprite) ->
 		[@rootX, @rootY] = [250, 120]
 	
 	update: (fs, new_dir) =>
-		# TODO this doesn't work anymore
-		@bashy_sprite.goToDir(new_dir)
+		alert 'update'
+		@rootX = 300
+		@rootY = 200
+		@drawFileSystem(fs)
 
-	drawFileSystem: (stage, fs) ->
-		drawFile(stage, fs.root, @rootX, @rootY)
-		drawChildren(stage, fs.root, @rootX, @rootY)
+	drawFileSystem: (fs) ->
+		drawFile(@stage, fs.root, @rootX, @rootY)
+		drawChildren(@stage, fs.root, @rootX, @rootY)

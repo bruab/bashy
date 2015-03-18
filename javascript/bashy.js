@@ -237,47 +237,6 @@
 
   })();
 
-  BashySprite = (function() {
-    function BashySprite(sprite1) {
-      this.sprite = sprite1;
-      this.sprite.x = 200;
-      this.sprite.y = 50;
-    }
-
-    BashySprite.prototype.goToDir = function(dir) {
-      if (dir === "/") {
-        return this.goRoot();
-      } else if (dir === "/home") {
-        return this.goHome();
-      } else if (dir === "/media") {
-        return this.goMedia();
-      }
-    };
-
-    BashySprite.prototype.goRoot = function() {
-      this.sprite.x = 200;
-      return this.sprite.y = 50;
-    };
-
-    BashySprite.prototype.goHome = function() {
-      this.sprite.x = 80;
-      return this.sprite.y = 180;
-    };
-
-    BashySprite.prototype.goMedia = function() {
-      this.sprite.x = 390;
-      return this.sprite.y = 180;
-    };
-
-    BashySprite.prototype.moveTo = function(x, y) {
-      this.sprite.x = x;
-      return this.sprite.y = y;
-    };
-
-    return BashySprite;
-
-  })();
-
   MenuManager = (function() {
     function MenuManager() {}
 
@@ -507,20 +466,24 @@
   };
 
   DisplayManager = (function() {
-    function DisplayManager(bashy_sprite1) {
+    function DisplayManager(stage1, bashy_sprite1) {
       var ref;
+      this.stage = stage1;
       this.bashy_sprite = bashy_sprite1;
       this.update = bind(this.update, this);
       ref = [250, 120], this.rootX = ref[0], this.rootY = ref[1];
     }
 
     DisplayManager.prototype.update = function(fs, new_dir) {
-      return this.bashy_sprite.goToDir(new_dir);
+      alert('update');
+      this.rootX = 300;
+      this.rootY = 200;
+      return this.drawFileSystem(fs);
     };
 
-    DisplayManager.prototype.drawFileSystem = function(stage, fs) {
-      drawFile(stage, fs.root, this.rootX, this.rootY);
-      return drawChildren(stage, fs.root, this.rootX, this.rootY);
+    DisplayManager.prototype.drawFileSystem = function(fs) {
+      drawFile(this.stage, fs.root, this.rootX, this.rootY);
+      return drawChildren(this.stage, fs.root, this.rootX, this.rootY);
     };
 
     return DisplayManager;
@@ -556,6 +519,47 @@
     createjs.Ticker.useRAF = true;
     return createjs.Ticker.setFPS(5);
   };
+
+  BashySprite = (function() {
+    function BashySprite(sprite1) {
+      this.sprite = sprite1;
+      this.sprite.x = 200;
+      this.sprite.y = 50;
+    }
+
+    BashySprite.prototype.goToDir = function(dir) {
+      if (dir === "/") {
+        return this.goRoot();
+      } else if (dir === "/home") {
+        return this.goHome();
+      } else if (dir === "/media") {
+        return this.goMedia();
+      }
+    };
+
+    BashySprite.prototype.goRoot = function() {
+      this.sprite.x = 200;
+      return this.sprite.y = 50;
+    };
+
+    BashySprite.prototype.goHome = function() {
+      this.sprite.x = 80;
+      return this.sprite.y = 180;
+    };
+
+    BashySprite.prototype.goMedia = function() {
+      this.sprite.x = 390;
+      return this.sprite.y = 180;
+    };
+
+    BashySprite.prototype.moveTo = function(x, y) {
+      this.sprite.x = x;
+      return this.sprite.y = y;
+    };
+
+    return BashySprite;
+
+  })();
 
   this.BashyController = (function() {
     function BashyController() {}
@@ -624,8 +628,8 @@
     var bashy_sprite, controller, display_mgr, handleInput;
     bashy_sprite = createBashySprite(bashy_himself, stage);
     startTicker(stage);
-    display_mgr = new DisplayManager(bashy_sprite);
-    display_mgr.drawFileSystem(stage, os.file_system);
+    display_mgr = new DisplayManager(stage, bashy_sprite);
+    display_mgr.drawFileSystem(os.file_system);
     controller = new BashyController(os, task_mgr, display_mgr, sound_mgr);
     handleInput = function(input) {
       return controller.handleInput(input);
@@ -750,6 +754,7 @@
       fs = this.os.file_system;
       ref = this.os.runCommand(command, args), cwd = ref[0], stdout = ref[1], stderr = ref[2];
       this.task_mgr.update(this.os);
+      this.display_mgr.update(fs, cwd);
 
       /*
       		if stderr
