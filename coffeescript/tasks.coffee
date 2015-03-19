@@ -53,7 +53,7 @@ class MenuManager
 		$("#menu").html("<p>" + task.name + "</p>")
 	
 	win: () ->
-		$("#menu").html("<p>You Win!</p>")
+		$("#menu").html("<h4>You Win!</h4>")
 
 
 window.TaskManager = TaskManager

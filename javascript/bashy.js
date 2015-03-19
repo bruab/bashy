@@ -317,7 +317,7 @@
     };
 
     MenuManager.prototype.win = function() {
-      return $("#menu").html("<p>You Win!</p>");
+      return $("#menu").html("<h4>You Win!</h4>");
     };
 
     return MenuManager;
