@@ -42,17 +42,28 @@ drawChildren = (stage, parent, parentX, parentY) ->
 		line.graphics.endStroke()
 		stage.addChild(line)
 
+findFileCoords = (fs, filepath, rootX, rootY) ->
+	if filepath == "/"
+		return [250, 120] # eew hardcoded, should this be a method?
+	else
+		# TODO
+		return [200, 100]
+
 # Class to handle updating map, character sprite
 class DisplayManager
 	constructor: (@stage, @bashy_sprite) ->
 		[@rootX, @rootY] = [250, 120]
 	
 	update: (fs, new_dir) =>
+		[newX, newY] = findFileCoords(fs, new_dir.path, @rootX, @rootY)
+		deltaX = @rootX - newX
+		deltaY = @rootY - newY
+		# TODO i guess i'm storing these values twice so it's
+		# necessary to sync them; not sure if i care
+		[@rootX, @rootY] = [@rootX+deltaX, @rootY+deltaY]
 		for child in @stage.children[1..] # skip bashy_sprite
-			# TODO skip the dern sprite
-			# TODO this should be a method to move the map to a certain point
-			child.x = child.x + 10
-			child.y = child.y - 10
+			child.x = child.x + deltaX
+			child.y = child.y + deltaY
 
 	drawFileSystem: (fs) ->
 		drawFile(@stage, fs.root, @rootX, @rootY)
