@@ -20,6 +20,7 @@ jQuery ->
 	################ HELP SCREEN ######################
 	###################################################
 	help_mgr = new HelpManager()
+	# Listen for any click whatsoever
 	$("#playScreen").click -> help_mgr.onClick()
 
 	###################################################
@@ -40,18 +41,18 @@ jQuery ->
 	canvas = $("#bashy_canvas")[0]
 	stage = new createjs.Stage(canvas)
 	# Load spritesheet image; start game when it's loaded
-	bashy_himself = new Image()
-	bashy_himself.src = "assets/bashy_sprite_sheet.png"
-	bashy_himself.onload = ->
-		startGame(sound_mgr, stage, bashy_himself, os, task_mgr)
+	bashy_image = new Image()
+	bashy_image.src = "assets/bashy_sprite_sheet.png"
+	bashy_image.onload = ->
+		startGame(sound_mgr, stage, bashy_image, os, task_mgr)
 
 
 ###################################################
 ########### MAIN GAME SETUP AND LOOP ##############
 ###################################################
-startGame = (sound_mgr, stage, bashy_himself, os, task_mgr) ->
+startGame = (sound_mgr, stage, bashy_image, os, task_mgr) ->
 	# Set up graphics
-	bashy_sprite = createBashySprite(bashy_himself, stage)
+	bashy_sprite = createBashySprite(bashy_image, stage)
 	startTicker(stage)
 	display_mgr = new DisplayManager(stage, bashy_sprite)
 	display_mgr.drawFileSystem(os.file_system)

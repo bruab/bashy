@@ -561,7 +561,7 @@
   })();
 
   jQuery(function() {
-    var bashy_himself, canvas, file_system, help_mgr, menu_mgr, os, playSounds, sound_mgr, stage, task_mgr;
+    var bashy_image, canvas, file_system, help_mgr, menu_mgr, os, playSounds, sound_mgr, stage, task_mgr;
     playSounds = false;
     sound_mgr = new SoundManager(playSounds);
     $("#audio_off").click(function() {
@@ -577,16 +577,16 @@
     task_mgr = new TaskManager(menu_mgr);
     canvas = $("#bashy_canvas")[0];
     stage = new createjs.Stage(canvas);
-    bashy_himself = new Image();
-    bashy_himself.src = "assets/bashy_sprite_sheet.png";
-    return bashy_himself.onload = function() {
-      return startGame(sound_mgr, stage, bashy_himself, os, task_mgr);
+    bashy_image = new Image();
+    bashy_image.src = "assets/bashy_sprite_sheet.png";
+    return bashy_image.onload = function() {
+      return startGame(sound_mgr, stage, bashy_image, os, task_mgr);
     };
   });
 
-  startGame = function(sound_mgr, stage, bashy_himself, os, task_mgr) {
+  startGame = function(sound_mgr, stage, bashy_image, os, task_mgr) {
     var bashy_sprite, controller, display_mgr, handleInput;
-    bashy_sprite = createBashySprite(bashy_himself, stage);
+    bashy_sprite = createBashySprite(bashy_image, stage);
     startTicker(stage);
     display_mgr = new DisplayManager(stage, bashy_sprite);
     display_mgr.drawFileSystem(os.file_system);
