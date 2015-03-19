@@ -422,7 +422,17 @@
       ref = [250, 120], this.rootX = ref[0], this.rootY = ref[1];
     }
 
-    DisplayManager.prototype.update = function(fs, new_dir) {};
+    DisplayManager.prototype.update = function(fs, new_dir) {
+      var child, j, len1, ref, results;
+      ref = this.stage.children.slice(1);
+      results = [];
+      for (j = 0, len1 = ref.length; j < len1; j++) {
+        child = ref[j];
+        child.x = child.x + 10;
+        results.push(child.y = child.y - 10);
+      }
+      return results;
+    };
 
     DisplayManager.prototype.drawFileSystem = function(fs) {
       drawFile(this.stage, fs.root, this.rootX, this.rootY);

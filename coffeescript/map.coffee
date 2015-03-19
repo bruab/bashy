@@ -48,7 +48,11 @@ class DisplayManager
 		[@rootX, @rootY] = [250, 120]
 	
 	update: (fs, new_dir) =>
-		# TODO make new sprite, figure out new root coords, move map to coords
+		for child in @stage.children[1..] # skip bashy_sprite
+			# TODO skip the dern sprite
+			# TODO this should be a method to move the map to a certain point
+			child.x = child.x + 10
+			child.y = child.y - 10
 
 	drawFileSystem: (fs) ->
 		drawFile(@stage, fs.root, @rootX, @rootY)
