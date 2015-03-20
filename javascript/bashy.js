@@ -382,6 +382,7 @@
   drawFile = function(map, file, x, y) {
     var ref, text;
     text = new createjs.Text(file.name(), "20px Arial", "black");
+    text.name = file.path;
     ref = [x, y], text.x = ref[0], text.y = ref[1];
     text.textBaseline = "alphabetic";
     return map.addChild(text);
@@ -423,36 +424,42 @@
 
   DisplayManager = (function() {
     function DisplayManager(stage1, bashy_sprite1) {
-      var ref;
+      var ref, ref1;
       this.stage = stage1;
       this.bashy_sprite = bashy_sprite1;
       this.update = bind(this.update, this);
-      ref = [250, 120], this.rootX = ref[0], this.rootY = ref[1];
+      ref = [130, 60], this.startingX = ref[0], this.startingY = ref[1];
+      this.centeredOn = "/";
       this.map = new createjs.Container();
       this.map.name = "map";
+      ref1 = [this.startingX, this.startingY], this.map.x = ref1[0], this.map.y = ref1[1];
     }
 
     DisplayManager.prototype.update = function(fs, new_dir) {
-      var child, deltaX, deltaY, j, len1, newX, newY, ref, ref1, ref2, results;
-      ref = findFileCoords(fs, new_dir.path, this.rootX, this.rootY), newX = ref[0], newY = ref[1];
-      deltaX = this.rootX - newX;
-      deltaY = this.rootY - newY;
-      ref1 = [this.rootX + deltaX, this.rootY + deltaY], this.rootX = ref1[0], this.rootY = ref1[1];
-      ref2 = this.stage.children.slice(1);
-      results = [];
-      for (j = 0, len1 = ref2.length; j < len1; j++) {
-        child = ref2[j];
-        child.x = child.x + deltaX;
-        results.push(child.y = child.y + deltaY);
+      var deltaX, deltaY, newX, newY, oldX, oldY, ref, ref1, ref2;
+      ref = this.getCoordinatesForPath(this.centeredOn), oldX = ref[0], oldY = ref[1];
+      ref1 = this.getCoordinatesForPath(new_dir.path), newX = ref1[0], newY = ref1[1];
+      ref2 = [oldX - newX, oldY - newY], deltaX = ref2[0], deltaY = ref2[1];
+      this.map.x = this.map.x + deltaX;
+      this.map.y = this.map.y + deltaY;
+      return this.centeredOn = new_dir.path;
+    };
+
+    DisplayManager.prototype.getCoordinatesForPath = function(path) {
+      var item, j, len1, ref;
+      ref = this.map.children;
+      for (j = 0, len1 = ref.length; j < len1; j++) {
+        item = ref[j];
+        if (item.name === path) {
+          return [item.x, item.y];
+        }
       }
-      return results;
     };
 
     DisplayManager.prototype.drawFileSystem = function(fs) {
-      drawFile(this.map, fs.root, this.rootX, this.rootY);
-      drawChildren(this.map, fs.root, this.rootX, this.rootY);
-      this.stage.addChild(this.map);
-      return alert(this.stage.children);
+      drawFile(this.map, fs.root, this.map.x, this.map.y);
+      drawChildren(this.map, fs.root, this.map.x, this.map.y);
+      return this.stage.addChild(this.map);
     };
 
     return DisplayManager;

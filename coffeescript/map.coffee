@@ -12,6 +12,7 @@ calculateChildCoords = (count, parentX, parentY) ->
 
 drawFile = (map, file, x, y) ->
 	text = new createjs.Text(file.name(), "20px Arial", "black")
+	text.name = file.path
 	[text.x, text.y] = [x, y]
 	text.textBaseline = "alphabetic"
 	map.addChild(text)
@@ -52,23 +53,27 @@ findFileCoords = (fs, filepath, rootX, rootY) ->
 # Class to handle updating map, character sprite
 class DisplayManager
 	constructor: (@stage, @bashy_sprite) ->
-		[@rootX, @rootY] = [250, 120]
+		#[@rootX, @rootY] = [250, 120]
+		[@startingX, @startingY] = [130, 60]
+		@centeredOn = "/"
 		@map = new createjs.Container()
 		@map.name = "map"
+		[@map.x, @map.y] = [@startingX, @startingY]
 	
 	update: (fs, new_dir) =>
-		[newX, newY] = findFileCoords(fs, new_dir.path, @rootX, @rootY)
-		deltaX = @rootX - newX
-		deltaY = @rootY - newY
-		# TODO i guess i'm storing these values twice so it's
-		# necessary to sync them; not sure if i care
-		[@rootX, @rootY] = [@rootX+deltaX, @rootY+deltaY]
-		for child in @stage.children[1..] # skip bashy_sprite
-			child.x = child.x + deltaX
-			child.y = child.y + deltaY
+		[oldX, oldY] = @getCoordinatesForPath @centeredOn
+		[newX, newY] = @getCoordinatesForPath new_dir.path
+		[deltaX, deltaY] = [oldX-newX, oldY-newY]
+		@map.x = @map.x + deltaX
+		@map.y = @map.y + deltaY
+		@centeredOn = new_dir.path
+
+	getCoordinatesForPath: (path) ->
+		for item in @map.children
+			if item.name == path
+				return [item.x, item.y]
 
 	drawFileSystem: (fs) ->
-		drawFile(@map, fs.root, @rootX, @rootY)
-		drawChildren(@map, fs.root, @rootX, @rootY)
+		drawFile(@map, fs.root, @map.x, @map.y)
+		drawChildren(@map, fs.root, @map.x, @map.y)
 		@stage.addChild(@map)
-		alert @stage.children
