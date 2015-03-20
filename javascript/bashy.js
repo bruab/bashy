@@ -313,10 +313,11 @@
     function MenuManager() {}
 
     MenuManager.prototype.showTask = function(task) {
-      return $("#menu").html("<p>" + task.name + "</p>");
+      return $("#menu").html(task.name);
     };
 
     MenuManager.prototype.win = function() {
+      $("#menu_header").html("");
       return $("#menu").html("<h4>You Win!</h4>");
     };
 

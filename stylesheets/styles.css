@@ -11,6 +11,11 @@ body {
   height: 120px;
 }
 
+#menu {
+    font-size: 18px;
+    color: green;
+}
+
 #overlay {
     position: fixed; 
     top: 0;

@@ -50,9 +50,10 @@ class MenuManager
 	constructor: () ->
 
 	showTask: (task) ->
-		$("#menu").html("<p>" + task.name + "</p>")
+		$("#menu").html(task.name)
 	
 	win: () ->
+		$("#menu_header").html("")
 		$("#menu").html("<h4>You Win!</h4>")
 
 
