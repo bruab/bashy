@@ -379,15 +379,15 @@
     return coords;
   };
 
-  drawFile = function(stage, file, x, y) {
+  drawFile = function(map, file, x, y) {
     var ref, text;
     text = new createjs.Text(file.name(), "20px Arial", "black");
     ref = [x, y], text.x = ref[0], text.y = ref[1];
     text.textBaseline = "alphabetic";
-    return stage.addChild(text);
+    return map.addChild(text);
   };
 
-  drawChildren = function(stage, parent, parentX, parentY) {
+  drawChildren = function(map, parent, parentX, parentY) {
     var child, childCoords, childX, childY, i, j, line, lineOffsetX, lineOffsetY, numChildren, ref, results;
     lineOffsetX = 20;
     lineOffsetY = 20;
@@ -399,16 +399,16 @@
       childX = childCoords[i][0];
       childY = childCoords[i][1];
       if (child.children.length > 0) {
-        drawChildren(stage, child, childX, childY);
+        drawChildren(map, child, childX, childY);
       }
-      drawFile(stage, child, childX, childY);
+      drawFile(map, child, childX, childY);
       line = new createjs.Shape();
       line.graphics.setStrokeStyle(1);
       line.graphics.beginStroke("gray");
       line.graphics.moveTo(parentX, parentY + lineOffsetY);
       line.graphics.lineTo(childX + lineOffsetX, childY - lineOffsetY);
       line.graphics.endStroke();
-      results.push(stage.addChild(line));
+      results.push(map.addChild(line));
     }
     return results;
   };
@@ -428,6 +428,7 @@
       this.bashy_sprite = bashy_sprite1;
       this.update = bind(this.update, this);
       ref = [250, 120], this.rootX = ref[0], this.rootY = ref[1];
+      this.map = new createjs.Container();
     }
 
     DisplayManager.prototype.update = function(fs, new_dir) {
@@ -447,8 +448,9 @@
     };
 
     DisplayManager.prototype.drawFileSystem = function(fs) {
-      drawFile(this.stage, fs.root, this.rootX, this.rootY);
-      return drawChildren(this.stage, fs.root, this.rootX, this.rootY);
+      drawFile(this.map, fs.root, this.rootX, this.rootY);
+      drawChildren(this.map, fs.root, this.rootX, this.rootY);
+      return this.stage.addChild(this.map);
     };
 
     return DisplayManager;

@@ -10,13 +10,13 @@ calculateChildCoords = (count, parentX, parentY) ->
 		coords.push( [x, y] )
 	coords
 
-drawFile = (stage, file, x, y) ->
+drawFile = (map, file, x, y) ->
 	text = new createjs.Text(file.name(), "20px Arial", "black")
 	[text.x, text.y] = [x, y]
 	text.textBaseline = "alphabetic"
-	stage.addChild(text)
+	map.addChild(text)
 
-drawChildren = (stage, parent, parentX, parentY) ->
+drawChildren = (map, parent, parentX, parentY) ->
 	lineOffsetX = 20
 	lineOffsetY = 20
 	numChildren = parent.children.length
@@ -28,9 +28,9 @@ drawChildren = (stage, parent, parentX, parentY) ->
 		childY = childCoords[i][1]
 		# Draw children (recursion ftw)
 		if child.children.length > 0
-			drawChildren(stage, child, childX, childY)
+			drawChildren(map, child, childX, childY)
 		# Draw text
-		drawFile(stage, child, childX, childY)
+		drawFile(map, child, childX, childY)
 		# Draw line
 		# TODO center line under/above text it points to
 		# by calculating length of text, etc. fancy stuff.
@@ -40,7 +40,7 @@ drawChildren = (stage, parent, parentX, parentY) ->
 		line.graphics.moveTo(parentX, parentY+lineOffsetY)
 		line.graphics.lineTo(childX+lineOffsetX, childY-lineOffsetY)
 		line.graphics.endStroke()
-		stage.addChild(line)
+		map.addChild(line)
 
 findFileCoords = (fs, filepath, rootX, rootY) ->
 	if filepath == "/"
@@ -53,6 +53,7 @@ findFileCoords = (fs, filepath, rootX, rootY) ->
 class DisplayManager
 	constructor: (@stage, @bashy_sprite) ->
 		[@rootX, @rootY] = [250, 120]
+		@map = new createjs.Container()
 	
 	update: (fs, new_dir) =>
 		[newX, newY] = findFileCoords(fs, new_dir.path, @rootX, @rootY)
@@ -66,5 +67,6 @@ class DisplayManager
 			child.y = child.y + deltaY
 
 	drawFileSystem: (fs) ->
-		drawFile(@stage, fs.root, @rootX, @rootY)
-		drawChildren(@stage, fs.root, @rootX, @rootY)
+		drawFile(@map, fs.root, @rootX, @rootY)
+		drawChildren(@map, fs.root, @rootX, @rootY)
+		@stage.addChild(@map)
