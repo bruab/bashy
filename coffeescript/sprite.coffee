@@ -12,6 +12,7 @@ createBashySprite = (bashy_himself, stage) ->
 	})
 	# Now create Sprite
 	sprite = new createjs.Sprite(bashySpriteSheet, 0)
+	sprite.name = "bashy_sprite"
 	# Start playing the first sequence:
 	sprite.gotoAndPlay "walking"
 	sprite.currentFrame = 0

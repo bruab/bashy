@@ -54,6 +54,7 @@ class DisplayManager
 	constructor: (@stage, @bashy_sprite) ->
 		[@rootX, @rootY] = [250, 120]
 		@map = new createjs.Container()
+		@map.name = "map"
 	
 	update: (fs, new_dir) =>
 		[newX, newY] = findFileCoords(fs, new_dir.path, @rootX, @rootY)
@@ -70,3 +71,4 @@ class DisplayManager
 		drawFile(@map, fs.root, @rootX, @rootY)
 		drawChildren(@map, fs.root, @rootX, @rootY)
 		@stage.addChild(@map)
+		alert @stage.children

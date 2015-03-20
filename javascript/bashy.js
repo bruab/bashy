@@ -429,6 +429,7 @@
       this.update = bind(this.update, this);
       ref = [250, 120], this.rootX = ref[0], this.rootY = ref[1];
       this.map = new createjs.Container();
+      this.map.name = "map";
     }
 
     DisplayManager.prototype.update = function(fs, new_dir) {
@@ -450,7 +451,8 @@
     DisplayManager.prototype.drawFileSystem = function(fs) {
       drawFile(this.map, fs.root, this.rootX, this.rootY);
       drawChildren(this.map, fs.root, this.rootX, this.rootY);
-      return this.stage.addChild(this.map);
+      this.stage.addChild(this.map);
+      return alert(this.stage.children);
     };
 
     return DisplayManager;
@@ -471,6 +473,7 @@
       }
     });
     sprite = new createjs.Sprite(bashySpriteSheet, 0);
+    sprite.name = "bashy_sprite";
     sprite.gotoAndPlay("walking");
     sprite.currentFrame = 0;
     stage.addChild(sprite);
