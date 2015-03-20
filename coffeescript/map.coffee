@@ -52,7 +52,7 @@ findFileCoords = (fs, filepath, rootX, rootY) ->
 
 # Class to handle updating map, character sprite
 class DisplayManager
-	constructor: (@stage, @bashy_sprite) ->
+	constructor: (@stage) ->
 		#[@rootX, @rootY] = [250, 120]
 		[@startingX, @startingY] = [130, 60]
 		@centeredOn = "/"

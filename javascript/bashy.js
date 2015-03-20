@@ -423,10 +423,9 @@
   };
 
   DisplayManager = (function() {
-    function DisplayManager(stage1, bashy_sprite1) {
+    function DisplayManager(stage1) {
       var ref, ref1;
       this.stage = stage1;
-      this.bashy_sprite = bashy_sprite1;
       this.update = bind(this.update, this);
       ref = [130, 60], this.startingX = ref[0], this.startingY = ref[1];
       this.centeredOn = "/";
@@ -591,10 +590,10 @@
 
   startGame = function(sound_mgr, stage, bashy_image, os, task_mgr) {
     var bashy_sprite, controller, display_mgr, handleInput;
+    display_mgr = new DisplayManager(stage);
+    display_mgr.drawFileSystem(os.file_system);
     bashy_sprite = createBashySprite(bashy_image, stage);
     startTicker(stage);
-    display_mgr = new DisplayManager(stage, bashy_sprite);
-    display_mgr.drawFileSystem(os.file_system);
     controller = new BashyController(os, task_mgr, display_mgr, sound_mgr);
     handleInput = function(input) {
       return controller.handleInput(input);

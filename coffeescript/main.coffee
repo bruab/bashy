@@ -51,10 +51,10 @@ jQuery ->
 ###################################################
 startGame = (sound_mgr, stage, bashy_image, os, task_mgr) ->
 	# Set up graphics
+	display_mgr = new DisplayManager(stage)
+	display_mgr.drawFileSystem(os.file_system)
 	bashy_sprite = createBashySprite(bashy_image, stage)
 	startTicker(stage)
-	display_mgr = new DisplayManager(stage, bashy_sprite)
-	display_mgr.drawFileSystem(os.file_system)
 
 	# Create other objects
 	controller = new BashyController(os, task_mgr, display_mgr, sound_mgr)
