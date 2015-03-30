@@ -6,26 +6,26 @@ parseCommand = (input) ->
 
 
 class BashyController
-	constructor: (@os, @task_mgr, @display_mgr, @sound_mgr) ->
+	constructor: (@os, @taskMgr, @displayMgr, @soundMgr) ->
 
 	executeCommand: (command, args) ->
 		# Get a copy of the current file system
-		fs = @os.file_system
+		fs = @os.fileSystem
 
 		# BashyOS updates and returns context, stdout, stderr
 		[cwd, stdout, stderr] = @os.runCommand(command, args)
 
 		# TaskManager checks for completed tasks
-		@task_mgr.update(@os)
+		@taskMgr.update(@os)
 
 		# DisplayManager updates map
-		@display_mgr.update(fs, cwd)
+		@displayMgr.update(fs, cwd)
 		
 		# Handle sound effects
 		if stderr
-			@sound_mgr.playOops()
+			@soundMgr.playOops()
 		else
-			@sound_mgr.playBoing()
+			@soundMgr.playBoing()
 
 		# Return text to terminal
 		if stderr

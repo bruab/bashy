@@ -77,8 +77,8 @@ getParentPath = (dir) ->
 
 # OS class in charge of file system, processing user input
 class BashyOS
-	constructor: (@file_system) ->
-		@cwd = @file_system.root
+	constructor: (@fileSystem) ->
+		@cwd = @fileSystem.root
 
 	# This feels ghetto but works for now
 	validCommands: () ->
@@ -97,7 +97,7 @@ class BashyOS
 		# Return context, stdout, stderr
 		return [@cwd, stdout, stderr]
 
-	cd_relative_path: (path) =>
+	cdRelativePath: (path) =>
 		# TODO hecka code duplication going on here
 		# No output by default
 		[stdout, stderr] = ["", ""]
@@ -112,41 +112,41 @@ class BashyOS
 				else
 					absolutePath = "#{absolutePath}/#{field}"
 			absolutePath = cleanPath(absolutePath)
-			if @file_system.isValidPath(absolutePath)
-				@cwd = @file_system.getFile(absolutePath)
+			if @fileSystem.isValidPath(absolutePath)
+				@cwd = @fileSystem.getFile(absolutePath)
 			else
 				stderr = "Invalid path: #{absolutePath}"
 		else if fields[0] == "."
 			# Build absolute path
-			if @cwd == @file_system.root
+			if @cwd == @fileSystem.root
 				absolutePath = "/#{path[2..]}"
 			else
 				absolutePath = "#{@cwd}/#{path[2..]}"
 			absolutePath = cleanPath(absolutePath)
-			if @file_system.isValidPath(absolutePath)
-				@cwd = @file_system.getFile(absolutePath)
+			if @fileSystem.isValidPath(absolutePath)
+				@cwd = @fileSystem.getFile(absolutePath)
 			else
 				stderr = "Invalid path: #{absolutePath}"
 			
 		else
 			# Build absolute path
-			if @cwd == @file_system.root
+			if @cwd == @fileSystem.root
 				absolutePath = @cwd.path + path
 			else
 				absolutePath = "#{@cwd.path}/#{path}"
 			absolutePath = cleanPath(absolutePath)
-			if @file_system.isValidPath(absolutePath)
-				@cwd = @file_system.getFile(absolutePath)
+			if @fileSystem.isValidPath(absolutePath)
+				@cwd = @fileSystem.getFile(absolutePath)
 			else
 				stderr = "Invalid path: #{absolutePath}"
 		return [stdout, stderr]
 
-	cd_absolute_path: (path) =>
+	cdAbsolutePath: (path) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
 		absolutePath = cleanPath(path)
-		if @file_system.isValidPath(path)
-			@cwd = @file_system.getFile(path)
+		if @fileSystem.isValidPath(path)
+			@cwd = @fileSystem.getFile(path)
 		else
 			stderr = "Invalid path"
 		return [stdout, stderr]
@@ -156,15 +156,15 @@ class BashyOS
 		[stdout, stderr] = ["", ""]
 		if args.length == 0
 			# The user typed "cd" with no additional args
-			@cwd = @file_system.getFile("/home")
+			@cwd = @fileSystem.getFile("/home")
 		else if args.length > 0
 			path = args[0] # not handling options/flags yet
 			# Determine if absolute or relative path
 			# based on first character
 			if path[0] == "/"
-				[stdout, stderr] = @cd_absolute_path(path)
+				[stdout, stderr] = @cdAbsolutePath(path)
 			else
-				[stdout, stderr] = @cd_relative_path(path)
+				[stdout, stderr] = @cdRelativePath(path)
 		return [stdout, stderr]
 
 	pwd: () =>

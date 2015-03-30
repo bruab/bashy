@@ -1,30 +1,30 @@
-get_tasks = ->
-	task1_fn = (os) ->
+getTasks = ->
+	task1Function = (os) ->
 		return os.cwd.path == "/home"
-	task2_fn = (os) ->
+	task2Function = (os) ->
 		return os.cwd.path == "/media"
-	task3_fn = (os) ->
+	task3Function = (os) ->
 		return os.cwd.path == "/"
-	task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1_fn)
-	task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task2_fn)
-	task3 = new Task("navigate to root", ["type 'cd /' and press enter"], task3_fn)
+	task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1Function)
+	task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task2Function)
+	task3 = new Task("navigate to root", ["type 'cd /' and press enter"], task3Function)
 	return [task1, task2, task3]
 
 # TaskManager class keeps track of Tasks, updates Menu (?)
 class TaskManager
 	constructor: () ->
 		@winner = false
-		@tasks = get_tasks()
-		@current_task = @tasks[0]
-		@showTask(@current_task)
+		@tasks = getTasks()
+		@currentTask = @tasks[0]
+		@showTask(@currentTask)
 
 	update: (os) ->
 		if not @winner
-			if @current_task.done(os)
+			if @currentTask.done(os)
 				if @tasks.length > 1
 					@tasks = @tasks[1..]
-					@current_task = @tasks[0]
-					@showTask(@current_task)
+					@currentTask = @tasks[0]
+					@showTask(@currentTask)
 				else
 					@winner = true
 					@win()
@@ -35,22 +35,22 @@ class TaskManager
 		return
 	
 	win: () ->
-		$("#menu_header").html("")
+		$("#menuHeader").html("")
 		$("#menu").html("<h4>You Win!</h4>")
 		return
 
 # Task class encapsulates a task name, hint(s) and any number of 
 # os queries and the desired responses
 class Task
-	constructor: (@name, @hints, @complete_fn) ->
-		@is_complete = false
+	constructor: (@name, @hints, @completeFunction) ->
+		@isComplete = false
 
 	done: (os) ->
-		if @is_complete
+		if @isComplete
 			return true
 		else
-			@is_complete = @complete_fn(os)
-			return @is_complete
+			@isComplete = @completeFunction(os)
+			return @isComplete
 
 	toString: () -> @name
 
@@ -63,7 +63,7 @@ class MenuManager
 		return
 	
 	win: () ->
-		$("#menu_header").html("")
+		$("#menuHeader").html("")
 		$("#menu").html("<h4>You Win!</h4>")
 		return
 

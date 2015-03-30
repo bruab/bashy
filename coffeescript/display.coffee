@@ -1,10 +1,10 @@
 # Functions to create sprite
-createBashySprite = (bashy_himself, stage) ->
+createBashySprite = (bashyImage, stage) ->
 	[SPRITEX, SPRITEY] = [200, 50]
 	## CREATE AND INITIALIZE CHARACTER SPRITE ##
 	# Create SpriteSheet first
 	bashySpriteSheet = new createjs.SpriteSheet({
-		images: [bashy_himself],
+		images: [bashyImage],
 		frames: {width: 64, height: 64},
 		animations: {
 		    walking: [0, 4, "walking"],
@@ -13,7 +13,7 @@ createBashySprite = (bashy_himself, stage) ->
 	})
 	# Now create Sprite
 	sprite = new createjs.Sprite(bashySpriteSheet, 0)
-	sprite.name = "bashy_sprite"
+	sprite.name = "bashySprite"
 	# Start playing the first sequence:
 	sprite.framerate = 4
 	sprite.gotoAndPlay "walking"
@@ -85,7 +85,7 @@ findFileCoords = (fs, filepath, rootX, rootY) ->
 
 # Class to handle updating map, character sprite
 class DisplayManager
-	constructor: (@stage, @bashy_sprite) ->
+	constructor: (@stage, @bashySprite) ->
 		#[@rootX, @rootY] = [250, 120]
 		[@startingX, @startingY] = [130, 60]
 		@centeredOn = "/"
@@ -93,12 +93,12 @@ class DisplayManager
 		@map.name = "map"
 		[@map.x, @map.y] = [@startingX, @startingY]
 	
-	update: (fs, new_dir) =>
+	update: (fs, newDir) =>
 		[oldX, oldY] = @getCoordinatesForPath @centeredOn
-		[newX, newY] = @getCoordinatesForPath new_dir.path
+		[newX, newY] = @getCoordinatesForPath newDir.path
 		[deltaX, deltaY] = [oldX-newX, oldY-newY]
 		createjs.Tween.get(@map).to( {x: @map.x + deltaX, y: @map.y + deltaY}, 500, createjs.Ease.getPowInOut(2))
-		@centeredOn = new_dir.path
+		@centeredOn = newDir.path
 		return
 
 	getCoordinatesForPath: (path) ->
