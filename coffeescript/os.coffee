@@ -9,7 +9,7 @@ class File
 			len = splitPath.length
 			splitPath[len-1]
 
-	toString: () -> "File object with path=" + @path
+	toString: () -> "File object with path=#{@path}"
 
 	getChild: (name) ->
 		for child in @children
@@ -60,7 +60,7 @@ cleanPath = (path) ->
 	newPath = ""
 	for dir in splitPath
 		if dir != ""
-			newPath = newPath + "/" + dir
+			newPath = "#{newPath}/#{dir}"
 	newPath
 	
 # helper function for path parsing
@@ -72,7 +72,7 @@ getParentPath = (dir) ->
 		len = splitPath.length
 		parentPath = ""
 		for i in [0..len-2]
-			parentPath = parentPath + "/" + splitPath[i]
+			parentPath = "#{parentPath}/#{splitPath[i]}"
 		parentPath
 
 # OS class in charge of file system, processing user input
@@ -110,35 +110,35 @@ class BashyOS
 				if absolutePath == "/"
 					absolutePath = absolutePath + field
 				else
-					absolutePath = absolutePath + "/" + field
+					absolutePath = "#{absolutePath}/#{field}"
 			absolutePath = cleanPath(absolutePath)
 			if @file_system.isValidPath(absolutePath)
 				@cwd = @file_system.getFile(absolutePath)
 			else
-				stderr = "Invalid path: " + absolutePath
+				stderr = "Invalid path: #{absolutePath}"
 		else if fields[0] == "."
 			# Build absolute path
-			if @cwd == "/"
-				absolutePath = @cwd + path[2..]
+			if @cwd == @file_system.root
+				absolutePath = "/#{path[2..]}"
 			else
-				absolutePath = @cwd + "/" + path[2..]
+				absolutePath = "#{@cwd}/#{path[2..]}"
 			absolutePath = cleanPath(absolutePath)
 			if @file_system.isValidPath(absolutePath)
 				@cwd = @file_system.getFile(absolutePath)
 			else
-				stderr = "Invalid path: " + absolutePath
+				stderr = "Invalid path: #{absolutePath}"
 			
 		else
 			# Build absolute path
 			if @cwd == @file_system.root
 				absolutePath = @cwd.path + path
 			else
-				absolutePath = @cwd.path + "/" + path
+				absolutePath = "#{@cwd.path}/#{path}"
 			absolutePath = cleanPath(absolutePath)
 			if @file_system.isValidPath(absolutePath)
 				@cwd = @file_system.getFile(absolutePath)
 			else
-				stderr = "Invalid path: " + absolutePath
+				stderr = "Invalid path: #{absolutePath}"
 		# Return stdout, stderr
 		[stdout, stderr]
 

@@ -171,8 +171,8 @@
           stderr = "Invalid path: " + absolutePath;
         }
       } else if (fields[0] === ".") {
-        if (this.cwd === "/") {
-          absolutePath = this.cwd + path.slice(2);
+        if (this.cwd === this.file_system.root) {
+          absolutePath = "/" + path.slice(2);
         } else {
           absolutePath = this.cwd + "/" + path.slice(2);
         }

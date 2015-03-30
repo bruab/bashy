@@ -1,4 +1,4 @@
-get_tasks = () ->
+get_tasks = ->
 	task1_fn = (os) ->
 		return os.cwd.path == "/home"
 	task2_fn = (os) ->
