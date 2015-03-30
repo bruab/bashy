@@ -34,12 +34,9 @@ startTicker = (stage) ->
 calculateChildCoords = (count, parentX, parentY) ->
 	yOffset = 80
 	xOffset = 100
-	coords = []
 	startingX = parentX - 0.5*count*xOffset
 	y = parentY + yOffset
-	for i in [0..count-1]
-		x = startingX + 2*i*xOffset
-		coords.push( [x, y] )
+	coords = for i in [0..count-1] then [startingX + 2*i*xOffset, y]
 	coords
 
 drawFile = (map, file, x, y) ->

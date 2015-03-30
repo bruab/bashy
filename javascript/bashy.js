@@ -409,16 +409,19 @@
   };
 
   calculateChildCoords = function(count, parentX, parentY) {
-    var coords, i, j, ref, startingX, x, xOffset, y, yOffset;
+    var coords, i, startingX, xOffset, y, yOffset;
     yOffset = 80;
     xOffset = 100;
-    coords = [];
     startingX = parentX - 0.5 * count * xOffset;
     y = parentY + yOffset;
-    for (i = j = 0, ref = count - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
-      x = startingX + 2 * i * xOffset;
-      coords.push([x, y]);
-    }
+    coords = (function() {
+      var j, ref, results;
+      results = [];
+      for (i = j = 0, ref = count - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
+        results.push([startingX + 2 * i * xOffset, y]);
+      }
+      return results;
+    })();
     return coords;
   };
 
