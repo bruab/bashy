@@ -257,12 +257,11 @@
   };
 
   TaskManager = (function() {
-    function TaskManager(menu_mgr1) {
-      this.menu_mgr = menu_mgr1;
+    function TaskManager() {
       this.winner = false;
       this.tasks = get_tasks();
       this.current_task = this.tasks[0];
-      this.menu_mgr.showTask(this.current_task);
+      this.showTask(this.current_task);
     }
 
     TaskManager.prototype.update = function(os) {
@@ -271,13 +270,22 @@
           if (this.tasks.length > 1) {
             this.tasks = this.tasks.slice(1);
             this.current_task = this.tasks[0];
-            return this.menu_mgr.showTask(this.current_task);
+            return this.showTask(this.current_task);
           } else {
             this.winner = true;
-            return this.menu_mgr.win();
+            return this.win();
           }
         }
       }
+    };
+
+    TaskManager.prototype.showTask = function(task) {
+      return $("#menu").html(task.name);
+    };
+
+    TaskManager.prototype.win = function() {
+      $("#menu_header").html("");
+      return $("#menu").html("<h4>You Win!</h4>");
     };
 
     return TaskManager;
@@ -566,7 +574,7 @@
   })();
 
   jQuery(function() {
-    var bashy_image, canvas, file_system, help_mgr, menu_mgr, os, playSounds, sound_mgr, stage, task_mgr;
+    var bashy_image, canvas, file_system, help_mgr, os, playSounds, sound_mgr, stage, task_mgr;
     playSounds = false;
     sound_mgr = new SoundManager(playSounds);
     $("#audio_off").click(function() {
@@ -578,8 +586,7 @@
     });
     file_system = new FileSystem();
     os = new BashyOS(file_system);
-    menu_mgr = new MenuManager();
-    task_mgr = new TaskManager(menu_mgr);
+    task_mgr = new TaskManager();
     canvas = $("#bashy_canvas")[0];
     stage = new createjs.Stage(canvas);
     bashy_image = new Image();

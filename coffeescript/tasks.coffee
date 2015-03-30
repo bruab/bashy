@@ -12,11 +12,11 @@ get_tasks = () ->
 
 # TaskManager class keeps track of Tasks, updates Menu (?)
 class TaskManager
-	constructor: (@menu_mgr) ->
+	constructor: () ->
 		@winner = false
 		@tasks = get_tasks()
 		@current_task = @tasks[0]
-		@menu_mgr.showTask(@current_task)
+		@showTask(@current_task)
 
 	update: (os) ->
 		if not @winner
@@ -24,10 +24,17 @@ class TaskManager
 				if @tasks.length > 1
 					@tasks = @tasks[1..]
 					@current_task = @tasks[0]
-					@menu_mgr.showTask(@current_task)
+					@showTask(@current_task)
 				else
 					@winner = true
-					@menu_mgr.win()
+					@win()
+
+	showTask: (task) ->
+		$("#menu").html(task.name)
+	
+	win: () ->
+		$("#menu_header").html("")
+		$("#menu").html("<h4>You Win!</h4>")
 
 # Task class encapsulates a task name, hint(s) and any number of 
 # os queries and the desired responses
