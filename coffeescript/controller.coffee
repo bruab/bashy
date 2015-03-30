@@ -45,8 +45,8 @@ class BashyController
 		# Parse input and check for invalid command
 		[command, args] = parseCommand(input)
 		if command not in @os.validCommands()
-			"Invalid command: #{command}"
+			return "Invalid command: #{command}"
 		else
-			@executeCommand(command, args)
+			return @executeCommand(command, args)
 
 window.BashyController = BashyController

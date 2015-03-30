@@ -270,22 +270,22 @@
           if (this.tasks.length > 1) {
             this.tasks = this.tasks.slice(1);
             this.current_task = this.tasks[0];
-            return this.showTask(this.current_task);
+            this.showTask(this.current_task);
           } else {
             this.winner = true;
-            return this.win();
+            this.win();
           }
         }
       }
     };
 
     TaskManager.prototype.showTask = function(task) {
-      return $("#menu").html(task.name);
+      $("#menu").html(task.name);
     };
 
     TaskManager.prototype.win = function() {
       $("#menu_header").html("");
-      return $("#menu").html("<h4>You Win!</h4>");
+      $("#menu").html("<h4>You Win!</h4>");
     };
 
     return TaskManager;
@@ -321,12 +321,12 @@
     function MenuManager() {}
 
     MenuManager.prototype.showTask = function(task) {
-      return $("#menu").html(task.name);
+      $("#menu").html(task.name);
     };
 
     MenuManager.prototype.win = function() {
       $("#menu_header").html("");
-      return $("#menu").html("<h4>You Win!</h4>");
+      $("#menu").html("<h4>You Win!</h4>");
     };
 
     return MenuManager;
@@ -343,9 +343,9 @@
     HelpManager.prototype.onClick = function() {
       if (!this.seenIntro) {
         this.playIntro();
-        return this.seenIntro = true;
+        this.seenIntro = true;
       } else {
-        return this.helpScreen();
+        this.helpScreen();
       }
     };
 
@@ -355,7 +355,7 @@
       intro_html += "<p>Use your keyboard to type commands.</p>";
       intro_html += "<p>Available commands are 'pwd' and 'cd'</p>";
       $('#help_text').html(intro_html);
-      return $('#helpScreen').foundation('reveal', 'open');
+      $('#helpScreen').foundation('reveal', 'open');
     };
 
     HelpManager.prototype.helpScreen = function() {
@@ -363,7 +363,7 @@
       help_html = "<h3>B@shy Help</h3>";
       help_html += "TODO contextual help messages";
       $('#help_text').html(help_html);
-      return $('#helpScreen').foundation('reveal', 'open');
+      $('#helpScreen').foundation('reveal', 'open');
     };
 
     return HelpManager;
@@ -404,7 +404,7 @@
     };
     createjs.Ticker.addEventListener("tick", tick);
     createjs.Ticker.useRAF = true;
-    return createjs.Ticker.setFPS(15);
+    createjs.Ticker.setFPS(15);
   };
 
   calculateChildCoords = function(count, parentX, parentY) {
@@ -430,16 +430,15 @@
     text.name = file.path;
     ref = [x, y], text.x = ref[0], text.y = ref[1];
     text.textBaseline = "alphabetic";
-    return map.addChild(text);
+    map.addChild(text);
   };
 
   drawChildren = function(map, parent, parentX, parentY) {
-    var child, childCoords, childX, childY, i, j, line, lineOffsetX, lineOffsetY, numChildren, ref, results;
+    var child, childCoords, childX, childY, i, j, line, lineOffsetX, lineOffsetY, numChildren, ref;
     lineOffsetX = 20;
     lineOffsetY = 20;
     numChildren = parent.children.length;
     childCoords = calculateChildCoords(numChildren, parentX, parentY);
-    results = [];
     for (i = j = 0, ref = numChildren - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
       child = parent.children[i];
       childX = childCoords[i][0];
@@ -454,9 +453,8 @@
       line.graphics.moveTo(parentX, parentY + lineOffsetY);
       line.graphics.lineTo(childX + lineOffsetX, childY - lineOffsetY);
       line.graphics.endStroke();
-      results.push(map.addChild(line));
+      map.addChild(line);
     }
-    return results;
   };
 
   findFileCoords = function(fs, filepath, rootX, rootY) {
@@ -485,25 +483,11 @@
       ref = this.getCoordinatesForPath(this.centeredOn), oldX = ref[0], oldY = ref[1];
       ref1 = this.getCoordinatesForPath(new_dir.path), newX = ref1[0], newY = ref1[1];
       ref2 = [oldX - newX, oldY - newY], deltaX = ref2[0], deltaY = ref2[1];
-
-      /*
-      		  createjs.Tween.get(circle, { loop: true })
-      		    .to({ x: 400 }, 1000, createjs.Ease.getPowInOut(4))
-      		      .to({ alpha: 0, y: 175 }, 500, createjs.Ease.getPowInOut(2))
-      		        .to({ alpha: 0, y: 225 }, 100)
-      			  .to({ alpha: 1, y: 200 }, 500, createjs.Ease.getPowInOut(2))
-      			    .to({ x: 100 }, 800, createjs.Ease.getPowInOut(2));
-       */
       createjs.Tween.get(this.map).to({
         x: this.map.x + deltaX,
         y: this.map.y + deltaY
       }, 500, createjs.Ease.getPowInOut(2));
-
-      /*
-      		@map.x = @map.x + deltaX
-      		@map.y = @map.y + deltaY
-       */
-      return this.centeredOn = new_dir.path;
+      this.centeredOn = new_dir.path;
     };
 
     DisplayManager.prototype.getCoordinatesForPath = function(path) {
@@ -520,7 +504,7 @@
     DisplayManager.prototype.drawFileSystem = function(fs) {
       drawFile(this.map, fs.root, this.map.x, this.map.y);
       drawChildren(this.map, fs.root, this.map.x, this.map.y);
-      return this.stage.addChild(this.map);
+      this.stage.addChild(this.map);
     };
 
     return DisplayManager;
@@ -638,35 +622,35 @@
 
     SoundManager.prototype.soundOff = function() {
       this.playSounds = false;
-      return createjs.Sound.stop();
+      createjs.Sound.stop();
     };
 
     SoundManager.prototype.playBoing = function() {
       if (this.playSounds) {
         if (Math.random() < 0.5) {
-          return createjs.Sound.play("boing1");
+          createjs.Sound.play("boing1");
         } else {
-          return createjs.Sound.play("boing2");
+          createjs.Sound.play("boing2");
         }
       }
     };
 
     SoundManager.prototype.playOops = function() {
       if (this.playSounds) {
-        return createjs.Sound.play("oops");
+        createjs.Sound.play("oops");
       }
     };
 
     SoundManager.prototype.playTheme = function() {
       if (this.playSounds) {
-        return createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5);
+        createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5);
       }
     };
 
     SoundManager.prototype.handleFileLoad = function(event) {
       console.log("Preloaded:", event.id, event.src);
       if (event.id === "bashy_theme1") {
-        return this.playTheme();
+        this.playTheme();
       }
     };
 

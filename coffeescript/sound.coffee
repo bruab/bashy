@@ -12,6 +12,7 @@ class SoundManager
 	soundOff: () ->
 		@playSounds = false
 		createjs.Sound.stop()
+		return
 
 	# Function to play sound effect after each successful user command
 	playBoing: () ->
@@ -20,21 +21,25 @@ class SoundManager
 				createjs.Sound.play("boing1")
 			else
 				createjs.Sound.play("boing2")
+		return
 
 	# Function to play sound effect after erroneous command
 	playOops: () ->
 		if @playSounds
 			createjs.Sound.play("oops")
+		return
 
 	# Function to play theme song
 	playTheme: () ->
 		if @playSounds
 			createjs.Sound.play("bashy_theme1", createjs.SoundJS.INTERRUPT_ANY, 0, 0, -1, 0.5)
+		return
 
 	# Event listener for loading audio files -- play theme song once it's loaded
 	handleFileLoad: (event) =>
 		console.log("Preloaded:", event.id, event.src)
 		if event.id == "bashy_theme1"
 			@playTheme()
+		return
 
 window.SoundManager = SoundManager

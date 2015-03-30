@@ -28,13 +28,16 @@ class TaskManager
 				else
 					@winner = true
 					@win()
+		return
 
 	showTask: (task) ->
 		$("#menu").html(task.name)
+		return
 	
 	win: () ->
 		$("#menu_header").html("")
 		$("#menu").html("<h4>You Win!</h4>")
+		return
 
 # Task class encapsulates a task name, hint(s) and any number of 
 # os queries and the desired responses
@@ -57,10 +60,12 @@ class MenuManager
 
 	showTask: (task) ->
 		$("#menu").html(task.name)
+		return
 	
 	win: () ->
 		$("#menu_header").html("")
 		$("#menu").html("<h4>You Win!</h4>")
+		return
 
 
 window.TaskManager = TaskManager
