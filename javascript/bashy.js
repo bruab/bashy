@@ -675,16 +675,10 @@
   window.SoundManager = SoundManager;
 
   parseCommand = function(input) {
-    var args, command, i, j, len, ref, splitInput;
+    var args, command, splitInput;
     splitInput = input.split(/\s+/);
     command = splitInput[0];
-    args = [];
-    len = splitInput.length;
-    if (len > 1) {
-      for (i = j = 1, ref = len - 1; 1 <= ref ? j <= ref : j >= ref; i = 1 <= ref ? ++j : --j) {
-        args.push(splitInput[i]);
-      }
-    }
+    args = splitInput.slice(1);
     return [command, args];
   };
 
