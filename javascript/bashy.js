@@ -335,8 +335,6 @@
 
   window.TaskManager = TaskManager;
 
-  window.MenuManager = MenuManager;
-
   HelpManager = (function() {
     function HelpManager() {
       this.seenIntro = false;
@@ -395,7 +393,8 @@
     sprite.currentFrame = 0;
     sprite.x = SPRITEX;
     sprite.y = SPRITEY;
-    return stage.addChild(sprite);
+    stage.addChild(sprite);
+    return sprite;
   };
 
   startTicker = function(stage) {

@@ -49,8 +49,7 @@ class Task
 			@is_complete = @complete_fn(os)
 			return @is_complete
 
-	toString: () ->
-		@name
+	toString: () -> @name
 
 # MenuManager updates "current task" menu
 class MenuManager
@@ -65,4 +64,3 @@ class MenuManager
 
 
 window.TaskManager = TaskManager
-window.MenuManager = MenuManager

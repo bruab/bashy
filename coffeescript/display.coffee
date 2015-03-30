@@ -21,6 +21,7 @@ createBashySprite = (bashy_himself, stage) ->
 	sprite.x = SPRITEX
 	sprite.y = SPRITEY
 	stage.addChild(sprite)
+	return sprite
 
 startTicker = (stage) ->
 	# Set up Ticker, frame rate
@@ -37,7 +38,7 @@ calculateChildCoords = (count, parentX, parentY) ->
 	startingX = parentX - 0.5*count*xOffset
 	y = parentY + yOffset
 	coords = for i in [0..count-1] then [startingX + 2*i*xOffset, y]
-	coords
+	return coords
 
 drawFile = (map, file, x, y) ->
 	text = new createjs.Text(file.name(), "20px Arial", "black")

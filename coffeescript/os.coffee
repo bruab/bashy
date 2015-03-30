@@ -3,11 +3,11 @@ class File
 		@children = []
 	name: () ->
 		if @path == "/"
-			@path
+			return @path
 		else
 			splitPath = @path.split "/"
 			len = splitPath.length
-			splitPath[len-1]
+			return splitPath[len-1]
 
 	toString: () -> "File object with path=#{@path}"
 
@@ -61,19 +61,19 @@ cleanPath = (path) ->
 	for dir in splitPath
 		if dir != ""
 			newPath = "#{newPath}/#{dir}"
-	newPath
+	return newPath
 	
 # helper function for path parsing
 getParentPath = (dir) ->
 	if dir.path == "/"
-		"/"
+		return "/"
 	else
 		splitPath = dir.path.split "/"
 		len = splitPath.length
 		parentPath = ""
 		for i in [0..len-2]
 			parentPath = "#{parentPath}/#{splitPath[i]}"
-		parentPath
+		return parentPath
 
 # OS class in charge of file system, processing user input
 class BashyOS
@@ -82,7 +82,7 @@ class BashyOS
 
 	# This feels ghetto but works for now
 	validCommands: () ->
-		["cd", "pwd"]
+		return ["cd", "pwd"]
 
 	# Function called every time a user types a command
 	# Takes input string, returns context, stdout and stderr
@@ -95,7 +95,7 @@ class BashyOS
 		else if command == 'pwd'
 			[stdout, stderr] = @pwd()
 		# Return context, stdout, stderr
-		[@cwd, stdout, stderr]
+		return [@cwd, stdout, stderr]
 
 	cd_relative_path: (path) =>
 		# TODO hecka code duplication going on here
@@ -139,8 +139,7 @@ class BashyOS
 				@cwd = @file_system.getFile(absolutePath)
 			else
 				stderr = "Invalid path: #{absolutePath}"
-		# Return stdout, stderr
-		[stdout, stderr]
+		return [stdout, stderr]
 
 	cd_absolute_path: (path) =>
 		# No output by default
@@ -150,8 +149,7 @@ class BashyOS
 			@cwd = @file_system.getFile(path)
 		else
 			stderr = "Invalid path"
-		# Return stdout, stderr
-		[stdout, stderr]
+		return [stdout, stderr]
 
 	cd: (args) =>
 		# No output by default
@@ -167,8 +165,7 @@ class BashyOS
 				[stdout, stderr] = @cd_absolute_path(path)
 			else
 				[stdout, stderr] = @cd_relative_path(path)
-		# Return stdout, stderr
-		[stdout, stderr]
+		return [stdout, stderr]
 
 	pwd: () =>
 		# Return @cwd as stdout, nothing as stderr

@@ -2,7 +2,7 @@ parseCommand = (input) ->
 	splitInput = input.split /\s+/
 	command = splitInput[0]
 	args = splitInput[1..]
-	[command, args]
+	return [command, args]
 
 
 class BashyController
@@ -29,13 +29,13 @@ class BashyController
 
 		# Return text to terminal
 		if stderr
-			stderr
+			return stderr
 		else
 			if stdout
-				stdout
+				return stdout
 			else
 				# Returning 'undefined' means no terminal output
-				undefined
+				return undefined
 
 	# Function called each time user types a command
 	# Takes user input string, updates system, returns text to terminal
