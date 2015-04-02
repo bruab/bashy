@@ -1,16 +1,16 @@
 class HelpManager
-	constructor: () ->
+	constructor: (@taskMgr) ->
 		@seenIntro = false
 
 	onClick: () ->
 		if not @seenIntro
-			@playIntro()
+			@introScreen()
 			@seenIntro = true
 		else
 			@helpScreen()
 		return
 
-	playIntro: () ->
+	introScreen: () ->
 		introHtml = "<h3>Welcome to B@shy!</h3>"
 		introHtml += "<p>Use your keyboard to type commands.</p>"
 		introHtml += "<p>Available commands are 'pwd' and 'cd'</p>"
@@ -19,8 +19,9 @@ class HelpManager
 		return
 
 	helpScreen: () ->
+		hint = @taskMgr.currentTask.hints[0]
 		helpHtml = "<h3>B@shy Help</h3>"
-		helpHtml += "TODO contextual help messages"
+		helpHtml += "<p>Hint: #{hint}</p>"
 		$('#helpText').html(helpHtml)
 		$('#helpScreen').foundation('reveal', 'open')
 		return

@@ -336,20 +336,21 @@
   window.TaskManager = TaskManager;
 
   HelpManager = (function() {
-    function HelpManager() {
+    function HelpManager(taskMgr1) {
+      this.taskMgr = taskMgr1;
       this.seenIntro = false;
     }
 
     HelpManager.prototype.onClick = function() {
       if (!this.seenIntro) {
-        this.playIntro();
+        this.introScreen();
         this.seenIntro = true;
       } else {
         this.helpScreen();
       }
     };
 
-    HelpManager.prototype.playIntro = function() {
+    HelpManager.prototype.introScreen = function() {
       var introHtml;
       introHtml = "<h3>Welcome to B@shy!</h3>";
       introHtml += "<p>Use your keyboard to type commands.</p>";
@@ -359,9 +360,10 @@
     };
 
     HelpManager.prototype.helpScreen = function() {
-      var helpHtml;
+      var helpHtml, hint;
+      hint = this.taskMgr.currentTask.hints[0];
       helpHtml = "<h3>B@shy Help</h3>";
-      helpHtml += "TODO contextual help messages";
+      helpHtml += "<p>Hint: " + hint + "</p>";
       $('#helpText').html(helpHtml);
       $('#helpScreen').foundation('reveal', 'open');
     };
@@ -567,13 +569,13 @@
     $("#audioOff").click(function() {
       return soundMgr.soundOff();
     });
-    helpMgr = new HelpManager();
+    taskMgr = new TaskManager();
+    helpMgr = new HelpManager(taskMgr);
     $("#playScreen").click(function() {
       return helpMgr.onClick();
     });
     fileSystem = new FileSystem();
     os = new BashyOS(fileSystem);
-    taskMgr = new TaskManager();
     canvas = $("#bashyCanvas")[0];
     stage = new createjs.Stage(canvas);
     bashyImage = new Image();
