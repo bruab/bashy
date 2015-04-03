@@ -59,4 +59,4 @@ jQuery ->
 		# Create Terminal object
 		# 'onBlur: false' guarantees the terminal always stays in focus
 		$('#terminal').terminal(handleInput,
-			{ greetings: "", prompt: '> ', onBlur: false, name: 'bashyTerminal' })
+			{ greetings: "", prompt: '$ ', onBlur: false, name: 'bashyTerminal' })

@@ -592,7 +592,7 @@
       };
       return $('#terminal').terminal(handleInput, {
         greetings: "",
-        prompt: '> ',
+        prompt: '$ ',
         onBlur: false,
         name: 'bashyTerminal'
       });
