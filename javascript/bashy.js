@@ -123,13 +123,13 @@
   };
 
   BashyOS = (function() {
-    function BashyOS(fileSystem1) {
-      this.fileSystem = fileSystem1;
+    function BashyOS() {
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
       this.cdAbsolutePath = bind(this.cdAbsolutePath, this);
       this.cdRelativePath = bind(this.cdRelativePath, this);
       this.runCommand = bind(this.runCommand, this);
+      this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
     }
 
@@ -629,15 +629,14 @@
 
   BashyGame = (function() {
     function BashyGame() {
-      var bashyImage, canvas, fileSystem, helpMgr, os, playSounds, soundMgr, stage, taskMgr;
+      var bashyImage, canvas, helpMgr, os, playSounds, soundMgr, stage, taskMgr;
       soundMgr = new SoundManager(playSounds = false);
       taskMgr = new TaskManager();
       helpMgr = new HelpManager(taskMgr);
       $("#playScreen").click(function() {
         return helpMgr.onClick();
       });
-      fileSystem = new FileSystem();
-      os = new BashyOS(fileSystem);
+      os = new BashyOS();
       canvas = $("#bashyCanvas")[0];
       stage = new createjs.Stage(canvas);
       bashyImage = new Image();

@@ -1,31 +1,13 @@
 class BashyGame
 	constructor: ->
-		###################################################
-		################ SOUND ############################
-		###################################################
 		soundMgr = new SoundManager(playSounds = false)
-
-		###################################################
-		############# MENU AND TASKS ######################
-		###################################################
 		taskMgr = new TaskManager()
-
-		###################################################
-		################ HELP SCREEN ######################
-		###################################################
 		helpMgr = new HelpManager(taskMgr)
 		# Listen for any click whatsoever
 		$("#playScreen").click -> helpMgr.onClick()
 
-		###################################################
-		############# FILE SYSTEM, OS #####################
-		###################################################
-		fileSystem = new FileSystem()
-		os = new BashyOS(fileSystem)
+		os = new BashyOS()
 
-		###################################################
-		################## CANVAS, ETC. ###################
-		###################################################
 		canvas = $("#bashyCanvas")[0]
 		stage = new createjs.Stage(canvas)
 		# Load spritesheet image; start game when it's loaded

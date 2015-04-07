@@ -77,7 +77,8 @@ getParentPath = (dir) ->
 
 # OS class in charge of file system, processing user input
 class BashyOS
-	constructor: (@fileSystem) ->
+	constructor: () ->
+		@fileSystem = new FileSystem()
 		@cwd = @fileSystem.root
 
 	# This feels ghetto but works for now
