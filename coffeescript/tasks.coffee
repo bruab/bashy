@@ -66,6 +66,3 @@ class MenuManager
 		$("#menuHeader").html("")
 		$("#menu").html("<h4>You Win!</h4>")
 		return
-
-
-window.TaskManager = TaskManager

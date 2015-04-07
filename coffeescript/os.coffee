@@ -172,7 +172,3 @@ class BashyOS
 		[stdout, stderr] = ["", ""]
 		stdout = @cwd.path
 		return [stdout, stderr]
-
-
-# Attach objects to window so they can be accessed by code in other file
-window.BashyOS = BashyOS

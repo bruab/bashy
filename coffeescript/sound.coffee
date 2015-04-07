@@ -41,5 +41,3 @@ class SoundManager
 		if event.id == "bashy_theme1"
 			@playTheme()
 		return
-
-window.SoundManager = SoundManager

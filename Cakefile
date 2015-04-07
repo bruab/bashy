@@ -10,6 +10,7 @@ appFiles  = [
   'main'
   'sound'
   'controller'
+  'bashy_game'
 ]
 
 task 'build', 'Build single application file from source files', ->

@@ -25,5 +25,3 @@ class HelpManager
 		$('#helpText').html(helpHtml)
 		$('#helpScreen').foundation('reveal', 'open')
 		return
-
-window.HelpManager = HelpManager

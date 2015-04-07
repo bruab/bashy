@@ -48,5 +48,3 @@ class BashyController
 			return "Invalid command: #{command}"
 		else
 			return @executeCommand(command, args)
-
-window.BashyController = BashyController
