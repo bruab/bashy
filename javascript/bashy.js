@@ -640,7 +640,6 @@
       canvas = $("#bashyCanvas")[0];
       stage = new createjs.Stage(canvas);
       bashyImage = new Image();
-      bashyImage.src = "assets/bashy_sprite_sheet.png";
       bashyImage.onload = function() {
         var bashySprite, controller, displayMgr, handleInput;
         bashySprite = createBashySprite(bashyImage, stage);
@@ -658,6 +657,7 @@
           name: 'bashyTerminal'
         });
       };
+      bashyImage.src = "assets/bashy_sprite_sheet.png";
     }
 
     return BashyGame;
