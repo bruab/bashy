@@ -332,8 +332,8 @@
   })();
 
   HelpManager = (function() {
-    function HelpManager(taskMgr1) {
-      this.taskMgr = taskMgr1;
+    function HelpManager(taskMgr) {
+      this.taskMgr = taskMgr;
       this.seenIntro = false;
     }
 
@@ -583,11 +583,11 @@
   };
 
   BashyController = (function() {
-    function BashyController(os1, taskMgr1, displayMgr1, soundMgr1) {
+    function BashyController(os1, taskMgr, displayMgr, soundMgr) {
       this.os = os1;
-      this.taskMgr = taskMgr1;
-      this.displayMgr = displayMgr1;
-      this.soundMgr = soundMgr1;
+      this.taskMgr = taskMgr;
+      this.displayMgr = displayMgr;
+      this.soundMgr = soundMgr;
     }
 
     BashyController.prototype.executeCommand = function(command, args) {
@@ -629,35 +629,37 @@
 
   BashyGame = (function() {
     function BashyGame() {
-      var bashyImage, canvas, helpMgr, os, playSounds, soundMgr, stage, taskMgr;
-      soundMgr = new SoundManager(playSounds = false);
-      taskMgr = new TaskManager();
-      helpMgr = new HelpManager(taskMgr);
+      var canvas, playSounds;
+      this.soundMgr = new SoundManager(playSounds = false);
+      this.taskMgr = new TaskManager();
+      this.helpMgr = new HelpManager(this.taskMgr);
       $("#playScreen").click(function() {
-        return helpMgr.onClick();
+        return this.helpMgr.onClick();
       });
-      os = new BashyOS();
+      this.os = new BashyOS();
       canvas = $("#bashyCanvas")[0];
-      stage = new createjs.Stage(canvas);
-      bashyImage = new Image();
-      bashyImage.onload = function() {
-        var bashySprite, controller, displayMgr, handleInput;
-        bashySprite = createBashySprite(bashyImage, stage);
-        displayMgr = new DisplayManager(stage, bashySprite);
-        displayMgr.drawFileSystem(os.fileSystem);
-        startTicker(stage);
-        controller = new BashyController(os, taskMgr, displayMgr, soundMgr);
-        handleInput = function(input) {
-          return controller.handleInput(input);
+      this.stage = new createjs.Stage(canvas);
+      this.bashyImage = new Image();
+      this.bashyImage.onload = (function(_this) {
+        return function() {
+          var bashySprite, handleInput;
+          bashySprite = createBashySprite(_this.bashyImage, _this.stage);
+          _this.displayMgr = new DisplayManager(_this.stage, bashySprite);
+          _this.displayMgr.drawFileSystem(_this.os.fileSystem);
+          startTicker(_this.stage);
+          _this.controller = new BashyController(_this.os, _this.taskMgr, _this.displayMgr, _this.soundMgr);
+          handleInput = function(input) {
+            return _this.controller.handleInput(input);
+          };
+          return $('#terminal').terminal(handleInput, {
+            greetings: "",
+            prompt: '$ ',
+            onBlur: false,
+            name: 'bashyTerminal'
+          });
         };
-        return $('#terminal').terminal(handleInput, {
-          greetings: "",
-          prompt: '$ ',
-          onBlur: false,
-          name: 'bashyTerminal'
-        });
-      };
-      bashyImage.src = "assets/bashy_sprite_sheet.png";
+      })(this);
+      this.bashyImage.src = "assets/bashy_sprite_sheet.png";
     }
 
     return BashyGame;
