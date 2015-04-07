@@ -8,6 +8,8 @@ class SoundManager
 			     {id:"oops", src:"oops.mp3"},
 			     {id:"bashy_theme1", src:"bashy_theme1.mp3"}]
 				, "assets/")
+		# Listen for 'turn off sound' button
+		$("#audioOff").click @soundOff
 
 	soundOff: () ->
 		@playSounds = false

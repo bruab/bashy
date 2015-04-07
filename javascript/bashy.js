@@ -533,6 +533,7 @@
           src: "bashy_theme1.mp3"
         }
       ], "assets/");
+      $("#audioOff").click(this.soundOff);
     }
 
     SoundManager.prototype.soundOff = function() {
@@ -629,11 +630,7 @@
   BashyGame = (function() {
     function BashyGame() {
       var bashyImage, canvas, fileSystem, helpMgr, os, playSounds, soundMgr, stage, taskMgr;
-      playSounds = false;
-      soundMgr = new SoundManager(playSounds);
-      $("#audioOff").click(function() {
-        return soundMgr.soundOff();
-      });
+      soundMgr = new SoundManager(playSounds = false);
       taskMgr = new TaskManager();
       helpMgr = new HelpManager(taskMgr);
       $("#playScreen").click(function() {

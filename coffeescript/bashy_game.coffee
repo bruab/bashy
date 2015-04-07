@@ -3,10 +3,7 @@ class BashyGame
 		###################################################
 		################ SOUND ############################
 		###################################################
-		playSounds = false
-		soundMgr = new SoundManager(playSounds)
-		# Listen for 'turn off sound' button
-		$("#audioOff").click -> soundMgr.soundOff()
+		soundMgr = new SoundManager(playSounds = false)
 
 		###################################################
 		############# MENU AND TASKS ######################
