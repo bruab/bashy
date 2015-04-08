@@ -7,6 +7,8 @@ parseCommand = (input) ->
 
 class BashyController
 	constructor: (@os, @taskMgr, @displayMgr, @soundMgr) ->
+		# Listen for any click whatsoever
+		$("html").click => helpScreen @taskMgr.currentTask.hints[0]
 
 	executeCommand: (command, args) ->
 		# Get a copy of the current file system

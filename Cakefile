@@ -5,7 +5,6 @@ appFiles  = [
   # omit src/ and .coffee to make the below lines a little shorter
   'os'
   'tasks'
-  'help_screen'
   'display'
   'main'
   'sound'

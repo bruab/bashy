@@ -1,12 +1,6 @@
 class BashyGame
 	constructor: ->
 		@soundMgr = new SoundManager(playSounds = false)
-		@taskMgr = new TaskManager()
-		@helpMgr = new HelpManager(@taskMgr)
-		# Listen for any click whatsoever
-		$("#playScreen").click -> @helpMgr.onClick()
-		@os = new BashyOS()
-
 		# Load spritesheet image; start game when it's loaded
 		@bashyImage = new Image()
 		@bashyImage.onload = =>
@@ -14,9 +8,11 @@ class BashyGame
 		@bashyImage.src = "assets/bashy_sprite_sheet.png"
 
 	initialize: ->
+		@taskMgr = new TaskManager()
+		@os = new BashyOS()
+
 		@displayMgr = createDisplayManager(@bashyImage)
 		@displayMgr.drawFileSystem(@os.fileSystem)
-		# Create controller
 		@controller = new BashyController(@os, @taskMgr, @displayMgr, @soundMgr)
 
 		# Create Terminal object
