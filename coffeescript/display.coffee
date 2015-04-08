@@ -1,3 +1,12 @@
+createDisplayManager = (image) ->
+	canvas = $("#bashyCanvas")[0]
+	stage = new createjs.Stage(canvas)
+	# Create sprite and display manager
+	bashySprite = createBashySprite(image, stage)
+	displayMgr = new DisplayManager(stage, bashySprite)
+	startTicker(stage)
+	return displayMgr
+
 # Functions to create sprite
 createBashySprite = (bashyImage, stage) ->
 	[SPRITEX, SPRITEY] = [200, 50]
@@ -112,3 +121,4 @@ class DisplayManager
 		drawChildren(@map, fs.root, @map.x, @map.y)
 		@stage.addChild(@map)
 		return
+

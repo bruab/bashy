@@ -14,14 +14,8 @@ class BashyGame
 		@bashyImage.src = "assets/bashy_sprite_sheet.png"
 
 	initialize: ->
-		canvas = $("#bashyCanvas")[0]
-		stage = new createjs.Stage(canvas)
-		# Create sprite and display manager
-		bashySprite = createBashySprite(@bashyImage, stage)
-		@displayMgr = new DisplayManager(stage, bashySprite)
+		@displayMgr = createDisplayManager(@bashyImage)
 		@displayMgr.drawFileSystem(@os.fileSystem)
-		startTicker(stage)
-
 		# Create controller
 		@controller = new BashyController(@os, @taskMgr, @displayMgr, @soundMgr)
 
