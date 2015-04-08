@@ -4,11 +4,23 @@ parseCommand = (input) ->
 	args = splitInput[1..]
 	return [command, args]
 
+createZoneManager = (display, sound, zone) ->
+	# TODO create zone based on 'zone' arg
+	zoneManager = new ZoneManager(display, sound)
+	return zoneManager
 
-class BashyController
-	constructor: (@os, @taskMgr, @displayMgr, @soundMgr) ->
+class ZoneManager
+	constructor: (@displayMgr, @soundMgr) ->
+		@nextZone = ""
+		@taskMgr = new TaskManager()
+		@os = new BashyOS()
 		# Listen for any click whatsoever
 		$("html").click => helpScreen @taskMgr.currentTask.hints[0]
+		@displayMgr.drawFileSystem(@os.fileSystem)
+		# Create Terminal object
+		# 'onBlur: false' guarantees the terminal always stays in focus
+		$('#terminal').terminal(@handleInput,
+			{ greetings: "", prompt: '$ ', onBlur: false, name: 'bashyTerminal' })
 
 	executeCommand: (command, args) ->
 		# Get a copy of the current file system
