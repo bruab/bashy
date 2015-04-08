@@ -588,6 +588,7 @@
       this.taskMgr = taskMgr;
       this.displayMgr = displayMgr;
       this.soundMgr = soundMgr;
+      this.handleInput = bind(this.handleInput, this);
     }
 
     BashyController.prototype.executeCommand = function(command, args) {
@@ -629,7 +630,7 @@
 
   BashyGame = (function() {
     function BashyGame() {
-      var canvas, playSounds;
+      var playSounds;
       this.soundMgr = new SoundManager(playSounds = false);
       this.taskMgr = new TaskManager();
       this.helpMgr = new HelpManager(this.taskMgr);
@@ -637,30 +638,31 @@
         return this.helpMgr.onClick();
       });
       this.os = new BashyOS();
-      canvas = $("#bashyCanvas")[0];
-      this.stage = new createjs.Stage(canvas);
       this.bashyImage = new Image();
       this.bashyImage.onload = (function(_this) {
         return function() {
-          var bashySprite, handleInput;
-          bashySprite = createBashySprite(_this.bashyImage, _this.stage);
-          _this.displayMgr = new DisplayManager(_this.stage, bashySprite);
-          _this.displayMgr.drawFileSystem(_this.os.fileSystem);
-          startTicker(_this.stage);
-          _this.controller = new BashyController(_this.os, _this.taskMgr, _this.displayMgr, _this.soundMgr);
-          handleInput = function(input) {
-            return _this.controller.handleInput(input);
-          };
-          return $('#terminal').terminal(handleInput, {
-            greetings: "",
-            prompt: '$ ',
-            onBlur: false,
-            name: 'bashyTerminal'
-          });
+          return _this.initialize();
         };
       })(this);
       this.bashyImage.src = "assets/bashy_sprite_sheet.png";
     }
+
+    BashyGame.prototype.initialize = function() {
+      var bashySprite, canvas, stage;
+      canvas = $("#bashyCanvas")[0];
+      stage = new createjs.Stage(canvas);
+      bashySprite = createBashySprite(this.bashyImage, stage);
+      this.displayMgr = new DisplayManager(stage, bashySprite);
+      this.displayMgr.drawFileSystem(this.os.fileSystem);
+      startTicker(stage);
+      this.controller = new BashyController(this.os, this.taskMgr, this.displayMgr, this.soundMgr);
+      return $('#terminal').terminal(this.controller.handleInput, {
+        greetings: "",
+        prompt: '$ ',
+        onBlur: false,
+        name: 'bashyTerminal'
+      });
+    };
 
     return BashyGame;
 

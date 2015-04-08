@@ -39,7 +39,7 @@ class BashyController
 
 	# Function called each time user types a command
 	# Takes user input string, updates system, returns text to terminal
-	handleInput: (input) ->
+	handleInput: (input) =>
 		# Strip leading and trailing whitespace
 		input = input.replace /^\s+|\s+$/g, ""
 		# Parse input and check for invalid command
