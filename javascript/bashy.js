@@ -591,14 +591,17 @@
           return helpScreen(_this.taskMgr.currentTask.hints[0]);
         };
       })(this));
+    }
+
+    ZoneManager.prototype.run = function() {
       this.displayMgr.drawFileSystem(this.os.fileSystem);
-      $('#terminal').terminal(this.handleInput, {
+      return $('#terminal').terminal(this.handleInput, {
         greetings: "",
         prompt: '$ ',
         onBlur: false,
         name: 'bashyTerminal'
       });
-    }
+    };
 
     ZoneManager.prototype.executeCommand = function(command, args) {
       var cwd, fs, ref, stderr, stdout;
@@ -651,8 +654,11 @@
     }
 
     BashyGame.prototype.initialize = function() {
+      var current_zone;
       this.displayMgr = createDisplayManager(this.bashyImage);
-      return this.zoneManager = createZoneManager(this.displayMgr, this.soundMgr, "nav");
+      current_zone = "nav";
+      this.zoneManager = createZoneManager(this.displayMgr, this.soundMgr, current_zone);
+      return this.zoneManager.run();
     };
 
     return BashyGame;

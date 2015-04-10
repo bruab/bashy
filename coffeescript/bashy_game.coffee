@@ -9,4 +9,7 @@ class BashyGame
 
 	initialize: ->
 		@displayMgr = createDisplayManager(@bashyImage)
-		@zoneManager = createZoneManager(@displayMgr, @soundMgr, "nav")
+		# Start on level one, navigation
+		current_zone = "nav"
+		@zoneManager = createZoneManager(@displayMgr, @soundMgr, current_zone)
+		@zoneManager.run()

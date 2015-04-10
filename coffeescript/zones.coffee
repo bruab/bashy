@@ -16,6 +16,9 @@ class ZoneManager
 		@os = new BashyOS()
 		# Listen for any click whatsoever
 		$("html").click => helpScreen @taskMgr.currentTask.hints[0]
+
+	run: () ->
+		# TODO how to return next zone from within handleInput method?
 		@displayMgr.drawFileSystem(@os.fileSystem)
 		# Create Terminal object
 		# 'onBlur: false' guarantees the terminal always stays in focus
