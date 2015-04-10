@@ -26,7 +26,8 @@ class Zone
 		# Get a copy of the current file system
 		fs = @os.fileSystem
 
-		# BashyOS updates and returns context, stdout, stderr
+		# @os updates and returns context, stdout, stderr
+		# @os.fileSystem may be modified by this command
 		[cwd, stdout, stderr] = @os.runCommand(command, args)
 
 		# TaskManager checks for completed tasks
@@ -35,21 +36,25 @@ class Zone
 		# DisplayManager updates map
 		@displayMgr.update(fs, cwd)
 		
-		# Handle sound effects
+		# Play sound effect, 
+		# return text to terminal
 		if stderr
-			@soundMgr.playOops()
-		else
-			@soundMgr.playBoing()
-
-		# Return text to terminal
-		if stderr
+			@playError()
 			return stderr
 		else
+			@playSuccess()
 			if stdout
 				return stdout
 			else
 				# Returning 'undefined' means no terminal output
 				return undefined
+
+	playError: ->
+		@soundMgr.playOops()
+
+	playSuccess: ->
+		@soundMgr.playBoing()
+
 
 	# Function called each time user types a command
 	# Takes user input string, updates system, returns text to terminal
@@ -57,6 +62,7 @@ class Zone
 		# Strip leading and trailing whitespace
 		input = input.replace /^\s+|\s+$/g, ""
 		# Parse input and check for invalid command
+		# TODO use a splat here
 		[command, args] = parseCommand(input)
 		if command not in @os.validCommands()
 			return "Invalid command: #{command}"

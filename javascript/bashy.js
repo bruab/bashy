@@ -609,19 +609,24 @@
       this.taskMgr.update(this.os);
       this.displayMgr.update(fs, cwd);
       if (stderr) {
-        this.soundMgr.playOops();
-      } else {
-        this.soundMgr.playBoing();
-      }
-      if (stderr) {
+        this.playError();
         return stderr;
       } else {
+        this.playSuccess();
         if (stdout) {
           return stdout;
         } else {
           return void 0;
         }
       }
+    };
+
+    Zone.prototype.playError = function() {
+      return this.soundMgr.playOops();
+    };
+
+    Zone.prototype.playSuccess = function() {
+      return this.soundMgr.playBoing();
     };
 
     Zone.prototype.handleInput = function(input) {
