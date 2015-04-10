@@ -9,11 +9,8 @@ createZoneManager = (display, sound, zone) ->
 	zoneManager = new ZoneManager(display, sound)
 	return zoneManager
 
-class ZoneManager
-	constructor: (@displayMgr, @soundMgr) ->
-		@nextZone = ""
-		@taskMgr = new TaskManager()
-		@os = new BashyOS()
+class Zone
+	constructor: (@displayMgr, @soundMgr, @taskMgr, @os) ->
 		# Listen for any click whatsoever
 		$("html").click => helpScreen @taskMgr.currentTask.hints[0]
 
@@ -65,3 +62,13 @@ class ZoneManager
 			return "Invalid command: #{command}"
 		else
 			return @executeCommand(command, args)
+
+
+class ZoneManager
+	constructor: (@displayMgr, @soundMgr) ->
+		@taskMgr = new TaskManager()
+		@os = new BashyOS()
+		@currentZone = new Zone(@displayMgr, @soundMgr, @taskMgr, @os)
+
+	run: () ->
+		@currentZone.run()
