@@ -1,4 +1,4 @@
-class File
+class Directory
 	constructor: (@path) ->
 		@children = []
 	name: () ->
@@ -9,7 +9,7 @@ class File
 			len = splitPath.length
 			return splitPath[len-1]
 
-	toString: () -> "File object with path=#{@path}"
+	toString: () -> "Directory object with path=#{@path}"
 
 	getChild: (name) ->
 		for child in @children
@@ -20,15 +20,15 @@ class File
 # FileSystem class stores and answers questions about directories and files
 class FileSystem
 	constructor: () ->
-		@root = new File("/")
+		@root = new Directory("/")
 
-		media = new File("/media")
-		pics = new File("/media/pics")
+		media = new Directory("/media")
+		pics = new Directory("/media/pics")
 		media.children.push(pics)
 		@root.children.push(media)
 
-		home = new File("/home")
-		bashy = new File("/home/bashy")
+		home = new Directory("/home")
+		bashy = new Directory("/home/bashy")
 		home.children.push(bashy)
 		@root.children.push(home)
 
@@ -46,7 +46,7 @@ class FileSystem
 				currentParent = dir
 		return true
 
-	getFile: (path) ->
+	getDirectory: (path) ->
 		if path == "/"
 			return @root
 		currentParent = @root
@@ -114,7 +114,7 @@ class BashyOS
 					absolutePath = "#{absolutePath}/#{field}"
 			absolutePath = cleanPath(absolutePath)
 			if @fileSystem.isValidPath(absolutePath)
-				@cwd = @fileSystem.getFile(absolutePath)
+				@cwd = @fileSystem.getDirectory(absolutePath)
 			else
 				stderr = "Invalid path: #{absolutePath}"
 		else if fields[0] == "."
@@ -125,7 +125,7 @@ class BashyOS
 				absolutePath = "#{@cwd}/#{path[2..]}"
 			absolutePath = cleanPath(absolutePath)
 			if @fileSystem.isValidPath(absolutePath)
-				@cwd = @fileSystem.getFile(absolutePath)
+				@cwd = @fileSystem.getDirectory(absolutePath)
 			else
 				stderr = "Invalid path: #{absolutePath}"
 			
@@ -137,7 +137,7 @@ class BashyOS
 				absolutePath = "#{@cwd.path}/#{path}"
 			absolutePath = cleanPath(absolutePath)
 			if @fileSystem.isValidPath(absolutePath)
-				@cwd = @fileSystem.getFile(absolutePath)
+				@cwd = @fileSystem.getDirectory(absolutePath)
 			else
 				stderr = "Invalid path: #{absolutePath}"
 		return [stdout, stderr]
@@ -147,7 +147,7 @@ class BashyOS
 		[stdout, stderr] = ["", ""]
 		absolutePath = cleanPath(path)
 		if @fileSystem.isValidPath(path)
-			@cwd = @fileSystem.getFile(path)
+			@cwd = @fileSystem.getDirectory(path)
 		else
 			stderr = "Invalid path"
 		return [stdout, stderr]
@@ -157,7 +157,7 @@ class BashyOS
 		[stdout, stderr] = ["", ""]
 		if args.length == 0
 			# The user typed "cd" with no additional args
-			@cwd = @fileSystem.getFile("/home")
+			@cwd = @fileSystem.getDirectory("/home")
 		else if args.length > 0
 			path = args[0] # not handling options/flags yet
 			# Determine if absolute or relative path
