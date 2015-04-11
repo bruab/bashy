@@ -163,8 +163,7 @@
       } else if (command === 'pwd') {
         ref2 = this.pwd(), stdout = ref2[0], stderr = ref2[1];
       }
-      alert(this.cwd);
-      return [this.cwd, stdout, stderr];
+      return [this.cwd.path, stdout, stderr];
     };
 
     BashyOS.prototype.cdRelativePath = function(path) {
@@ -486,13 +485,13 @@
     DisplayManager.prototype.update = function(fs, newDir) {
       var deltaX, deltaY, newX, newY, oldX, oldY, ref, ref1, ref2;
       ref = this.getCoordinatesForPath(this.centeredOn), oldX = ref[0], oldY = ref[1];
-      ref1 = this.getCoordinatesForPath(newDir.path), newX = ref1[0], newY = ref1[1];
+      ref1 = this.getCoordinatesForPath(newDir), newX = ref1[0], newY = ref1[1];
       ref2 = [oldX - newX, oldY - newY], deltaX = ref2[0], deltaY = ref2[1];
       createjs.Tween.get(this.map).to({
         x: this.map.x + deltaX,
         y: this.map.y + deltaY
       }, 500, createjs.Ease.getPowInOut(2));
-      this.centeredOn = newDir.path;
+      this.centeredOn = newDir;
     };
 
     DisplayManager.prototype.getCoordinatesForPath = function(path) {
@@ -625,7 +624,6 @@
       var cwd, fs, ref, stderr, stdout;
       fs = this.os.fileSystem;
       ref = this.os.runCommand(command, args), cwd = ref[0], stdout = ref[1], stderr = ref[2];
-      alert(cwd);
       this.taskMgr.update(this.os);
       this.displayMgr.update(fs, cwd);
       if (stderr) {

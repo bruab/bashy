@@ -112,8 +112,7 @@ class BashyOS
 			[stdout, stderr] = @pwd()
 		# Return context, stdout, stderr
 		# TODO context? what? just need a string for @cwd, right?
-		alert @cwd
-		return [@cwd, stdout, stderr]
+		return [@cwd.path, stdout, stderr]
 
 	cdRelativePath: (path) =>
 		# TODO hecka code duplication going on here

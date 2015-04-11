@@ -117,11 +117,12 @@ class DisplayManager
 		[@map.x, @map.y] = [@startingX, @startingY]
 	
 	update: (fs, newDir) =>
+		# newDir is a string, e.g. "/home/bashy/pics"
 		[oldX, oldY] = @getCoordinatesForPath @centeredOn
-		[newX, newY] = @getCoordinatesForPath newDir.path
+		[newX, newY] = @getCoordinatesForPath newDir
 		[deltaX, deltaY] = [oldX-newX, oldY-newY]
 		createjs.Tween.get(@map).to( {x: @map.x + deltaX, y: @map.y + deltaY}, 500, createjs.Ease.getPowInOut(2))
-		@centeredOn = newDir.path
+		@centeredOn = newDir
 		return
 
 	getCoordinatesForPath: (path) ->
