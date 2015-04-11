@@ -75,15 +75,20 @@ getParentPath = (dir) ->
 			parentPath = "#{parentPath}/#{splitPath[i]}"
 		return parentPath
 
+## OS-related functions
+createBashyOS = (zone_name) ->
+	if zone_name == "nav"
+		validCommands = ["cd", "pwd"]
+		return new BashyOS(validCommands)
+	else
+		alert "createBashyOS called with unknown zone name: " + zone_name
+		return None
+
 # OS class in charge of file system, processing user input
 class BashyOS
-	constructor: () ->
+	constructor: (@validCommands) ->
 		@fileSystem = new FileSystem()
 		@cwd = @fileSystem.root
-
-	# This feels ghetto but works for now
-	validCommands: () ->
-		return ["cd", "pwd"]
 
 	# Function called every time a user types a command
 	# Takes input string, returns context, stdout and stderr

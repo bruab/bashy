@@ -64,7 +64,7 @@ class Zone
 		# Parse input and check for invalid command
 		# TODO use a splat here
 		[command, args] = parseCommand(input)
-		if command not in @os.validCommands()
+		if command not in @os.validCommands
 			return "Invalid command: #{command}"
 		else
 			return @executeCommand(command, args)
@@ -73,7 +73,7 @@ class Zone
 class ZoneManager
 	constructor: (@displayMgr, @soundMgr) ->
 		@taskMgr = new TaskManager()
-		@os = new BashyOS()
+		@os = createBashyOS "nav"
 		@currentZone = new Zone(@displayMgr, @soundMgr, @taskMgr, @os)
 
 	run: () ->
