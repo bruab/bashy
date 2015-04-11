@@ -123,10 +123,11 @@
   };
 
   createBashyOS = function(zone_name) {
-    var validCommands;
+    var fileSystem, validCommands;
     if (zone_name === "nav") {
       validCommands = ["cd", "pwd"];
-      return new BashyOS(validCommands);
+      fileSystem = new FileSystem();
+      return new BashyOS(validCommands, fileSystem);
     } else {
       alert("createBashyOS called with unknown zone name: " + zone_name);
       return None;
@@ -134,14 +135,14 @@
   };
 
   BashyOS = (function() {
-    function BashyOS(validCommands1) {
+    function BashyOS(validCommands1, fileSystem1) {
       this.validCommands = validCommands1;
+      this.fileSystem = fileSystem1;
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
       this.cdAbsolutePath = bind(this.cdAbsolutePath, this);
       this.cdRelativePath = bind(this.cdRelativePath, this);
       this.runCommand = bind(this.runCommand, this);
-      this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
     }
 

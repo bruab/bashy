@@ -79,15 +79,15 @@ getParentPath = (dir) ->
 createBashyOS = (zone_name) ->
 	if zone_name == "nav"
 		validCommands = ["cd", "pwd"]
-		return new BashyOS(validCommands)
+		fileSystem = new FileSystem()
+		return new BashyOS(validCommands, fileSystem)
 	else
 		alert "createBashyOS called with unknown zone name: " + zone_name
 		return None
 
 # OS class in charge of file system, processing user input
 class BashyOS
-	constructor: (@validCommands) ->
-		@fileSystem = new FileSystem()
+	constructor: (@validCommands, @fileSystem) ->
 		@cwd = @fileSystem.root
 
 	# Function called every time a user types a command
