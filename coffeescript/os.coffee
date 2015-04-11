@@ -17,6 +17,15 @@ class Directory
 				return child
 		return ""
 
+## FileSystem-related functions
+createFileSystem = (zoneName) ->
+	if zoneName == "nav"
+		# TODO create directories and instantiate with them as arg?
+		return new FileSystem()
+	else
+		alert "createFileSystem called with unknown zone name: " + zoneName
+		return None
+
 # FileSystem class stores and answers questions about directories and files
 class FileSystem
 	constructor: () ->
@@ -76,18 +85,19 @@ getParentPath = (dir) ->
 		return parentPath
 
 ## OS-related functions
-createBashyOS = (zone_name) ->
-	if zone_name == "nav"
+createBashyOS = (zoneName) ->
+	if zoneName == "nav"
 		validCommands = ["cd", "pwd"]
-		fileSystem = new FileSystem()
+		fileSystem = createFileSystem(zoneName)
 		return new BashyOS(validCommands, fileSystem)
 	else
-		alert "createBashyOS called with unknown zone name: " + zone_name
+		alert "createBashyOS called with unknown zone name: " + zoneName
 		return None
 
 # OS class in charge of file system, processing user input
 class BashyOS
 	constructor: (@validCommands, @fileSystem) ->
+		# @cwd is a Directory object
 		@cwd = @fileSystem.root
 
 	# Function called every time a user types a command
@@ -101,6 +111,8 @@ class BashyOS
 		else if command == 'pwd'
 			[stdout, stderr] = @pwd()
 		# Return context, stdout, stderr
+		# TODO context? what? just need a string for @cwd, right?
+		alert @cwd
 		return [@cwd, stdout, stderr]
 
 	cdRelativePath: (path) =>

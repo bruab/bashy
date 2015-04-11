@@ -29,6 +29,7 @@ class Zone
 		# @os updates and returns context, stdout, stderr
 		# @os.fileSystem may be modified by this command
 		[cwd, stdout, stderr] = @os.runCommand(command, args)
+		alert cwd
 
 		# TaskManager checks for completed tasks
 		@taskMgr.update(@os)
