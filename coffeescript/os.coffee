@@ -23,7 +23,7 @@ createFileSystem = (zoneName) ->
 		# TODO create directories and instantiate with them as arg?
 		return new FileSystem()
 	else
-		alert "createFileSystem called with unknown zone name: " + zoneName
+		console.log "createFileSystem called with unknown zone name: " + zoneName
 		return None
 
 # FileSystem class stores and answers questions about directories and files
@@ -73,16 +73,16 @@ cleanPath = (path) ->
 	return newPath
 	
 # helper function for path parsing
-getParentPath = (dir) ->
-	if dir.path == "/"
+getParentPath = (path) ->
+	if path == "/"
 		return "/"
 	else
-		splitPath = dir.path.split "/"
+		splitPath = path.split "/"
 		len = splitPath.length
 		parentPath = ""
 		for i in [0..len-2]
 			parentPath = "#{parentPath}/#{splitPath[i]}"
-		return parentPath
+		return cleanPath parentPath
 
 ## OS-related functions
 createBashyOS = (zoneName) ->
@@ -91,8 +91,30 @@ createBashyOS = (zoneName) ->
 		fileSystem = createFileSystem(zoneName)
 		return new BashyOS(validCommands, fileSystem)
 	else
-		alert "createBashyOS called with unknown zone name: " + zoneName
+		console.log "createBashyOS called with unknown zone name: " + zoneName
 		return None
+
+parseRelativePath = (relativePath, cwd) ->
+	if relativePath == ".."
+		newPath = getParentPath(cwd)
+		return newPath
+	fields = relativePath.split "/"
+	finished = false
+	while not finished
+		if fields.length == 1
+			finished = true
+		dir = fields[0]
+		if dir == "."
+			fields = fields[1..fields.length]
+			continue
+		else if dir == ".."
+			cwd = getParentPath(cwd)
+		else
+			cwd = cwd + "/" + dir
+		fields = fields[1..fields.length]
+	return cwd
+
+
 
 # OS class in charge of file system, processing user input
 class BashyOS
@@ -110,52 +132,19 @@ class BashyOS
 			[stdout, stderr] = @cd args
 		else if command == 'pwd'
 			[stdout, stderr] = @pwd()
-		# Return context, stdout, stderr
-		# TODO context? what? just need a string for @cwd, right?
+		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
 	cdRelativePath: (path) =>
-		# TODO hecka code duplication going on here
 		# No output by default
 		[stdout, stderr] = ["", ""]
-		newpath = ""
-		fields = path.split("/")
-		if fields[0] == ".."
-			# Build absolute path
-			absolutePath = getParentPath(@cwd)
-			for field in [fields[1..]]
-				if absolutePath == "/"
-					absolutePath = absolutePath + field
-				else
-					absolutePath = "#{absolutePath}/#{field}"
-			absolutePath = cleanPath(absolutePath)
-			if @fileSystem.isValidPath(absolutePath)
-				@cwd = @fileSystem.getDirectory(absolutePath)
-			else
-				stderr = "Invalid path: #{absolutePath}"
-		else if fields[0] == "."
-			# Build absolute path
-			if @cwd == @fileSystem.root
-				absolutePath = "/#{path[2..]}"
-			else
-				absolutePath = "#{@cwd}/#{path[2..]}"
-			absolutePath = cleanPath(absolutePath)
-			if @fileSystem.isValidPath(absolutePath)
-				@cwd = @fileSystem.getDirectory(absolutePath)
-			else
-				stderr = "Invalid path: #{absolutePath}"
-			
+		# Build absolute path
+		absolutePath = parseRelativePath(path, @cwd.path)
+		absolutePath = cleanPath(absolutePath)
+		if @fileSystem.isValidPath(absolutePath)
+			@cwd = @fileSystem.getDirectory(absolutePath)
 		else
-			# Build absolute path
-			if @cwd == @fileSystem.root
-				absolutePath = @cwd.path + path
-			else
-				absolutePath = "#{@cwd.path}/#{path}"
-			absolutePath = cleanPath(absolutePath)
-			if @fileSystem.isValidPath(absolutePath)
-				@cwd = @fileSystem.getDirectory(absolutePath)
-			else
-				stderr = "Invalid path: #{absolutePath}"
+			stderr = "Invalid path: #{absolutePath}"
 		return [stdout, stderr]
 
 	cdAbsolutePath: (path) =>
