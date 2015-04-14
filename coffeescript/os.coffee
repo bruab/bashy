@@ -128,7 +128,9 @@ class BashyOS
 	runCommand: (command, args) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
-		if command == 'cd'
+		if command not in @validCommands
+			stderr = "Invalid command: #{command}"
+		else if command == 'cd'
 			[stdout, stderr] = @cd args
 		else if command == 'pwd'
 			[stdout, stderr] = @pwd()

@@ -184,7 +184,9 @@
     BashyOS.prototype.runCommand = function(command, args) {
       var ref, ref1, ref2, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
-      if (command === 'cd') {
+      if (indexOf.call(this.validCommands, command) < 0) {
+        stderr = "Invalid command: " + command;
+      } else if (command === 'cd') {
         ref1 = this.cd(args), stdout = ref1[0], stderr = ref1[1];
       } else if (command === 'pwd') {
         ref2 = this.pwd(), stdout = ref2[0], stderr = ref2[1];
@@ -573,6 +575,7 @@
 
   parseCommand = function(input) {
     var args, command, splitInput;
+    input = input.replace(/^\s+|\s+$/g, "");
     splitInput = input.split(/\s+/);
     command = splitInput[0];
     args = splitInput.slice(1);
@@ -638,13 +641,8 @@
 
     Zone.prototype.handleInput = function(input) {
       var args, command, ref;
-      input = input.replace(/^\s+|\s+$/g, "");
       ref = parseCommand(input), command = ref[0], args = ref[1];
-      if (indexOf.call(this.os.validCommands, command) < 0) {
-        return "Invalid command: " + command;
-      } else {
-        return this.executeCommand(command, args);
-      }
+      return this.executeCommand(command, args);
     };
 
     return Zone;

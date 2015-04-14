@@ -1,7 +1,10 @@
 parseCommand = (input) ->
+	# Trim leading and trailing whitespace
+	input = input.replace /^\s+|\s+$/g, ""
 	splitInput = input.split /\s+/
 	command = splitInput[0]
 	args = splitInput[1..]
+	# Return list with command (string) and args (list of strings)
 	return [command, args]
 
 createZoneManager = (display, sound, zone) ->
@@ -60,14 +63,8 @@ class Zone
 	# Takes user input string, updates system, returns text to terminal
 	handleInput: (input) =>
 		# Strip leading and trailing whitespace
-		input = input.replace /^\s+|\s+$/g, ""
-		# Parse input and check for invalid command
-		# TODO use a splat here
 		[command, args] = parseCommand(input)
-		if command not in @os.validCommands
-			return "Invalid command: #{command}"
-		else
-			return @executeCommand(command, args)
+		return @executeCommand(command, args)
 
 
 class ZoneManager
