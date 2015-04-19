@@ -1,6 +1,5 @@
 class Zone
 	constructor: (@displayMgr, @taskMgr, @os) ->
-		$("#helpButton").click => @displayMgr.helpScreen @taskMgr.currentTask.hints[0]
 
 	run: () ->
 		# TODO how to return next zone from within handleInput method?

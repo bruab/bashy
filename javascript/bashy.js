@@ -514,11 +514,6 @@
       this.taskMgr = taskMgr;
       this.os = os1;
       this.handleInput = bind(this.handleInput, this);
-      $("#helpButton").click((function(_this) {
-        return function() {
-          return _this.displayMgr.helpScreen(_this.taskMgr.currentTask.hints[0]);
-        };
-      })(this));
     }
 
     Zone.prototype.run = function() {
@@ -559,8 +554,19 @@
       this.displayMgr = new DisplayManager();
       this.currentZone = new Zone(this.displayMgr, this.taskMgr, this.os);
       this.terminal = new Terminal(this.currentZone.handleInput);
+      $("#helpButton").click((function(_this) {
+        return function() {
+          return _this.help();
+        };
+      })(this));
       this.currentZone.run();
     }
+
+    BashyGame.prototype.help = function() {
+      var currentHint;
+      currentHint = this.taskMgr.currentTask.hints[0];
+      return this.displayMgr.helpScreen(currentHint);
+    };
 
     return BashyGame;
 
