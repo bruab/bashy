@@ -68,7 +68,7 @@ class FileSystem
 class BashyOS
 	constructor: (zoneName) ->
 		if zoneName == "nav"
-			@validCommands = ["cd", "pwd"]
+			@validCommands = ["man", "cd", "pwd"]
 			@fileSystem = new FileSystem(zoneName)
 		else
 			console.log "BashyOS instantiated with unknown zone name: " + zoneName
@@ -87,6 +87,8 @@ class BashyOS
 		[stdout, stderr] = ["", ""]
 		if command not in @validCommands
 			stderr = "Invalid command: #{command}"
+		else if command == 'man'
+			[stdout, stderr] = @man.getEntry args[0]
 		else if command == 'cd'
 			[stdout, stderr] = @cd args
 		else if command == 'pwd'
