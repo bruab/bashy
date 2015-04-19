@@ -500,7 +500,7 @@
       this.taskMgr = taskMgr;
       this.os = os1;
       this.handleInput = bind(this.handleInput, this);
-      $("html").click((function(_this) {
+      $("#helpButton").click((function(_this) {
         return function() {
           return _this.displayMgr.helpScreen(_this.taskMgr.currentTask.hints[0]);
         };

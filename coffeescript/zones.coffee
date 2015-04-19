@@ -2,7 +2,7 @@ class Zone
 	constructor: (@displayMgr, @taskMgr, @os) ->
 		# Listen for any click whatsoever
 		# TODO should this just go in BashyGame?
-		$("html").click => @displayMgr.helpScreen @taskMgr.currentTask.hints[0]
+		$("#helpButton").click => @displayMgr.helpScreen @taskMgr.currentTask.hints[0]
 
 	run: () ->
 		# TODO how to return next zone from within handleInput method?
