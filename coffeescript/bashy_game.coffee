@@ -1,6 +1,8 @@
 class BashyGame
 	constructor: ->
 		@soundMgr = new SoundManager(playSounds = false)
+		@taskMgr = new TaskManager()
+		@os = createBashyOS "nav"
 		# Load spritesheet image; start game when it's loaded
 		@bashyImage = new Image()
 		@bashyImage.onload = =>
@@ -9,7 +11,5 @@ class BashyGame
 
 	initialize: ->
 		@displayMgr = createDisplayManager(@bashyImage)
-		# Start on level one, navigation
-		current_zone = "nav"
-		@zoneManager = createZoneManager(@displayMgr, @soundMgr, current_zone)
-		@zoneManager.run()
+		@currentZone = new Zone(@displayMgr, @soundMgr, @taskMgr, @os)
+		@currentZone.run()

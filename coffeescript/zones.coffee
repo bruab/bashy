@@ -1,8 +1,3 @@
-createZoneManager = (display, sound, zone) ->
-	# TODO create zone based on 'zone' arg
-	zoneManager = new ZoneManager(display, sound)
-	return zoneManager
-
 class Zone
 	constructor: (@displayMgr, @soundMgr, @taskMgr, @os) ->
 		# Listen for any click whatsoever
@@ -65,13 +60,3 @@ class Zone
 		# Strip leading and trailing whitespace
 		[command, args] = @parseCommand(input)
 		return @executeCommand(command, args)
-
-
-class ZoneManager
-	constructor: (@displayMgr, @soundMgr) ->
-		@taskMgr = new TaskManager()
-		@os = createBashyOS "nav"
-		@currentZone = new Zone(@displayMgr, @soundMgr, @taskMgr, @os)
-
-	run: () ->
-		@currentZone.run()
