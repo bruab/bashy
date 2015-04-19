@@ -12,14 +12,6 @@ helpScreen = (hint) ->
 	$('#helpText').html(helpHtml)
 	$('#helpScreen').foundation('reveal', 'open')
 	return
-createDisplayManager = (image) ->
-	canvas = $("#bashyCanvas")[0]
-	stage = new createjs.Stage(canvas)
-	# Create sprite and display manager
-	bashySprite = createBashySprite(image, stage)
-	displayMgr = new DisplayManager(stage, bashySprite)
-	startTicker(stage)
-	return displayMgr
 
 # Functions to create sprite
 createBashySprite = (bashyImage, stage) ->
@@ -108,13 +100,25 @@ findFileCoords = (fs, filepath, rootX, rootY) ->
 
 # Class to handle updating map, character sprite
 class DisplayManager
-	constructor: (@stage, @bashySprite) ->
-		#[@rootX, @rootY] = [250, 120]
+	constructor: () ->
+		canvas = $("#bashyCanvas")[0]
+		@stage = new createjs.Stage(canvas)
 		[@startingX, @startingY] = [130, 60]
 		@centeredOn = "/"
 		@map = new createjs.Container()
 		@map.name = "map"
 		[@map.x, @map.y] = [@startingX, @startingY]
+		# Load spritesheet image; start game when it's loaded
+		@bashyImage = new Image()
+		@bashyImage.onload = =>
+			@spriteLoaded()
+		@bashyImage.src = "assets/bashy_sprite_sheet.png"
+
+	spriteLoaded: () ->
+		# TODO who owns/uses bashySprite?
+		@bashySprite = createBashySprite(@bashyImage, @stage)
+		startTicker(@stage)
+
 	
 	update: (fs, newDir) =>
 		# newDir is a string, e.g. "/home/bashy/pics"
