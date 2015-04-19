@@ -346,26 +346,37 @@
   DisplayManager = (function() {
     function DisplayManager() {
       this.update = bind(this.update, this);
-      var canvas, ref, ref1;
+      var canvas;
       canvas = $("#bashyCanvas")[0];
       this.stage = new createjs.Stage(canvas);
+      this.initializeMap();
+      this.initializeSprite();
+      return;
+    }
+
+    DisplayManager.prototype.initializeMap = function() {
+      var ref, ref1;
       ref = [130, 60], this.startingX = ref[0], this.startingY = ref[1];
       this.centeredOn = "/";
       this.map = new createjs.Container();
       this.map.name = "map";
       ref1 = [this.startingX, this.startingY], this.map.x = ref1[0], this.map.y = ref1[1];
-      this.bashyImage = new Image();
-      this.bashyImage.onload = (function(_this) {
+    };
+
+    DisplayManager.prototype.initializeSprite = function() {
+      var bashyImage;
+      bashyImage = new Image();
+      bashyImage.onload = (function(_this) {
         return function() {
-          return _this.spriteLoaded();
+          return _this.spriteSheetLoaded(bashyImage);
         };
       })(this);
-      this.bashyImage.src = "assets/bashy_sprite_sheet.png";
-    }
+      bashyImage.src = "assets/bashy_sprite_sheet.png";
+    };
 
-    DisplayManager.prototype.spriteLoaded = function() {
-      this.bashySprite = this.createBashySprite(this.bashyImage, this.stage);
-      return this.startTicker(this.stage);
+    DisplayManager.prototype.spriteSheetLoaded = function(image) {
+      this.bashySprite = this.createBashySprite(image, this.stage);
+      this.startTicker(this.stage);
     };
 
     DisplayManager.prototype.update = function(fs, newDir) {
@@ -397,15 +408,6 @@
       this.stage.addChild(this.map);
     };
 
-    DisplayManager.prototype.introScreen = function() {
-      var introHtml;
-      introHtml = "<h3>Welcome to B@shy!</h3>";
-      introHtml += "<p>Use your keyboard to type commands.</p>";
-      introHtml += "<p>Available commands are 'pwd' and 'cd'</p>";
-      $('#helpText').html(introHtml);
-      $('#helpScreen').foundation('reveal', 'open');
-    };
-
     DisplayManager.prototype.helpScreen = function(hint) {
       var helpHtml;
       helpHtml = "<h3>B@shy Help</h3>";
@@ -414,11 +416,11 @@
       $('#helpScreen').foundation('reveal', 'open');
     };
 
-    DisplayManager.prototype.createBashySprite = function() {
+    DisplayManager.prototype.createBashySprite = function(image) {
       var SPRITEX, SPRITEY, bashySpriteSheet, ref, sprite;
       ref = [200, 50], SPRITEX = ref[0], SPRITEY = ref[1];
       bashySpriteSheet = new createjs.SpriteSheet({
-        images: [this.bashyImage],
+        images: [image],
         frames: {
           width: 64,
           height: 64

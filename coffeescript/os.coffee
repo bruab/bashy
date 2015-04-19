@@ -1,6 +1,10 @@
+# Directory class stores a folder and its children
 class Directory
+	# Instantiated with a string representing path
 	constructor: (@path) ->
 		@children = []
+
+	# Return the directory's name (not entire path)
 	name: () ->
 		if @path == "/"
 			return @path
@@ -11,6 +15,7 @@ class Directory
 
 	toString: () -> "Directory object with path=#{@path}"
 
+	# Return child Directory object, or empty string if child not found
 	getChild: (name) ->
 		for child in @children
 			if child.name() == name
@@ -35,8 +40,8 @@ class FileSystem
 		else
 			console.log "FileSystem instantiated with unknown zone name: " + zoneName
 
+	# Takes absolute path as a string, returns boolean
 	isValidPath: (path) ->
-		# Takes absolute path, returns boolean
 		if path == "/"
 			return true
 		splitPath = path.split "/"
@@ -49,6 +54,7 @@ class FileSystem
 				currentParent = dir
 		return true
 
+	# Takes path as a string, returns Directory object
 	getDirectory: (path) ->
 		if path == "/"
 			return @root
@@ -58,7 +64,7 @@ class FileSystem
 			currentParent = currentParent.getChild(dirName)
 		return currentParent
 
-# OS class in charge of file system, processing user input
+# OS class in charge of file system, executing commands
 class BashyOS
 	constructor: (zoneName) ->
 		if zoneName == "nav"
@@ -72,9 +78,10 @@ class BashyOS
 		@cwd = @fileSystem.root
 
 
-	# Function called every time a user types a command
-	# Takes input string, returns context, stdout and stderr
-	# (for now 'context' = 'cwd')
+	# Function called every time a user types a valid command
+	# Takes command as string, args as list of strings;
+	# returns a list of three strings -- path to cwd,
+	# stdout and stderr
 	runCommand: (command, args) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
@@ -87,6 +94,8 @@ class BashyOS
 		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
+	# Take relative path as a string, attempt to update @cwd; 
+	# return stdout and stderr
 	cdRelativePath: (path) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
@@ -98,7 +107,9 @@ class BashyOS
 		else
 			stderr = "Invalid path: #{absolutePath}"
 		return [stdout, stderr]
-
+	
+	# Take absolute path as a string, attempt to update @cwd;
+	# return stdout and stderr
 	cdAbsolutePath: (path) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
@@ -109,6 +120,8 @@ class BashyOS
 			stderr = "Invalid path"
 		return [stdout, stderr]
 
+	# Take a list of command line args to 'cd' command;
+	# attempt to update @cwd and return stdout, stderr
 	cd: (args) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
@@ -125,12 +138,14 @@ class BashyOS
 				[stdout, stderr] = @cdRelativePath(path)
 		return [stdout, stderr]
 
+	# Return @cwd as string to stdout, nothing to stderr
 	pwd: () =>
-		# Return @cwd as stdout, nothing as stderr
 		[stdout, stderr] = ["", ""]
 		stdout = @cwd.path
 		return [stdout, stderr]
 
+	# Take path as a string, remove extra or trailing slashes
+	# e.g. "/home//bashy/pics/" -> "/home/bashy/pics"
 	cleanPath: (path) ->
 		splitPath = path.split "/"
 		newPath = ""
@@ -139,7 +154,7 @@ class BashyOS
 				newPath = "#{newPath}/#{dir}"
 		return newPath
 		
-	# helper function for path parsing
+	# Take path as a string, return parent path as a string
 	getParentPath: (path) ->
 		if path == "/"
 			return "/"
@@ -151,7 +166,9 @@ class BashyOS
 				parentPath = "#{parentPath}/#{splitPath[i]}"
 			return @cleanPath parentPath
 
-	## OS-related functions
+	# Take relative  path and cwd as strings
+	# return absolute path of target directory
+	# e.g. parseRelativePath("../foo", "/home/bar") -> "/home/foo"
 	parseRelativePath: (relativePath, cwd) ->
 		if relativePath == ".."
 			newPath = @getParentPath(cwd)

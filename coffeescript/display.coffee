@@ -1,27 +1,43 @@
 # Class to handle updating map, character sprite
 class DisplayManager
 	constructor: () ->
+		# Create canvas and Stage object
 		canvas = $("#bashyCanvas")[0]
 		@stage = new createjs.Stage(canvas)
+		@initializeMap()
+		@initializeSprite()
+		return
+
+	# Create map as Container object which will hold text objects
+	# representing directory names and Shape objects for the 
+	# lines connecting the directories
+	initializeMap: () ->
+		# Starting positions for map are kind of arbitrary...
 		[@startingX, @startingY] = [130, 60]
 		@centeredOn = "/"
 		@map = new createjs.Container()
 		@map.name = "map"
 		[@map.x, @map.y] = [@startingX, @startingY]
-		# Load spritesheet image; start game when it's loaded
-		@bashyImage = new Image()
-		@bashyImage.onload = =>
-			@spriteLoaded()
-		@bashyImage.src = "assets/bashy_sprite_sheet.png"
+		return
 
-	spriteLoaded: () ->
-		# TODO who owns/uses bashySprite?
-		@bashySprite = @createBashySprite(@bashyImage, @stage)
-		@startTicker(@stage)
-
+	# Load spritesheet image, trigger @spriteSheetLoaded() on load
+	initializeSprite: () ->
+		bashyImage = new Image()
+		bashyImage.onload = =>
+			@spriteSheetLoaded(bashyImage)
+		bashyImage.src = "assets/bashy_sprite_sheet.png"
+		return
 	
+	# Create Sprite object and start Ticker
+	spriteSheetLoaded: (image) ->
+		@bashySprite = @createBashySprite(image, @stage)
+		@startTicker(@stage)
+		return
+	
+	# Take a FileSystem object and newDir as a string
+	# Find location of newDir, then move map until it is centered
+	# on newDir
 	update: (fs, newDir) =>
-		# newDir is a string, e.g. "/home/bashy/pics"
 		[oldX, oldY] = @getCoordinatesForPath @centeredOn
 		[newX, newY] = @getCoordinatesForPath newDir
 		[deltaX, deltaY] = [oldX-newX, oldY-newY]
@@ -29,27 +45,23 @@ class DisplayManager
 		@centeredOn = newDir
 		return
 
+	# Take path as a string, search through @map to find the text object
+	# that corresponds; return its [x, y] coordinates
 	getCoordinatesForPath: (path) ->
 		# TODO if no match, what do we return?
 		for item in @map.children
 			if item.name == path
 				return [item.x, item.y]
 
+	# Take a FileSystem object; draw text for each directory's name
+	# and draw lines connecting directories to their children
 	drawFileSystem: (fs) ->
 		@drawFile(@map, fs.root, @map.x, @map.y)
 		@drawChildren(@map, fs.root, @map.x, @map.y)
 		@stage.addChild(@map)
 		return
 
-	# TODO dead code? Play this onload?
-	introScreen: () ->
-		introHtml = "<h3>Welcome to B@shy!</h3>"
-		introHtml += "<p>Use your keyboard to type commands.</p>"
-		introHtml += "<p>Available commands are 'pwd' and 'cd'</p>"
-		$('#helpText').html(introHtml)
-		$('#helpScreen').foundation('reveal', 'open')
-		return
-
+	# Take a string representing a contextual hint; display a modal window
 	helpScreen: (hint) ->
 		helpHtml = "<h3>B@shy Help</h3>"
 		helpHtml += "<p>Hint: #{hint}</p>"
@@ -57,12 +69,12 @@ class DisplayManager
 		$('#helpScreen').foundation('reveal', 'open')
 		return
 
-	createBashySprite: () ->
+	createBashySprite: (image) ->
 		[SPRITEX, SPRITEY] = [200, 50]
 		## CREATE AND INITIALIZE CHARACTER SPRITE ##
 		# Create SpriteSheet first
 		bashySpriteSheet = new createjs.SpriteSheet({
-			images: [@bashyImage],
+			images: [image],
 			frames: {width: 64, height: 64},
 			animations: {
 			    walking: [0, 4, "walking"],
