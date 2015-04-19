@@ -1,20 +1,8 @@
-getTasks = ->
-	task1Function = (os) ->
-		return os.cwd.path == "/home"
-	task2Function = (os) ->
-		return os.cwd.path == "/media"
-	task3Function = (os) ->
-		return os.cwd.path == "/"
-	task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1Function)
-	task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task2Function)
-	task3 = new Task("navigate to root", ["type 'cd /' and press enter"], task3Function)
-	return [task1, task2, task3]
-
 # TaskManager class keeps track of Tasks, updates Menu (?)
 class TaskManager
 	constructor: () ->
 		@winner = false
-		@tasks = getTasks()
+		@tasks = @getTasks()
 		@currentTask = @tasks[0]
 		@showTask(@currentTask)
 
@@ -38,6 +26,18 @@ class TaskManager
 		$("#menuHeader").html("")
 		$("#menu").html("<h4>You Win!</h4>")
 		return
+
+	getTasks: () ->
+		task1Function = (os) ->
+			return os.cwd.path == "/home"
+		task2Function = (os) ->
+			return os.cwd.path == "/media"
+		task3Function = (os) ->
+			return os.cwd.path == "/"
+		task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1Function)
+		task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task2Function)
+		task3 = new Task("navigate to root", ["type 'cd /' and press enter"], task3Function)
+		return [task1, task2, task3]
 
 # Task class encapsulates a task name, hint(s) and any number of 
 # os queries and the desired responses
