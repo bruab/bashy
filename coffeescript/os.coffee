@@ -17,29 +17,23 @@ class Directory
 				return child
 		return ""
 
-## FileSystem-related functions
-createFileSystem = (zoneName) ->
-	if zoneName == "nav"
-		# TODO create directories and instantiate with them as arg?
-		return new FileSystem()
-	else
-		console.log "createFileSystem called with unknown zone name: " + zoneName
-		return None
-
 # FileSystem class stores and answers questions about directories and files
 class FileSystem
-	constructor: () ->
-		@root = new Directory("/")
+	constructor: (zoneName) ->
+		if zoneName == "nav"
+			@root = new Directory("/")
 
-		media = new Directory("/media")
-		pics = new Directory("/media/pics")
-		media.children.push(pics)
-		@root.children.push(media)
+			media = new Directory("/media")
+			pics = new Directory("/media/pics")
+			media.children.push(pics)
+			@root.children.push(media)
 
-		home = new Directory("/home")
-		bashy = new Directory("/home/bashy")
-		home.children.push(bashy)
-		@root.children.push(home)
+			home = new Directory("/home")
+			bashy = new Directory("/home/bashy")
+			home.children.push(bashy)
+			@root.children.push(home)
+		else
+			console.log "FileSystem instantiated with unknown zone name: " + zoneName
 
 	isValidPath: (path) ->
 		# Takes absolute path, returns boolean
@@ -112,9 +106,9 @@ class BashyOS
 	constructor: (zoneName) ->
 		if zoneName == "nav"
 			@validCommands = ["cd", "pwd"]
-			@fileSystem = createFileSystem(zoneName)
+			@fileSystem = new FileSystem(zoneName)
 		else
-			console.log "createBashyOS called with unknown zone name: " + zoneName
+			console.log "BashyOS instantiated with unknown zone name: " + zoneName
 			@validCommands = []
 			@fileSystem = None
 		# @cwd is a Directory object
