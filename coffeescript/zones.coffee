@@ -1,12 +1,3 @@
-parseCommand = (input) ->
-	# Trim leading and trailing whitespace
-	input = input.replace /^\s+|\s+$/g, ""
-	splitInput = input.split /\s+/
-	command = splitInput[0]
-	args = splitInput[1..]
-	# Return list with command (string) and args (list of strings)
-	return [command, args]
-
 createZoneManager = (display, sound, zone) ->
 	# TODO create zone based on 'zone' arg
 	zoneManager = new ZoneManager(display, sound)
@@ -24,6 +15,15 @@ class Zone
 		# 'onBlur: false' guarantees the terminal always stays in focus
 		$('#terminal').terminal(@handleInput,
 			{ greetings: "", prompt: '$ ', onBlur: false, name: 'bashyTerminal' })
+
+	parseCommand: (input) ->
+		# Trim leading and trailing whitespace
+		input = input.replace /^\s+|\s+$/g, ""
+		splitInput = input.split /\s+/
+		command = splitInput[0]
+		args = splitInput[1..]
+		# Return list with command (string) and args (list of strings)
+		return [command, args]
 
 	executeCommand: (command, args) ->
 		# Get a copy of the current file system
@@ -63,7 +63,7 @@ class Zone
 	# Takes user input string, updates system, returns text to terminal
 	handleInput: (input) =>
 		# Strip leading and trailing whitespace
-		[command, args] = parseCommand(input)
+		[command, args] = @parseCommand(input)
 		return @executeCommand(command, args)
 
 
