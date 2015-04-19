@@ -4,6 +4,7 @@ fs     = require 'fs'
 appFiles  = [
   # omit src/ and .coffee to make the below lines a little shorter
   'os'
+  'terminal'
   'tasks'
   'display'
   'main'
