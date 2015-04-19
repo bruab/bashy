@@ -7,7 +7,6 @@ appFiles  = [
   'tasks'
   'display'
   'main'
-  'sound'
   'zones'
   'bashy_game'
 ]

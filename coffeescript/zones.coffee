@@ -1,5 +1,5 @@
 class Zone
-	constructor: (@displayMgr, @soundMgr, @taskMgr, @os) ->
+	constructor: (@displayMgr, @taskMgr, @os) ->
 		# Listen for any click whatsoever
 		$("html").click => helpScreen @taskMgr.currentTask.hints[0]
 
@@ -34,26 +34,6 @@ class Zone
 		# DisplayManager updates map
 		@displayMgr.update(fs, cwd)
 		
-		# Play sound effect, 
-		# return text to terminal
-		if stderr
-			@playError()
-			return stderr
-		else
-			@playSuccess()
-			if stdout
-				return stdout
-			else
-				# Returning 'undefined' means no terminal output
-				return undefined
-
-	playError: ->
-		@soundMgr.playOops()
-
-	playSuccess: ->
-		@soundMgr.playBoing()
-
-
 	# Function called each time user types a command
 	# Takes user input string, updates system, returns text to terminal
 	handleInput: (input) =>
