@@ -58,49 +58,6 @@ class FileSystem
 			currentParent = currentParent.getChild(dirName)
 		return currentParent
 
-cleanPath = (path) ->
-	splitPath = path.split "/"
-	newPath = ""
-	for dir in splitPath
-		if dir != ""
-			newPath = "#{newPath}/#{dir}"
-	return newPath
-	
-# helper function for path parsing
-getParentPath = (path) ->
-	if path == "/"
-		return "/"
-	else
-		splitPath = path.split "/"
-		len = splitPath.length
-		parentPath = ""
-		for i in [0..len-2]
-			parentPath = "#{parentPath}/#{splitPath[i]}"
-		return cleanPath parentPath
-
-## OS-related functions
-parseRelativePath = (relativePath, cwd) ->
-	if relativePath == ".."
-		newPath = getParentPath(cwd)
-		return newPath
-	fields = relativePath.split "/"
-	finished = false
-	while not finished
-		if fields.length == 1
-			finished = true
-		dir = fields[0]
-		if dir == "."
-			fields = fields[1..fields.length]
-			continue
-		else if dir == ".."
-			cwd = getParentPath(cwd)
-		else
-			cwd = cwd + "/" + dir
-		fields = fields[1..fields.length]
-	return cwd
-
-
-
 # OS class in charge of file system, processing user input
 class BashyOS
 	constructor: (zoneName) ->
@@ -134,8 +91,8 @@ class BashyOS
 		# No output by default
 		[stdout, stderr] = ["", ""]
 		# Build absolute path
-		absolutePath = parseRelativePath(path, @cwd.path)
-		absolutePath = cleanPath(absolutePath)
+		absolutePath = @parseRelativePath(path, @cwd.path)
+		absolutePath = @cleanPath(absolutePath)
 		if @fileSystem.isValidPath(absolutePath)
 			@cwd = @fileSystem.getDirectory(absolutePath)
 		else
@@ -145,7 +102,7 @@ class BashyOS
 	cdAbsolutePath: (path) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
-		absolutePath = cleanPath(path)
+		absolutePath = @cleanPath(path)
 		if @fileSystem.isValidPath(path)
 			@cwd = @fileSystem.getDirectory(path)
 		else
@@ -173,3 +130,44 @@ class BashyOS
 		[stdout, stderr] = ["", ""]
 		stdout = @cwd.path
 		return [stdout, stderr]
+
+	cleanPath: (path) ->
+		splitPath = path.split "/"
+		newPath = ""
+		for dir in splitPath
+			if dir != ""
+				newPath = "#{newPath}/#{dir}"
+		return newPath
+		
+	# helper function for path parsing
+	getParentPath: (path) ->
+		if path == "/"
+			return "/"
+		else
+			splitPath = path.split "/"
+			len = splitPath.length
+			parentPath = ""
+			for i in [0..len-2]
+				parentPath = "#{parentPath}/#{splitPath[i]}"
+			return @cleanPath parentPath
+
+	## OS-related functions
+	parseRelativePath: (relativePath, cwd) ->
+		if relativePath == ".."
+			newPath = @getParentPath(cwd)
+			return newPath
+		fields = relativePath.split "/"
+		finished = false
+		while not finished
+			if fields.length == 1
+				finished = true
+			dir = fields[0]
+			if dir == "."
+				fields = fields[1..fields.length]
+				continue
+			else if dir == ".."
+				cwd = @getParentPath(cwd)
+			else
+				cwd = cwd + "/" + dir
+			fields = fields[1..fields.length]
+		return cwd
