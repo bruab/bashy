@@ -1,63 +1,3 @@
-startTicker = (stage) ->
-	# Set up Ticker, frame rate
-	tick = (event) ->
-		stage.update(event)
-	createjs.Ticker.addEventListener("tick", tick)
-	createjs.Ticker.useRAF = true
-	createjs.Ticker.setFPS(15)
-	return
-
-# Functions to draw map
-calculateChildCoords = (count, parentX, parentY) ->
-	yOffset = 80
-	xOffset = 100
-	startingX = parentX - 0.5*count*xOffset
-	y = parentY + yOffset
-	coords = for i in [0..count-1] then [startingX + 2*i*xOffset, y]
-	return coords
-
-drawFile = (map, file, x, y) ->
-	text = new createjs.Text(file.name(), "20px Arial", "black")
-	text.name = file.path
-	[text.x, text.y] = [x, y]
-	text.textBaseline = "alphabetic"
-	map.addChild(text)
-	return
-
-drawChildren = (map, parent, parentX, parentY) ->
-	lineOffsetX = 20
-	lineOffsetY = 20
-	numChildren = parent.children.length
-	childCoords = calculateChildCoords(numChildren, parentX, parentY)
-	for i in [0..numChildren-1]
-		# Calculate coordinates
-		child = parent.children[i]
-		childX = childCoords[i][0]
-		childY = childCoords[i][1]
-		# Draw children (recursion ftw)
-		if child.children.length > 0
-			drawChildren(map, child, childX, childY)
-		# Draw text
-		drawFile(map, child, childX, childY)
-		# Draw line
-		# TODO center line under/above text it points to
-		# by calculating length of text, etc. fancy stuff.
-		line = new createjs.Shape()
-		line.graphics.setStrokeStyle(1)
-		line.graphics.beginStroke("gray")
-		line.graphics.moveTo(parentX, parentY+lineOffsetY)
-		line.graphics.lineTo(childX+lineOffsetX, childY-lineOffsetY)
-		line.graphics.endStroke()
-		map.addChild(line)
-	return
-
-findFileCoords = (fs, filepath, rootX, rootY) ->
-	if filepath == "/"
-		return [250, 120] # eew hardcoded, should this be a method?
-	else
-		# TODO
-		return [200, 100]
-
 # Class to handle updating map, character sprite
 class DisplayManager
 	constructor: () ->
@@ -77,7 +17,7 @@ class DisplayManager
 	spriteLoaded: () ->
 		# TODO who owns/uses bashySprite?
 		@bashySprite = @createBashySprite(@bashyImage, @stage)
-		startTicker(@stage)
+		@startTicker(@stage)
 
 	
 	update: (fs, newDir) =>
@@ -96,8 +36,8 @@ class DisplayManager
 				return [item.x, item.y]
 
 	drawFileSystem: (fs) ->
-		drawFile(@map, fs.root, @map.x, @map.y)
-		drawChildren(@map, fs.root, @map.x, @map.y)
+		@drawFile(@map, fs.root, @map.x, @map.y)
+		@drawChildren(@map, fs.root, @map.x, @map.y)
 		@stage.addChild(@map)
 		return
 
@@ -141,3 +81,57 @@ class DisplayManager
 		@stage.addChild(sprite)
 		return sprite
 
+	startTicker: (stage) ->
+		# TODO this only works when stage is passed in,
+		# why can't this method access @stage?
+		# Set up Ticker, frame rate
+		tick = (event) ->
+			stage.update(event)
+		createjs.Ticker.addEventListener("tick", tick)
+		createjs.Ticker.useRAF = true
+		createjs.Ticker.setFPS(15)
+		return
+
+	# Functions to draw map
+	calculateChildCoords: (count, parentX, parentY) ->
+		yOffset = 80
+		xOffset = 100
+		startingX = parentX - 0.5*count*xOffset
+		y = parentY + yOffset
+		coords = for i in [0..count-1] then [startingX + 2*i*xOffset, y]
+		return coords
+
+	drawFile: (map, file, x, y) ->
+		text = new createjs.Text(file.name(), "20px Arial", "black")
+		text.name = file.path
+		[text.x, text.y] = [x, y]
+		text.textBaseline = "alphabetic"
+		map.addChild(text)
+		return
+
+	drawChildren: (map, parent, parentX, parentY) ->
+		lineOffsetX = 20
+		lineOffsetY = 20
+		numChildren = parent.children.length
+		childCoords = @calculateChildCoords(numChildren, parentX, parentY)
+		for i in [0..numChildren-1]
+			# Calculate coordinates
+			child = parent.children[i]
+			childX = childCoords[i][0]
+			childY = childCoords[i][1]
+			# Draw children (recursion ftw)
+			if child.children.length > 0
+				@drawChildren(map, child, childX, childY)
+			# Draw text
+			@drawFile(map, child, childX, childY)
+			# Draw line
+			# TODO center line under/above text it points to
+			# by calculating length of text, etc. fancy stuff.
+			line = new createjs.Shape()
+			line.graphics.setStrokeStyle(1)
+			line.graphics.beginStroke("gray")
+			line.graphics.moveTo(parentX, parentY+lineOffsetY)
+			line.graphics.lineTo(childX+lineOffsetX, childY-lineOffsetY)
+			line.graphics.endStroke()
+			map.addChild(line)
+		return
