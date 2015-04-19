@@ -1,28 +1,3 @@
-# Functions to create sprite
-createBashySprite = (bashyImage, stage) ->
-	[SPRITEX, SPRITEY] = [200, 50]
-	## CREATE AND INITIALIZE CHARACTER SPRITE ##
-	# Create SpriteSheet first
-	bashySpriteSheet = new createjs.SpriteSheet({
-		images: [bashyImage],
-		frames: {width: 64, height: 64},
-		animations: {
-		    walking: [0, 4, "walking"],
-		    standing: [0, 0, "standing"],
-		}
-	})
-	# Now create Sprite
-	sprite = new createjs.Sprite(bashySpriteSheet, 0)
-	sprite.name = "bashySprite"
-	# Start playing the first sequence:
-	sprite.framerate = 4
-	sprite.gotoAndPlay "walking"
-	sprite.currentFrame = 0
-	sprite.x = SPRITEX
-	sprite.y = SPRITEY
-	stage.addChild(sprite)
-	return sprite
-
 startTicker = (stage) ->
 	# Set up Ticker, frame rate
 	tick = (event) ->
@@ -101,7 +76,7 @@ class DisplayManager
 
 	spriteLoaded: () ->
 		# TODO who owns/uses bashySprite?
-		@bashySprite = createBashySprite(@bashyImage, @stage)
+		@bashySprite = @createBashySprite(@bashyImage, @stage)
 		startTicker(@stage)
 
 	
@@ -141,4 +116,28 @@ class DisplayManager
 		$('#helpText').html(helpHtml)
 		$('#helpScreen').foundation('reveal', 'open')
 		return
+
+	createBashySprite: () ->
+		[SPRITEX, SPRITEY] = [200, 50]
+		## CREATE AND INITIALIZE CHARACTER SPRITE ##
+		# Create SpriteSheet first
+		bashySpriteSheet = new createjs.SpriteSheet({
+			images: [@bashyImage],
+			frames: {width: 64, height: 64},
+			animations: {
+			    walking: [0, 4, "walking"],
+			    standing: [0, 0, "standing"],
+			}
+		})
+		# Now create Sprite
+		sprite = new createjs.Sprite(bashySpriteSheet, 0)
+		sprite.name = "bashySprite"
+		# Start playing the first sequence:
+		sprite.framerate = 4
+		sprite.gotoAndPlay "walking"
+		sprite.currentFrame = 0
+		sprite.x = SPRITEX
+		sprite.y = SPRITEY
+		@stage.addChild(sprite)
+		return sprite
 
