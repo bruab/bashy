@@ -69,6 +69,8 @@ class DisplayManager
 		$('#helpScreen').foundation('reveal', 'open')
 		return
 
+	# Take a spritesheet Image object, create a Sprite object,
+	# start playing it and return it
 	createBashySprite: (image) ->
 		[SPRITEX, SPRITEY] = [200, 50]
 		## CREATE AND INITIALIZE CHARACTER SPRITE ##
@@ -93,6 +95,7 @@ class DisplayManager
 		@stage.addChild(sprite)
 		return sprite
 
+	# Set frame rate; call stage.update on each tick
 	startTicker: (stage) ->
 		# TODO this only works when stage is passed in,
 		# why can't this method access @stage?
@@ -104,7 +107,8 @@ class DisplayManager
 		createjs.Ticker.setFPS(15)
 		return
 
-	# Functions to draw map
+	# Take a count of children and a parent's x, y coordinates
+	# Return a list of x, y coordinates for each child
 	calculateChildCoords: (count, parentX, parentY) ->
 		yOffset = 80
 		xOffset = 100
@@ -113,6 +117,8 @@ class DisplayManager
 		coords = for i in [0..count-1] then [startingX + 2*i*xOffset, y]
 		return coords
 
+	# Take a map Container object, a Directory object and an x, y pair
+	# Add a Text object to the map with the appropriate coordinates
 	drawFile: (map, file, x, y) ->
 		text = new createjs.Text(file.name(), "20px Arial", "black")
 		text.name = file.path
@@ -121,6 +127,11 @@ class DisplayManager
 		map.addChild(text)
 		return
 
+	# Take a map Container object, a parent Directory object
+	# and its x, y coordinates
+	# Add the parent to the map as a Text object;
+	# add its children as Text objects; draw lines (Shape objects)
+	# connecting the parent to its children
 	drawChildren: (map, parent, parentX, parentY) ->
 		lineOffsetX = 20
 		lineOffsetY = 20
