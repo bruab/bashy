@@ -85,15 +85,6 @@ getParentPath = (path) ->
 		return cleanPath parentPath
 
 ## OS-related functions
-createBashyOS = (zoneName) ->
-	if zoneName == "nav"
-		validCommands = ["cd", "pwd"]
-		fileSystem = createFileSystem(zoneName)
-		return new BashyOS(validCommands, fileSystem)
-	else
-		console.log "createBashyOS called with unknown zone name: " + zoneName
-		return None
-
 parseRelativePath = (relativePath, cwd) ->
 	if relativePath == ".."
 		newPath = getParentPath(cwd)
@@ -118,9 +109,17 @@ parseRelativePath = (relativePath, cwd) ->
 
 # OS class in charge of file system, processing user input
 class BashyOS
-	constructor: (@validCommands, @fileSystem) ->
+	constructor: (zoneName) ->
+		if zoneName == "nav"
+			@validCommands = ["cd", "pwd"]
+			@fileSystem = createFileSystem(zoneName)
+		else
+			console.log "createBashyOS called with unknown zone name: " + zoneName
+			@validCommands = []
+			@fileSystem = None
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
+
 
 	# Function called every time a user types a command
 	# Takes input string, returns context, stdout and stderr
