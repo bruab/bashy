@@ -35,6 +35,12 @@ class BashyGame
 		@taskMgr.update(@os)
 		# DisplayManager updates map
 		@displayMgr.update(fs, cwd)
+		if stderr
+			return stderr
+		else if stdout
+			return stdout
+		else
+			return
 		
 	# Function called each time user types a command
 	# Take user input string, update system, return text to terminal

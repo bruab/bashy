@@ -76,7 +76,7 @@ class BashyOS
 			@fileSystem = None
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
-
+		@man = new Man()
 
 	# Function called every time a user types a valid command
 	# Takes command as string, args as list of strings;
