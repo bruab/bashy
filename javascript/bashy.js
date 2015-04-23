@@ -144,7 +144,7 @@
       this.cdRelativePath = bind(this.cdRelativePath, this);
       this.runCommand = bind(this.runCommand, this);
       if (zoneName === "nav") {
-        this.validCommands = ["man", "cd", "pwd", "ls"];
+        this.validCommands = ["man", "cd", "pwd", "ls", "cat"];
         this.fileSystem = new FileSystem(zoneName);
       } else {
         console.log("BashyOS instantiated with unknown zone name: " + zoneName);
@@ -156,7 +156,7 @@
     }
 
     BashyOS.prototype.runCommand = function(command, args) {
-      var ref, ref1, ref2, ref3, ref4, stderr, stdout;
+      var ref, ref1, ref2, ref3, ref4, ref5, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       if (indexOf.call(this.validCommands, command) < 0) {
         stderr = "Invalid command: " + command;
@@ -168,6 +168,8 @@
         ref3 = this.pwd(), stdout = ref3[0], stderr = ref3[1];
       } else if (command === 'ls') {
         ref4 = this.ls(), stdout = ref4[0], stderr = ref4[1];
+      } else if (command === 'cat') {
+        ref5 = this.cat(args[0]), stdout = ref5[0], stderr = ref5[1];
       }
       return [this.cwd.path, stdout, stderr];
     };
@@ -234,6 +236,25 @@
         stdout += directory.name() + "\t";
       }
       console.log([stdout, stderr]);
+      return [stdout, stderr];
+    };
+
+    BashyOS.prototype.cat = function(filename) {
+      var file, j, len1, ref, ref1, stderr, stdout, validFile;
+      ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      validFile = false;
+      ref1 = this.cwd.files;
+      for (j = 0, len1 = ref1.length; j < len1; j++) {
+        file = ref1[j];
+        if (file.name === filename) {
+          validFile = true;
+          stdout += file.contents;
+          break;
+        }
+      }
+      if (!validFile) {
+        stdout = "cat: " + filename + ": No such file or directory";
+      }
       return [stdout, stderr];
     };
 

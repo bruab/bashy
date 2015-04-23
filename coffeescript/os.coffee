@@ -76,7 +76,7 @@ class FileSystem
 class BashyOS
 	constructor: (zoneName) ->
 		if zoneName == "nav"
-			@validCommands = ["man", "cd", "pwd", "ls"]
+			@validCommands = ["man", "cd", "pwd", "ls", "cat"]
 			@fileSystem = new FileSystem(zoneName)
 		else
 			console.log "BashyOS instantiated with unknown zone name: " + zoneName
@@ -103,6 +103,8 @@ class BashyOS
 			[stdout, stderr] = @pwd()
 		else if command == 'ls'
 			[stdout, stderr] = @ls()
+		else if command == 'cat'
+			[stdout,stderr] = @cat args[0]
 		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
@@ -165,6 +167,18 @@ class BashyOS
 			# name is a method on Directory
 			stdout += directory.name() + "\t"
 		console.log [stdout, stderr]
+		return [stdout, stderr]
+
+	cat: (filename) ->
+		[stdout, stderr] = ["", ""]
+		validFile = false
+		for file in @cwd.files
+			if file.name == filename
+				validFile = true
+				stdout += file.contents
+				break
+		if not validFile
+			stdout = "cat: #{filename}: No such file or directory"
 		return [stdout, stderr]
 
 	# Take path as a string, remove extra or trailing slashes
