@@ -1,8 +1,14 @@
-# Directory class stores a folder and its children
+# File class stores contents and path
+class File
+	constructor: (@name, @contents) ->
+
+# Directory class stores a folder and its files & subdirectories
 class Directory
 	# Instantiated with a string representing path
 	constructor: (@path) ->
-		@children = []
+		@subdirectories = []
+		@files = []
+		console.log @subdirectories
 
 	# Return the directory's name (not entire path)
 	name: () ->
@@ -17,7 +23,7 @@ class Directory
 
 	# Return child Directory object, or empty string if child not found
 	getChild: (name) ->
-		for child in @children
+		for child in @subdirectories
 			if child.name() == name
 				return child
 		return ""
@@ -30,13 +36,15 @@ class FileSystem
 
 			media = new Directory("/media")
 			pics = new Directory("/media/pics")
-			media.children.push(pics)
-			@root.children.push(media)
+			media.subdirectories.push(pics)
+			@root.subdirectories.push(media)
 
 			home = new Directory("/home")
 			bashy = new Directory("/home/bashy")
-			home.children.push(bashy)
-			@root.children.push(home)
+			foo = new File("foo.txt", "This is a simple text file.")
+			bashy.files.push(foo)
+			home.subdirectories.push(bashy)
+			@root.subdirectories.push(home)
 		else
 			console.log "FileSystem instantiated with unknown zone name: " + zoneName
 
@@ -68,7 +76,7 @@ class FileSystem
 class BashyOS
 	constructor: (zoneName) ->
 		if zoneName == "nav"
-			@validCommands = ["man", "cd", "pwd"]
+			@validCommands = ["man", "cd", "pwd", "ls"]
 			@fileSystem = new FileSystem(zoneName)
 		else
 			console.log "BashyOS instantiated with unknown zone name: " + zoneName
@@ -93,6 +101,8 @@ class BashyOS
 			[stdout, stderr] = @cd args
 		else if command == 'pwd'
 			[stdout, stderr] = @pwd()
+		else if command == 'ls'
+			[stdout, stderr] = @ls()
 		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
@@ -144,6 +154,17 @@ class BashyOS
 	pwd: () =>
 		[stdout, stderr] = ["", ""]
 		stdout = @cwd.path
+		return [stdout, stderr]
+
+	ls: () ->
+		[stdout, stderr] = ["", ""]
+		for file in @cwd.files
+			# name is an attribute of File
+			stdout += file.name + "\t"
+		for directory in @cwd.subdirectories
+			# name is a method on Directory
+			stdout += directory.name() + "\t"
+		console.log [stdout, stderr]
 		return [stdout, stderr]
 
 	# Take path as a string, remove extra or trailing slashes

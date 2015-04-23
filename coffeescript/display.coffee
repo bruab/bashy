@@ -135,15 +135,15 @@ class DisplayManager
 	drawChildren: (map, parent, parentX, parentY) ->
 		lineOffsetX = 20
 		lineOffsetY = 20
-		numChildren = parent.children.length
+		numChildren = parent.subdirectories.length
 		childCoords = @calculateChildCoords(numChildren, parentX, parentY)
 		for i in [0..numChildren-1]
 			# Calculate coordinates
-			child = parent.children[i]
+			child = parent.subdirectories[i]
 			childX = childCoords[i][0]
 			childY = childCoords[i][1]
 			# Draw children (recursion ftw)
-			if child.children.length > 0
+			if child.subdirectories.length > 0
 				@drawChildren(map, child, childX, childY)
 			# Draw text
 			@drawFile(map, child, childX, childY)
