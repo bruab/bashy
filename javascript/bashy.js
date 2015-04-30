@@ -164,7 +164,7 @@
       } else if (command === 'pwd') {
         ref3 = this.pwd(), stdout = ref3[0], stderr = ref3[1];
       } else if (command === 'ls') {
-        ref4 = this.ls(), stdout = ref4[0], stderr = ref4[1];
+        ref4 = this.ls(args[0]), stdout = ref4[0], stderr = ref4[1];
       } else if (command === 'cat') {
         ref5 = this.cat(args[0]), stdout = ref5[0], stderr = ref5[1];
       }
@@ -195,18 +195,27 @@
       return [stdout, stderr];
     };
 
-    BashyOS.prototype.ls = function() {
-      var directory, file, j, k, len1, len2, ref, ref1, ref2, stderr, stdout;
+    BashyOS.prototype.ls = function(path) {
+      var dir, directory, file, j, k, len1, len2, ref, ref1, ref2, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
-      ref1 = this.cwd.files;
-      for (j = 0, len1 = ref1.length; j < len1; j++) {
-        file = ref1[j];
-        stdout += file.name + "\t";
+      if (path == null) {
+        dir = this.cwd;
+      } else {
+        dir = this.getDirectoryFromPath(path);
       }
-      ref2 = this.cwd.subdirectories;
-      for (k = 0, len2 = ref2.length; k < len2; k++) {
-        directory = ref2[k];
-        stdout += directory.name() + "\t";
+      if (dir == null) {
+        stderr = "ls: " + path + ": No such file or directory";
+      } else {
+        ref1 = dir.files;
+        for (j = 0, len1 = ref1.length; j < len1; j++) {
+          file = ref1[j];
+          stdout += file.name + "\t";
+        }
+        ref2 = dir.subdirectories;
+        for (k = 0, len2 = ref2.length; k < len2; k++) {
+          directory = ref2[k];
+          stdout += directory.name() + "\t";
+        }
       }
       return [stdout, stderr];
     };
@@ -280,6 +289,7 @@
 
     BashyOS.prototype.parseRelativePath = function(relativePath) {
       var cwd, dir, fields, finished, newPath;
+      console.log(relativePath);
       cwd = this.cwd.path;
       if (relativePath === "..") {
         newPath = this.getParentPath(cwd);

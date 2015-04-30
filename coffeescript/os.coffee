@@ -102,7 +102,7 @@ class BashyOS
 		else if command == 'pwd'
 			[stdout, stderr] = @pwd()
 		else if command == 'ls'
-			[stdout, stderr] = @ls()
+			[stdout, stderr] = @ls args[0]
 		else if command == 'cat'
 			[stdout,stderr] = @cat args[0]
 		# Return path, stdout, stderr
@@ -132,14 +132,22 @@ class BashyOS
 		stdout = @cwd.path
 		return [stdout, stderr]
 
-	ls: () ->
+	ls: (path) ->
 		[stdout, stderr] = ["", ""]
-		for file in @cwd.files
-			# name is an attribute of File
-			stdout += file.name + "\t"
-		for directory in @cwd.subdirectories
-			# name is a method on Directory
-			stdout += directory.name() + "\t"
+		if not path?
+			# No path provided; use cwd
+			dir = @cwd
+		else
+			dir = @getDirectoryFromPath path
+		if not dir?
+			stderr = "ls: #{path}: No such file or directory"
+		else
+			for file in dir.files
+				# name is an attribute of File
+				stdout += file.name + "\t"
+			for directory in dir.subdirectories
+				# name is a method on Directory
+				stdout += directory.name() + "\t"
 		return [stdout, stderr]
 
 	cat: (filename) ->
@@ -197,6 +205,7 @@ class BashyOS
 	# return absolute path of target directory
 	# e.g. parseRelativePath("../foo", "/home/bar") -> "/home/foo"
 	parseRelativePath: (relativePath) ->
+		console.log relativePath
 		cwd = @cwd.path
 		if relativePath == ".."
 			newPath = @getParentPath(cwd)
