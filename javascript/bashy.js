@@ -43,7 +43,6 @@
       this.path = path1;
       this.subdirectories = [];
       this.files = [];
-      console.log(this.subdirectories);
     }
 
     Directory.prototype.name = function() {
@@ -140,8 +139,6 @@
     function BashyOS(zoneName) {
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
-      this.cdAbsolutePath = bind(this.cdAbsolutePath, this);
-      this.cdRelativePath = bind(this.cdRelativePath, this);
       this.runCommand = bind(this.runCommand, this);
       if (zoneName === "nav") {
         this.validCommands = ["man", "cd", "pwd", "ls", "cat"];
@@ -174,42 +171,18 @@
       return [this.cwd.path, stdout, stderr];
     };
 
-    BashyOS.prototype.cdRelativePath = function(path) {
-      var absolutePath, ref, stderr, stdout;
-      ref = ["", ""], stdout = ref[0], stderr = ref[1];
-      absolutePath = this.parseRelativePath(path, this.cwd.path);
-      absolutePath = this.cleanPath(absolutePath);
-      if (this.fileSystem.isValidPath(absolutePath)) {
-        this.cwd = this.fileSystem.getDirectory(absolutePath);
-      } else {
-        stderr = "Invalid path: " + absolutePath;
-      }
-      return [stdout, stderr];
-    };
-
-    BashyOS.prototype.cdAbsolutePath = function(path) {
-      var absolutePath, ref, stderr, stdout;
-      ref = ["", ""], stdout = ref[0], stderr = ref[1];
-      absolutePath = this.cleanPath(path);
-      if (this.fileSystem.isValidPath(path)) {
-        this.cwd = this.fileSystem.getDirectory(path);
-      } else {
-        stderr = "Invalid path";
-      }
-      return [stdout, stderr];
-    };
-
     BashyOS.prototype.cd = function(args) {
-      var path, ref, ref1, ref2, stderr, stdout;
+      var path, ref, stderr, stdout, targetDirectory;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       if (args.length === 0) {
         this.cwd = this.fileSystem.getDirectory("/home");
-      } else if (args.length > 0) {
+      } else {
         path = args[0];
-        if (path[0] === "/") {
-          ref1 = this.cdAbsolutePath(path), stdout = ref1[0], stderr = ref1[1];
+        targetDirectory = this.getDirectoryFromPath(path);
+        if (targetDirectory != null) {
+          this.cwd = targetDirectory;
         } else {
-          ref2 = this.cdRelativePath(path), stdout = ref2[0], stderr = ref2[1];
+          stderr = "Invalid path: " + path;
         }
       }
       return [stdout, stderr];
@@ -235,7 +208,6 @@
         directory = ref2[k];
         stdout += directory.name() + "\t";
       }
-      console.log([stdout, stderr]);
       return [stdout, stderr];
     };
 
@@ -286,8 +258,29 @@
       }
     };
 
-    BashyOS.prototype.parseRelativePath = function(relativePath, cwd) {
-      var dir, fields, finished, newPath;
+    BashyOS.prototype.getDirectoryFromPath = function(path) {
+      if (this.isRelativePath(path)) {
+        path = this.parseRelativePath(path);
+        path = this.cleanPath(path);
+      }
+      if (this.fileSystem.isValidPath(path)) {
+        return this.fileSystem.getDirectory(path);
+      } else {
+        return null;
+      }
+    };
+
+    BashyOS.prototype.isRelativePath = function(path) {
+      if (path[0] === "/") {
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    BashyOS.prototype.parseRelativePath = function(relativePath) {
+      var cwd, dir, fields, finished, newPath;
+      cwd = this.cwd.path;
       if (relativePath === "..") {
         newPath = this.getParentPath(cwd);
         return newPath;

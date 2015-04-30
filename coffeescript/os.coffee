@@ -8,7 +8,6 @@ class Directory
 	constructor: (@path) ->
 		@subdirectories = []
 		@files = []
-		console.log @subdirectories
 
 	# Return the directory's name (not entire path)
 	name: () ->
@@ -62,7 +61,8 @@ class FileSystem
 				currentParent = dir
 		return true
 
-	# Takes path as a string, returns Directory object
+	# Takes absolute path as a string, returns Directory object
+	# Assumes path is valid!
 	getDirectory: (path) ->
 		if path == "/"
 			return @root
@@ -108,32 +108,6 @@ class BashyOS
 		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
-	# Take relative path as a string, attempt to update @cwd; 
-	# return stdout and stderr
-	cdRelativePath: (path) =>
-		# No output by default
-		[stdout, stderr] = ["", ""]
-		# Build absolute path
-		absolutePath = @parseRelativePath(path, @cwd.path)
-		absolutePath = @cleanPath(absolutePath)
-		if @fileSystem.isValidPath(absolutePath)
-			@cwd = @fileSystem.getDirectory(absolutePath)
-		else
-			stderr = "Invalid path: #{absolutePath}"
-		return [stdout, stderr]
-	
-	# Take absolute path as a string, attempt to update @cwd;
-	# return stdout and stderr
-	cdAbsolutePath: (path) =>
-		# No output by default
-		[stdout, stderr] = ["", ""]
-		absolutePath = @cleanPath(path)
-		if @fileSystem.isValidPath(path)
-			@cwd = @fileSystem.getDirectory(path)
-		else
-			stderr = "Invalid path"
-		return [stdout, stderr]
-
 	# Take a list of command line args to 'cd' command;
 	# attempt to update @cwd and return stdout, stderr
 	cd: (args) =>
@@ -142,14 +116,14 @@ class BashyOS
 		if args.length == 0
 			# The user typed "cd" with no additional args
 			@cwd = @fileSystem.getDirectory("/home")
-		else if args.length > 0
-			path = args[0] # not handling options/flags yet
-			# Determine if absolute or relative path
-			# based on first character
-			if path[0] == "/"
-				[stdout, stderr] = @cdAbsolutePath(path)
+		else
+			# The user provided a path
+			path = args[0]
+			targetDirectory = @getDirectoryFromPath path
+			if targetDirectory?
+				@cwd = targetDirectory
 			else
-				[stdout, stderr] = @cdRelativePath(path)
+				stderr = "Invalid path: #{path}"
 		return [stdout, stderr]
 
 	# Return @cwd as string to stdout, nothing to stderr
@@ -166,7 +140,6 @@ class BashyOS
 		for directory in @cwd.subdirectories
 			# name is a method on Directory
 			stdout += directory.name() + "\t"
-		console.log [stdout, stderr]
 		return [stdout, stderr]
 
 	cat: (filename) ->
@@ -203,10 +176,28 @@ class BashyOS
 				parentPath = "#{parentPath}/#{splitPath[i]}"
 			return @cleanPath parentPath
 
+	# Take path as string. If valid path, return Directory object
+	# to which it refers. If not valid, return null
+	getDirectoryFromPath: (path) ->
+		if @isRelativePath path
+			path = @parseRelativePath path
+			path = @cleanPath path
+		if @fileSystem.isValidPath path
+			return @fileSystem.getDirectory path
+		else
+			return null
+
+	isRelativePath: (path) ->
+		if path[0] == "/"
+			return false
+		else
+			return true
+
 	# Take relative  path and cwd as strings
 	# return absolute path of target directory
 	# e.g. parseRelativePath("../foo", "/home/bar") -> "/home/foo"
-	parseRelativePath: (relativePath, cwd) ->
+	parseRelativePath: (relativePath) ->
+		cwd = @cwd.path
 		if relativePath == ".."
 			newPath = @getParentPath(cwd)
 			return newPath
