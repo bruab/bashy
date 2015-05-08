@@ -48,7 +48,7 @@ class FileSystem
 			console.log "FileSystem instantiated with unknown zone name: " + zoneName
 
 	# Takes absolute path as a string, returns boolean
-	isValidPath: (path) ->
+	isValidDirectoryPath: (path) ->
 		if path == "/"
 			return true
 		splitPath = path.split "/"
@@ -61,6 +61,32 @@ class FileSystem
 				currentParent = dir
 		return true
 
+	isValidFilePath: (path) ->
+		if path == "/"
+			return true
+		splitPath = path.split "/"
+		len = splitPath.length
+		currentParent = @root
+		# Verify directories
+		for dirName in splitPath[1..len-2]
+			dir = currentParent.getChild dirName
+			if not dir
+				return false
+			else
+				currentParent = dir
+		# Verify file itself
+		filename = splitPath[len-1]
+		for file in currentParent.files
+			if file.name == filename
+				return true
+		return false
+
+	# Takes a path such as /home/foo/bar.txt and returns the
+	# directory ("/home/foo") and the filename ("bar.txt")
+	splitPath: (path) ->
+		# TODO
+		return ["/home/bashy", "foo.txt"]
+
 	# Takes absolute path as a string, returns Directory object
 	# Assumes path is valid!
 	getDirectory: (path) ->
@@ -71,6 +97,15 @@ class FileSystem
 		for dirName in splitPath[1..]
 			currentParent = currentParent.getChild(dirName)
 		return currentParent
+
+	# Takes absolute path as a string, returns File object
+	# Assumes path is valid!
+	getFile: (path) ->
+		[dirPath, filename] = @splitPath path
+		dir = @getDirectory dirPath
+		for file in dir.files
+			if file.name == filename
+				return file
 
 # OS class in charge of file system, executing commands
 class BashyOS
@@ -153,23 +188,19 @@ class BashyOS
 	cat: (path) ->
 		[stdout, stderr] = ["", ""]
 		validFile = false
-		cwd = @cwd
-		for file in cwd.files
-			if file.name == path
-				validFile = true
-				stdout += file.contents
-				break
-		if not validFile
+		file = @getFileFromPath path
+		if not file
+			# TODO should be stderr?
 			stdout = "cat: #{path}: No such file or directory"
+		else
+			stdout = file.contents
 		return [stdout, stderr]
 
 	# Take path as a string, remove extra or trailing slashes
 	# e.g. "/home//bashy/pics/" -> "/home/bashy/pics"
 	cleanPath: (path) ->
-		alert "cleanpath in: " + path
 		path = path.replace /\/+/g, "/"
 		path = path.replace /\/$/, ""
-		alert "cleanpath out: " + path
 		return path
 		
 	# Take path as a string, return parent path as a string
@@ -190,8 +221,18 @@ class BashyOS
 		if @isRelativePath path
 			path = @parseRelativePath path
 			path = @cleanPath path
-		if @fileSystem.isValidPath path
+		if @fileSystem.isValidDirectoryPath path
 			return @fileSystem.getDirectory path
+		else
+			return null
+
+	getFileFromPath: (path) ->
+		path = @cleanPath path
+		if @isRelativePath path
+			path = @parseRelativePath path
+			path = @cleanPath path
+		if @fileSystem.isValidFilePath path
+			return @fileSystem.getFile path
 		else
 			return null
 
@@ -205,7 +246,6 @@ class BashyOS
 	# return absolute path of target directory
 	# e.g. parseRelativePath("../foo", "/home/bar") -> "/home/foo"
 	parseRelativePath: (relativePath) ->
-		console.log relativePath
 		cwd = @cwd.path
 		if relativePath == ".."
 			newPath = @getParentPath(cwd)

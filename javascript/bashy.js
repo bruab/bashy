@@ -96,8 +96,9 @@
       }
     }
 
-    FileSystem.prototype.isValidPath = function(path) {
+    FileSystem.prototype.isValidDirectoryPath = function(path) {
       var currentParent, dir, dirName, j, len1, ref, splitPath;
+      console.log("isValidDirectoryPath called with " + path);
       if (path === "/") {
         return true;
       }
@@ -108,12 +109,51 @@
         dirName = ref[j];
         dir = currentParent.getChild(dirName);
         if (!dir) {
+          console.log("isValidDirectoryPath returning false");
           return false;
         } else {
           currentParent = dir;
         }
       }
+      console.log("isValidDirectoryPath returning true");
       return true;
+    };
+
+    FileSystem.prototype.isValidFilePath = function(path) {
+      var currentParent, dir, dirName, file, filename, j, k, len, len1, len2, ref, ref1, splitPath;
+      console.log("isValidFilePath called with " + path);
+      if (path === "/") {
+        return true;
+      }
+      splitPath = path.split("/");
+      len = splitPath.length;
+      currentParent = this.root;
+      ref = splitPath.slice(1, +(len - 2) + 1 || 9e9);
+      for (j = 0, len1 = ref.length; j < len1; j++) {
+        dirName = ref[j];
+        dir = currentParent.getChild(dirName);
+        if (!dir) {
+          console.log("isValidFilePath returning false");
+          return false;
+        } else {
+          currentParent = dir;
+        }
+      }
+      filename = splitPath[len - 1];
+      ref1 = currentParent.files;
+      for (k = 0, len2 = ref1.length; k < len2; k++) {
+        file = ref1[k];
+        if (file.name === filename) {
+          console.log("isValidFilePath returning true");
+          return true;
+        }
+      }
+      console.log("isValidFilePath returning false");
+      return false;
+    };
+
+    FileSystem.prototype.splitPath = function(path) {
+      return ["/home/bashy", "foo.txt"];
     };
 
     FileSystem.prototype.getDirectory = function(path) {
@@ -129,6 +169,19 @@
         currentParent = currentParent.getChild(dirName);
       }
       return currentParent;
+    };
+
+    FileSystem.prototype.getFile = function(path) {
+      var dir, dirPath, file, filename, j, len1, ref, ref1;
+      ref = this.splitPath(path), dirPath = ref[0], filename = ref[1];
+      dir = this.getDirectory(dirPath);
+      ref1 = dir.files;
+      for (j = 0, len1 = ref1.length; j < len1; j++) {
+        file = ref1[j];
+        if (file.name === filename) {
+          return file;
+        }
+      }
     };
 
     return FileSystem;
@@ -221,30 +274,22 @@
     };
 
     BashyOS.prototype.cat = function(path) {
-      var cwd, file, j, len1, ref, ref1, stderr, stdout, validFile;
+      var file, ref, stderr, stdout, validFile;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       validFile = false;
-      cwd = this.cwd;
-      ref1 = cwd.files;
-      for (j = 0, len1 = ref1.length; j < len1; j++) {
-        file = ref1[j];
-        if (file.name === path) {
-          validFile = true;
-          stdout += file.contents;
-          break;
-        }
-      }
-      if (!validFile) {
+      file = this.getFileFromPath(path);
+      console.log(file);
+      if (!file) {
         stdout = "cat: " + path + ": No such file or directory";
+      } else {
+        stdout = file.contents;
       }
       return [stdout, stderr];
     };
 
     BashyOS.prototype.cleanPath = function(path) {
-      alert("cleanpath in: " + path);
       path = path.replace(/\/+/g, "/");
       path = path.replace(/\/$/, "");
-      alert("cleanpath out: " + path);
       return path;
     };
 
@@ -268,8 +313,21 @@
         path = this.parseRelativePath(path);
         path = this.cleanPath(path);
       }
-      if (this.fileSystem.isValidPath(path)) {
+      if (this.fileSystem.isValidDirectoryPath(path)) {
         return this.fileSystem.getDirectory(path);
+      } else {
+        return null;
+      }
+    };
+
+    BashyOS.prototype.getFileFromPath = function(path) {
+      path = this.cleanPath(path);
+      if (this.isRelativePath(path)) {
+        path = this.parseRelativePath(path);
+        path = this.cleanPath(path);
+      }
+      if (this.fileSystem.isValidFilePath(path)) {
+        return this.fileSystem.getFile(path);
       } else {
         return null;
       }
