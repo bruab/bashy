@@ -29,23 +29,20 @@ class Directory
 
 # FileSystem class stores and answers questions about directories and files
 class FileSystem
-	constructor: (zoneName) ->
-		if zoneName == "nav"
-			@root = new Directory("/")
+	constructor: () ->
+		@root = new Directory("/")
 
-			media = new Directory("/media")
-			pics = new Directory("/media/pics")
-			media.subdirectories.push(pics)
-			@root.subdirectories.push(media)
+		media = new Directory("/media")
+		pics = new Directory("/media/pics")
+		media.subdirectories.push(pics)
+		@root.subdirectories.push(media)
 
-			home = new Directory("/home")
-			bashy = new Directory("/home/bashy")
-			foo = new File("foo.txt", "This is a simple text file.")
-			bashy.files.push(foo)
-			home.subdirectories.push(bashy)
-			@root.subdirectories.push(home)
-		else
-			console.log "FileSystem instantiated with unknown zone name: " + zoneName
+		home = new Directory("/home")
+		bashy = new Directory("/home/bashy")
+		foo = new File("foo.txt", "This is a simple text file.")
+		bashy.files.push(foo)
+		home.subdirectories.push(bashy)
+		@root.subdirectories.push(home)
 
 	# Takes absolute path as a string, returns boolean
 	isValidDirectoryPath: (path) ->
@@ -109,14 +106,9 @@ class FileSystem
 
 # OS class in charge of file system, executing commands
 class BashyOS
-	constructor: (zoneName) ->
-		if zoneName == "nav"
-			@validCommands = ["man", "cd", "pwd", "ls", "cat"]
-			@fileSystem = new FileSystem(zoneName)
-		else
-			console.log "BashyOS instantiated with unknown zone name: " + zoneName
-			@validCommands = []
-			@fileSystem = None
+	constructor: () ->
+		@validCommands = ["man", "cd", "pwd", "ls", "cat"]
+		@fileSystem = new FileSystem()
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
 		@man = new Man()

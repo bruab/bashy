@@ -2,7 +2,7 @@
 class BashyGame
 	constructor: ->
 		@taskMgr = new TaskManager()
-		@os = new BashyOS("nav")
+		@os = new BashyOS()
 		@displayMgr = new DisplayManager()
 		@displayMgr.drawFileSystem(@os.fileSystem)
 		@terminal = new Terminal(@handleInput)

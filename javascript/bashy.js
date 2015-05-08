@@ -77,28 +77,23 @@
   })();
 
   FileSystem = (function() {
-    function FileSystem(zoneName) {
+    function FileSystem() {
       var bashy, foo, home, media, pics;
-      if (zoneName === "nav") {
-        this.root = new Directory("/");
-        media = new Directory("/media");
-        pics = new Directory("/media/pics");
-        media.subdirectories.push(pics);
-        this.root.subdirectories.push(media);
-        home = new Directory("/home");
-        bashy = new Directory("/home/bashy");
-        foo = new File("foo.txt", "This is a simple text file.");
-        bashy.files.push(foo);
-        home.subdirectories.push(bashy);
-        this.root.subdirectories.push(home);
-      } else {
-        console.log("FileSystem instantiated with unknown zone name: " + zoneName);
-      }
+      this.root = new Directory("/");
+      media = new Directory("/media");
+      pics = new Directory("/media/pics");
+      media.subdirectories.push(pics);
+      this.root.subdirectories.push(media);
+      home = new Directory("/home");
+      bashy = new Directory("/home/bashy");
+      foo = new File("foo.txt", "This is a simple text file.");
+      bashy.files.push(foo);
+      home.subdirectories.push(bashy);
+      this.root.subdirectories.push(home);
     }
 
     FileSystem.prototype.isValidDirectoryPath = function(path) {
       var currentParent, dir, dirName, j, len1, ref, splitPath;
-      console.log("isValidDirectoryPath called with " + path);
       if (path === "/") {
         return true;
       }
@@ -109,19 +104,16 @@
         dirName = ref[j];
         dir = currentParent.getChild(dirName);
         if (!dir) {
-          console.log("isValidDirectoryPath returning false");
           return false;
         } else {
           currentParent = dir;
         }
       }
-      console.log("isValidDirectoryPath returning true");
       return true;
     };
 
     FileSystem.prototype.isValidFilePath = function(path) {
       var currentParent, dir, dirName, file, filename, j, k, len, len1, len2, ref, ref1, splitPath;
-      console.log("isValidFilePath called with " + path);
       if (path === "/") {
         return true;
       }
@@ -133,7 +125,6 @@
         dirName = ref[j];
         dir = currentParent.getChild(dirName);
         if (!dir) {
-          console.log("isValidFilePath returning false");
           return false;
         } else {
           currentParent = dir;
@@ -144,11 +135,9 @@
       for (k = 0, len2 = ref1.length; k < len2; k++) {
         file = ref1[k];
         if (file.name === filename) {
-          console.log("isValidFilePath returning true");
           return true;
         }
       }
-      console.log("isValidFilePath returning false");
       return false;
     };
 
@@ -189,18 +178,12 @@
   })();
 
   BashyOS = (function() {
-    function BashyOS(zoneName) {
+    function BashyOS() {
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
       this.runCommand = bind(this.runCommand, this);
-      if (zoneName === "nav") {
-        this.validCommands = ["man", "cd", "pwd", "ls", "cat"];
-        this.fileSystem = new FileSystem(zoneName);
-      } else {
-        console.log("BashyOS instantiated with unknown zone name: " + zoneName);
-        this.validCommands = [];
-        this.fileSystem = None;
-      }
+      this.validCommands = ["man", "cd", "pwd", "ls", "cat"];
+      this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
       this.man = new Man();
     }
@@ -278,7 +261,6 @@
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       validFile = false;
       file = this.getFileFromPath(path);
-      console.log(file);
       if (!file) {
         stdout = "cat: " + path + ": No such file or directory";
       } else {
@@ -343,7 +325,6 @@
 
     BashyOS.prototype.parseRelativePath = function(relativePath) {
       var cwd, dir, fields, finished, newPath;
-      console.log(relativePath);
       cwd = this.cwd.path;
       if (relativePath === "..") {
         newPath = this.getParentPath(cwd);
@@ -636,7 +617,7 @@
     function BashyGame() {
       this.handleInput = bind(this.handleInput, this);
       this.taskMgr = new TaskManager();
-      this.os = new BashyOS("nav");
+      this.os = new BashyOS();
       this.displayMgr = new DisplayManager();
       this.displayMgr.drawFileSystem(this.os.fileSystem);
       this.terminal = new Terminal(this.handleInput);
