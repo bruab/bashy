@@ -220,36 +220,32 @@
       return [stdout, stderr];
     };
 
-    BashyOS.prototype.cat = function(filename) {
-      var file, j, len1, ref, ref1, stderr, stdout, validFile;
+    BashyOS.prototype.cat = function(path) {
+      var cwd, file, j, len1, ref, ref1, stderr, stdout, validFile;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       validFile = false;
-      ref1 = this.cwd.files;
+      cwd = this.cwd;
+      ref1 = cwd.files;
       for (j = 0, len1 = ref1.length; j < len1; j++) {
         file = ref1[j];
-        if (file.name === filename) {
+        if (file.name === path) {
           validFile = true;
           stdout += file.contents;
           break;
         }
       }
       if (!validFile) {
-        stdout = "cat: " + filename + ": No such file or directory";
+        stdout = "cat: " + path + ": No such file or directory";
       }
       return [stdout, stderr];
     };
 
     BashyOS.prototype.cleanPath = function(path) {
-      var dir, j, len1, newPath, splitPath;
-      splitPath = path.split("/");
-      newPath = "";
-      for (j = 0, len1 = splitPath.length; j < len1; j++) {
-        dir = splitPath[j];
-        if (dir !== "") {
-          newPath = newPath + "/" + dir;
-        }
-      }
-      return newPath;
+      alert("cleanpath in: " + path);
+      path = path.replace(/\/+/g, "/");
+      path = path.replace(/\/$/, "");
+      alert("cleanpath out: " + path);
+      return path;
     };
 
     BashyOS.prototype.getParentPath = function(path) {

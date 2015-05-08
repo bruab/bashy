@@ -150,27 +150,27 @@ class BashyOS
 				stdout += directory.name() + "\t"
 		return [stdout, stderr]
 
-	cat: (filename) ->
+	cat: (path) ->
 		[stdout, stderr] = ["", ""]
 		validFile = false
-		for file in @cwd.files
-			if file.name == filename
+		cwd = @cwd
+		for file in cwd.files
+			if file.name == path
 				validFile = true
 				stdout += file.contents
 				break
 		if not validFile
-			stdout = "cat: #{filename}: No such file or directory"
+			stdout = "cat: #{path}: No such file or directory"
 		return [stdout, stderr]
 
 	# Take path as a string, remove extra or trailing slashes
 	# e.g. "/home//bashy/pics/" -> "/home/bashy/pics"
 	cleanPath: (path) ->
-		splitPath = path.split "/"
-		newPath = ""
-		for dir in splitPath
-			if dir != ""
-				newPath = "#{newPath}/#{dir}"
-		return newPath
+		alert "cleanpath in: " + path
+		path = path.replace /\/+/g, "/"
+		path = path.replace /\/$/, ""
+		alert "cleanpath out: " + path
+		return path
 		
 	# Take path as a string, return parent path as a string
 	getParentPath: (path) ->
