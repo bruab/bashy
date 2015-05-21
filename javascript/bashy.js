@@ -78,7 +78,7 @@
 
   FileSystem = (function() {
     function FileSystem() {
-      var bashy, foo, home, media, pics;
+      var bashy, home, list, media, pics;
       this.root = new Directory("/");
       media = new Directory("/media");
       pics = new Directory("/media/pics");
@@ -86,8 +86,8 @@
       this.root.subdirectories.push(media);
       home = new Directory("/home");
       bashy = new Directory("/home/bashy");
-      foo = new File("foo.txt", "This is a simple text file.");
-      bashy.files.push(foo);
+      list = new File("list", "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20");
+      bashy.files.push(list);
       home.subdirectories.push(bashy);
       this.root.subdirectories.push(home);
     }
@@ -142,7 +142,12 @@
     };
 
     FileSystem.prototype.splitPath = function(path) {
-      return ["/home/bashy", "foo.txt"];
+      var dirPath, filename, len, splitPath;
+      splitPath = path.split("/");
+      len = splitPath.length;
+      filename = splitPath[len - 1];
+      dirPath = splitPath.slice(0, +(len - 2) + 1 || 9e9).join("/");
+      return [dirPath, filename];
     };
 
     FileSystem.prototype.getDirectory = function(path) {

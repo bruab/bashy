@@ -39,8 +39,10 @@ class FileSystem
 
 		home = new Directory("/home")
 		bashy = new Directory("/home/bashy")
-		foo = new File("foo.txt", "This is a simple text file.")
-		bashy.files.push(foo)
+		#foo = new File("foo.txt", "This is a simple text file.")
+		list = new File("list", "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20")
+		bashy.files.push(list)
+		#bashy.files.push(foo)
 		home.subdirectories.push(bashy)
 		@root.subdirectories.push(home)
 
@@ -78,11 +80,14 @@ class FileSystem
 				return true
 		return false
 
-	# Takes a path such as /home/foo/bar.txt and returns the
+	# Takes an absolute path such as /home/foo/bar.txt and returns the
 	# directory ("/home/foo") and the filename ("bar.txt")
 	splitPath: (path) ->
-		# TODO
-		return ["/home/bashy", "foo.txt"]
+		splitPath = path.split "/"
+		len = splitPath.length
+		filename = splitPath[len-1]
+		dirPath = splitPath[0..len-2].join "/"
+		return [dirPath, filename]
 
 	# Takes absolute path as a string, returns Directory object
 	# Assumes path is valid!
