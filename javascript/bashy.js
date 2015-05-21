@@ -78,7 +78,7 @@
 
   FileSystem = (function() {
     function FileSystem() {
-      var bashy, home, list, media, pics;
+      var bashy, foo, home, list, media, pics;
       this.root = new Directory("/");
       media = new Directory("/media");
       pics = new Directory("/media/pics");
@@ -86,8 +86,10 @@
       this.root.subdirectories.push(media);
       home = new Directory("/home");
       bashy = new Directory("/home/bashy");
+      foo = new File("foo.txt", "This is a simple text file.");
       list = new File("list", "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20");
       bashy.files.push(list);
+      bashy.files.push(foo);
       home.subdirectories.push(bashy);
       this.root.subdirectories.push(home);
     }
@@ -187,14 +189,14 @@
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
       this.runCommand = bind(this.runCommand, this);
-      this.validCommands = ["man", "cd", "pwd", "ls", "cat"];
+      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail"];
       this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
       this.man = new Man();
     }
 
     BashyOS.prototype.runCommand = function(command, args) {
-      var ref, ref1, ref2, ref3, ref4, ref5, stderr, stdout;
+      var ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       if (indexOf.call(this.validCommands, command) < 0) {
         stderr = "Invalid command: " + command;
@@ -208,6 +210,10 @@
         ref4 = this.ls(args[0]), stdout = ref4[0], stderr = ref4[1];
       } else if (command === 'cat') {
         ref5 = this.cat(args[0]), stdout = ref5[0], stderr = ref5[1];
+      } else if (command === 'head') {
+        ref6 = this.head(args[0]), stdout = ref6[0], stderr = ref6[1];
+      } else if (command === 'tail') {
+        ref7 = this.tail(args[0]), stdout = ref7[0], stderr = ref7[1];
       }
       return [this.cwd.path, stdout, stderr];
     };
@@ -262,14 +268,42 @@
     };
 
     BashyOS.prototype.cat = function(path) {
-      var file, ref, stderr, stdout, validFile;
+      var file, ref, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
-      validFile = false;
       file = this.getFileFromPath(path);
       if (!file) {
-        stdout = "cat: " + path + ": No such file or directory";
+        stderr = "cat: " + path + ": No such file or directory";
       } else {
         stdout = file.contents;
+      }
+      return [stdout, stderr];
+    };
+
+    BashyOS.prototype.head = function(path) {
+      var file, numberOfLines, ref, splitContents, stderr, stdout;
+      numberOfLines = 10;
+      ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      file = this.getFileFromPath(path);
+      if (!file) {
+        stderr = "head: " + path + ": No such file or directory";
+      } else {
+        splitContents = file.contents.split("\n");
+        stdout = splitContents.slice(0, +(numberOfLines - 1) + 1 || 9e9).join("\n");
+      }
+      return [stdout, stderr];
+    };
+
+    BashyOS.prototype.tail = function(path) {
+      var file, numberOfLines, ref, splitContents, stderr, stdout, totalLines;
+      numberOfLines = 10;
+      ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      file = this.getFileFromPath(path);
+      if (!file) {
+        stderr = "tail: " + path + ": No such file or directory";
+      } else {
+        splitContents = file.contents.split("\n");
+        totalLines = splitContents.length;
+        stdout = splitContents.slice(totalLines - numberOfLines).join("\n");
       }
       return [stdout, stderr];
     };

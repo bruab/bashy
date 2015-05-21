@@ -39,10 +39,10 @@ class FileSystem
 
 		home = new Directory("/home")
 		bashy = new Directory("/home/bashy")
-		#foo = new File("foo.txt", "This is a simple text file.")
+		foo = new File("foo.txt", "This is a simple text file.")
 		list = new File("list", "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20")
 		bashy.files.push(list)
-		#bashy.files.push(foo)
+		bashy.files.push(foo)
 		home.subdirectories.push(bashy)
 		@root.subdirectories.push(home)
 
@@ -112,7 +112,7 @@ class FileSystem
 # OS class in charge of file system, executing commands
 class BashyOS
 	constructor: () ->
-		@validCommands = ["man", "cd", "pwd", "ls", "cat"]
+		@validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail"]
 		@fileSystem = new FileSystem()
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
@@ -137,6 +137,10 @@ class BashyOS
 			[stdout, stderr] = @ls args[0]
 		else if command == 'cat'
 			[stdout,stderr] = @cat args[0]
+		else if command == 'head'
+			[stdout, stderr] = @head args[0]
+		else if command == 'tail'
+			[stdout, stderr] = @tail args[0]
 		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
@@ -186,10 +190,32 @@ class BashyOS
 		[stdout, stderr] = ["", ""]
 		file = @getFileFromPath path
 		if not file
-			# TODO should be stderr?
-			stdout = "cat: #{path}: No such file or directory"
+			stderr = "cat: #{path}: No such file or directory"
 		else
 			stdout = file.contents
+		return [stdout, stderr]
+
+	head: (path) ->
+		numberOfLines = 10
+		[stdout, stderr] = ["", ""]
+		file = @getFileFromPath path
+		if not file
+			stderr = "head: #{path}: No such file or directory"
+		else
+			splitContents = file.contents.split "\n"
+			stdout = splitContents[0..numberOfLines-1].join "\n"
+		return [stdout, stderr]
+
+	tail: (path) ->
+		numberOfLines = 10
+		[stdout, stderr] = ["", ""]
+		file = @getFileFromPath path
+		if not file
+			stderr = "tail: #{path}: No such file or directory"
+		else
+			splitContents = file.contents.split "\n"
+			totalLines = splitContents.length
+			stdout = splitContents[totalLines-numberOfLines..].join "\n"
 		return [stdout, stderr]
 
 	# Take path as a string, remove extra or trailing slashes
