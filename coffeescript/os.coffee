@@ -184,7 +184,6 @@ class BashyOS
 
 	cat: (path) ->
 		[stdout, stderr] = ["", ""]
-		validFile = false
 		file = @getFileFromPath path
 		if not file
 			# TODO should be stderr?
