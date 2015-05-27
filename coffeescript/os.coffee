@@ -112,7 +112,7 @@ class FileSystem
 # OS class in charge of file system, executing commands
 class BashyOS
 	constructor: () ->
-		@validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail"]
+		@validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc"]
 		@fileSystem = new FileSystem()
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
@@ -141,6 +141,8 @@ class BashyOS
 			[stdout, stderr] = @head args[0]
 		else if command == 'tail'
 			[stdout, stderr] = @tail args[0]
+		else if command == 'wc'
+			[stdout, stderr] = @wc args[0]
 		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
@@ -217,6 +219,21 @@ class BashyOS
 			totalLines = splitContents.length
 			stdout = splitContents[totalLines-numberOfLines..].join "\n"
 		return [stdout, stderr]
+
+	wc: (path) ->
+		[stdout, stderr] = ["", ""]
+		file = @getFileFromPath path
+		if not file
+			stderr = "wc: #{path}: open: No such file or directory"
+		else
+			lines = file.contents.split "\n"
+			numberOfLines = lines.length
+			words = file.contents.match /\S+/g
+			numberOfWords = words.length
+			numberOfCharacters = file.contents.length + 1
+			stdout = "\t#{numberOfLines}\t#{numberOfWords}\t#{numberOfCharacters}"
+		return [stdout, stderr]
+		
 
 	# Take path as a string, remove extra or trailing slashes
 	# e.g. "/home//bashy/pics/" -> "/home/bashy/pics"

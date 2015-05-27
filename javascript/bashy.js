@@ -189,14 +189,14 @@
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
       this.runCommand = bind(this.runCommand, this);
-      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail"];
+      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc"];
       this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
       this.man = new Man();
     }
 
     BashyOS.prototype.runCommand = function(command, args) {
-      var ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, stderr, stdout;
+      var ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       if (indexOf.call(this.validCommands, command) < 0) {
         stderr = "Invalid command: " + command;
@@ -214,6 +214,8 @@
         ref6 = this.head(args[0]), stdout = ref6[0], stderr = ref6[1];
       } else if (command === 'tail') {
         ref7 = this.tail(args[0]), stdout = ref7[0], stderr = ref7[1];
+      } else if (command === 'wc') {
+        ref8 = this.wc(args[0]), stdout = ref8[0], stderr = ref8[1];
       }
       return [this.cwd.path, stdout, stderr];
     };
@@ -304,6 +306,24 @@
         splitContents = file.contents.split("\n");
         totalLines = splitContents.length;
         stdout = splitContents.slice(totalLines - numberOfLines).join("\n");
+      }
+      return [stdout, stderr];
+    };
+
+    BashyOS.prototype.wc = function(path) {
+      var file, lines, numberOfCharacters, numberOfLines, numberOfWords, ref, stderr, stdout, words;
+      ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      file = this.getFileFromPath(path);
+      if (!file) {
+        stderr = "wc: " + path + ": open: No such file or directory";
+      } else {
+        lines = file.contents.split("\n");
+        numberOfLines = lines.length;
+        words = file.contents.match(/\S+/g);
+        numberOfWords = words.length;
+        numberOfCharacters = file.contents.length + 1;
+        console.log(file.contents, lines, words, numberOfCharacters);
+        stdout = "\t" + numberOfLines + "\t" + numberOfWords + "\t" + numberOfCharacters;
       }
       return [stdout, stderr];
     };
