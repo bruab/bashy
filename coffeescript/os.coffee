@@ -112,7 +112,8 @@ class FileSystem
 # OS class in charge of file system, executing commands
 class BashyOS
 	constructor: () ->
-		@validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc"]
+		@validCommands = ["man", "cd", "pwd", "ls", "cat",
+				  "head", "tail", "wc", "grep"]
 		@fileSystem = new FileSystem()
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
@@ -122,6 +123,9 @@ class BashyOS
 	# Takes command as string, args as list of strings;
 	# returns a list of three strings -- path to cwd,
 	# stdout and stderr
+	# TODO refactor, hecka duplicated code. can handle by making all commands
+	#   take "args" even if they don't need it (?)
+	#   Or can have dictionary of commands as strings to methods & args (?)
 	runCommand: (command, args) =>
 		# No output by default
 		[stdout, stderr] = ["", ""]
@@ -143,6 +147,8 @@ class BashyOS
 			[stdout, stderr] = @tail args[0]
 		else if command == 'wc'
 			[stdout, stderr] = @wc args[0]
+		else if command == 'grep'
+			[stdout, stderr] = @grep args[0], args[1]
 		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
@@ -234,6 +240,24 @@ class BashyOS
 			stdout = "\t#{numberOfLines}\t#{numberOfWords}\t#{numberOfCharacters}"
 		return [stdout, stderr]
 		
+	grep: (pattern, path) ->
+		[stdout, stderr] = ["", ""]
+		file = @getFileFromPath path
+		if not file
+			stderr = "grep: #{path}: open: No such file or directory"
+		else
+			lines = file.contents.split "\n"
+			console.log lines
+			matchingLines = (line for line in lines when line.match pattern)
+			console.log matchingLines
+			stdout = matchingLines.join "\n"
+		return [stdout, stderr]
+		
+	grepMatch: (pattern, line) ->
+		# TODO true regex match?
+		console.log pattern, line
+		console.log (pattern in line)
+		return line.includes pattern
 
 	# Take path as a string, remove extra or trailing slashes
 	# e.g. "/home//bashy/pics/" -> "/home/bashy/pics"

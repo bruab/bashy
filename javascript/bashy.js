@@ -189,14 +189,14 @@
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
       this.runCommand = bind(this.runCommand, this);
-      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc"];
+      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc", "grep"];
       this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
       this.man = new Man();
     }
 
     BashyOS.prototype.runCommand = function(command, args) {
-      var ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, stderr, stdout;
+      var ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       if (indexOf.call(this.validCommands, command) < 0) {
         stderr = "Invalid command: " + command;
@@ -216,6 +216,8 @@
         ref7 = this.tail(args[0]), stdout = ref7[0], stderr = ref7[1];
       } else if (command === 'wc') {
         ref8 = this.wc(args[0]), stdout = ref8[0], stderr = ref8[1];
+      } else if (command === 'grep') {
+        ref9 = this.grep(args[0], args[1]), stdout = ref9[0], stderr = ref9[1];
       }
       return [this.cwd.path, stdout, stderr];
     };
@@ -322,10 +324,41 @@
         words = file.contents.match(/\S+/g);
         numberOfWords = words.length;
         numberOfCharacters = file.contents.length + 1;
-        console.log(file.contents, lines, words, numberOfCharacters);
         stdout = "\t" + numberOfLines + "\t" + numberOfWords + "\t" + numberOfCharacters;
       }
       return [stdout, stderr];
+    };
+
+    BashyOS.prototype.grep = function(pattern, path) {
+      var file, line, lines, matchingLines, ref, stderr, stdout;
+      ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      file = this.getFileFromPath(path);
+      if (!file) {
+        stderr = "grep: " + path + ": open: No such file or directory";
+      } else {
+        lines = file.contents.split("\n");
+        console.log(lines);
+        matchingLines = (function() {
+          var j, len1, results;
+          results = [];
+          for (j = 0, len1 = lines.length; j < len1; j++) {
+            line = lines[j];
+            if (line.match(pattern)) {
+              results.push(line);
+            }
+          }
+          return results;
+        })();
+        console.log(matchingLines);
+        stdout = matchingLines.join("\n");
+      }
+      return [stdout, stderr];
+    };
+
+    BashyOS.prototype.grepMatch = function(pattern, line) {
+      console.log(pattern, line);
+      console.log((indexOf.call(line, pattern) >= 0));
+      return line.includes(pattern);
     };
 
     BashyOS.prototype.cleanPath = function(path) {
