@@ -117,7 +117,7 @@ class BashyOS
 	constructor: () ->
 		@validCommands = ["man", "cd", "pwd", "ls", "cat",
 				  "head", "tail", "wc", "grep", "sed",
-				  "rm"]
+				  "rm", "mv", "cp"]
 		@fileSystem = new FileSystem()
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
@@ -157,6 +157,10 @@ class BashyOS
 			[stdout, stderr] = @sed args
 		else if command == 'rm'
 			[stdout, stderr] = @rm args
+		else if command == 'mv'
+			[stdout, stderr] = @mv args
+		else if command == 'cp'
+			[stdout, stderr] = @cp args
 		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
@@ -301,6 +305,44 @@ class BashyOS
 			parentDirectory = @getDirectoryFromPath dirPath
 			parentDirectory.removeFile filename
 		return [stdout, stderr]
+
+	mv: (args) ->
+		[stdout, stderr] = ["", ""]
+		if args.length < 2
+			stderr = "mv: please specify a source and a target"
+			return [stdout, stderr]
+		sourcePath = args[0]
+		source = @getFileFromPath sourcePath
+		if not source
+			stderr = "mv: #{path}: No such file or directory"
+		else
+			# Remove source file
+			[sourceDirPath, sourceFilename] = @fileSystem.splitPath sourcePath
+			sourceDirectory = @getDirectoryFromPath sourceDirPath
+			sourceDirectory.removeFile sourceFilename
+			# Add file to target directory
+			targetPath = args[1]
+			[targetDirPath, targetFilename] = @fileSystem.splitPath targetPath
+			targetDirectory = @getDirectoryFromPath targetDirPath
+			targetDirectory.files.push source
+		return [stdout, stderr]
+
+	cp: (args) ->
+		[stdout, stderr] = ["", ""]
+		if args.length < 2
+			stderr = "cp: please specify a source and a target"
+			return [stdout, stderr]
+		sourcePath = args[0]
+		source = @getFileFromPath sourcePath
+		if not source
+			stderr = "cp: #{path}: No such file or directory"
+		else
+			targetPath = args[1]
+			[targetDirPath, targetFilename] = @fileSystem.splitPath targetPath
+			targetDirectory = @getDirectoryFromPath targetDirPath
+			targetDirectory.files.push source
+		return [stdout, stderr]
+
 		
 	# Take path as a string, remove extra or trailing slashes
 	# e.g. "/home//bashy/pics/" -> "/home/bashy/pics"

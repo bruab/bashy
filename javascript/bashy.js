@@ -211,14 +211,14 @@
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
       this.runCommand = bind(this.runCommand, this);
-      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc", "grep", "sed", "rm"];
+      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc", "grep", "sed", "rm", "mv", "cp"];
       this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
       this.man = new Man();
     }
 
     BashyOS.prototype.runCommand = function(command, args) {
-      var ref, ref1, ref10, ref11, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
+      var ref, ref1, ref10, ref11, ref12, ref13, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       if (indexOf.call(this.validCommands, command) < 0) {
         stderr = "Invalid command: " + command;
@@ -244,6 +244,10 @@
         ref10 = this.sed(args), stdout = ref10[0], stderr = ref10[1];
       } else if (command === 'rm') {
         ref11 = this.rm(args), stdout = ref11[0], stderr = ref11[1];
+      } else if (command === 'mv') {
+        ref12 = this.mv(args), stdout = ref12[0], stderr = ref12[1];
+      } else if (command === 'cp') {
+        ref13 = this.cp(args), stdout = ref13[0], stderr = ref13[1];
       }
       return [this.cwd.path, stdout, stderr];
     };
@@ -433,6 +437,49 @@
         ref1 = this.fileSystem.splitPath(path), dirPath = ref1[0], filename = ref1[1];
         parentDirectory = this.getDirectoryFromPath(dirPath);
         parentDirectory.removeFile(filename);
+      }
+      return [stdout, stderr];
+    };
+
+    BashyOS.prototype.mv = function(args) {
+      var ref, ref1, ref2, source, sourceDirPath, sourceDirectory, sourceFilename, sourcePath, stderr, stdout, targetDirPath, targetDirectory, targetFilename, targetPath;
+      ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      if (args.length < 2) {
+        stderr = "mv: please specify a source and a target";
+        return [stdout, stderr];
+      }
+      sourcePath = args[0];
+      source = this.getFileFromPath(sourcePath);
+      if (!source) {
+        stderr = "mv: " + path + ": No such file or directory";
+      } else {
+        ref1 = this.fileSystem.splitPath(sourcePath), sourceDirPath = ref1[0], sourceFilename = ref1[1];
+        sourceDirectory = this.getDirectoryFromPath(sourceDirPath);
+        sourceDirectory.removeFile(sourceFilename);
+        targetPath = args[1];
+        ref2 = this.fileSystem.splitPath(targetPath), targetDirPath = ref2[0], targetFilename = ref2[1];
+        targetDirectory = this.getDirectoryFromPath(targetDirPath);
+        targetDirectory.files.push(source);
+      }
+      return [stdout, stderr];
+    };
+
+    BashyOS.prototype.cp = function(args) {
+      var ref, ref1, source, sourcePath, stderr, stdout, targetDirPath, targetDirectory, targetFilename, targetPath;
+      ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      if (args.length < 2) {
+        stderr = "cp: please specify a source and a target";
+        return [stdout, stderr];
+      }
+      sourcePath = args[0];
+      source = this.getFileFromPath(sourcePath);
+      if (!source) {
+        stderr = "cp: " + path + ": No such file or directory";
+      } else {
+        targetPath = args[1];
+        ref1 = this.fileSystem.splitPath(targetPath), targetDirPath = ref1[0], targetFilename = ref1[1];
+        targetDirectory = this.getDirectoryFromPath(targetDirPath);
+        targetDirectory.files.push(source);
       }
       return [stdout, stderr];
     };
