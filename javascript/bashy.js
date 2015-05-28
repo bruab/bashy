@@ -195,14 +195,14 @@
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
       this.runCommand = bind(this.runCommand, this);
-      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc", "grep"];
+      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc", "grep", "sed"];
       this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
       this.man = new Man();
     }
 
     BashyOS.prototype.runCommand = function(command, args) {
-      var ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
+      var ref, ref1, ref10, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       if (indexOf.call(this.validCommands, command) < 0) {
         stderr = "Invalid command: " + command;
@@ -224,6 +224,8 @@
         ref8 = this.wc(args[0]), stdout = ref8[0], stderr = ref8[1];
       } else if (command === 'grep') {
         ref9 = this.grep(args[0], args[1]), stdout = ref9[0], stderr = ref9[1];
+      } else if (command === 'sed') {
+        ref10 = this.sed(args), stdout = ref10[0], stderr = ref10[1];
       }
       return [this.cwd.path, stdout, stderr];
     };
@@ -361,10 +363,8 @@
       return [stdout, stderr];
     };
 
-    BashyOS.prototype.grepMatch = function(pattern, line) {
-      console.log(pattern, line);
-      console.log((indexOf.call(line, pattern) >= 0));
-      return line.includes(pattern);
+    BashyOS.prototype.sed = function(args) {
+      return console.log(args);
     };
 
     BashyOS.prototype.cleanPath = function(path) {

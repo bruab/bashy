@@ -113,7 +113,7 @@ class FileSystem
 class BashyOS
 	constructor: () ->
 		@validCommands = ["man", "cd", "pwd", "ls", "cat",
-				  "head", "tail", "wc", "grep"]
+				  "head", "tail", "wc", "grep", "sed"]
 		@fileSystem = new FileSystem()
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
@@ -149,6 +149,8 @@ class BashyOS
 			[stdout, stderr] = @wc args[0]
 		else if command == 'grep'
 			[stdout, stderr] = @grep args[0], args[1]
+		else if command == 'sed'
+			[stdout, stderr] = @sed args
 		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
@@ -252,13 +254,11 @@ class BashyOS
 			console.log matchingLines
 			stdout = matchingLines.join "\n"
 		return [stdout, stderr]
-		
-	grepMatch: (pattern, line) ->
-		# TODO true regex match?
-		console.log pattern, line
-		console.log (pattern in line)
-		return line.includes pattern
 
+	sed: (args) ->
+		console.log args
+		# TODO
+		
 	# Take path as a string, remove extra or trailing slashes
 	# e.g. "/home//bashy/pics/" -> "/home/bashy/pics"
 	cleanPath: (path) ->
