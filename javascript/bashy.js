@@ -364,7 +364,37 @@
     };
 
     BashyOS.prototype.sed = function(args) {
-      return console.log(args);
+      var command, file, line, lines, newLines, pattern, ref, replacement, splitCommand, stderr, stdout;
+      ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      if (args.length !== 2) {
+        stderr = "sed: invalid or missing arguments.";
+        return [stdout, stderr];
+      }
+      file = this.getFileFromPath(args[1]);
+      if (!file) {
+        stderr = "sed: " + path + ": No such file or directory";
+      } else {
+        command = args[0];
+        splitCommand = command.split("/");
+        if (splitCommand[0] !== 's') {
+          stderr = "sed: sorry, command must start with 's'";
+          return [stdout, stderr];
+        }
+        pattern = splitCommand[1];
+        replacement = splitCommand[2];
+        lines = file.contents.split("\n");
+        newLines = (function() {
+          var j, len1, results;
+          results = [];
+          for (j = 0, len1 = lines.length; j < len1; j++) {
+            line = lines[j];
+            results.push(line.replace(pattern, replacement));
+          }
+          return results;
+        })();
+        stdout = newLines.join("\n");
+      }
+      return [stdout, stderr];
     };
 
     BashyOS.prototype.cleanPath = function(path) {
