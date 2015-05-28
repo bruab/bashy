@@ -27,6 +27,9 @@ class Directory
 				return child
 		return ""
 
+	removeFile: (name) ->
+		@files = (f for f in @files when f.name != name)
+
 # FileSystem class stores and answers questions about directories and files
 class FileSystem
 	constructor: () ->
@@ -113,7 +116,8 @@ class FileSystem
 class BashyOS
 	constructor: () ->
 		@validCommands = ["man", "cd", "pwd", "ls", "cat",
-				  "head", "tail", "wc", "grep", "sed"]
+				  "head", "tail", "wc", "grep", "sed",
+				  "rm"]
 		@fileSystem = new FileSystem()
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
@@ -151,6 +155,8 @@ class BashyOS
 			[stdout, stderr] = @grep args[0], args[1]
 		else if command == 'sed'
 			[stdout, stderr] = @sed args
+		else if command == 'rm'
+			[stdout, stderr] = @rm args
 		# Return path, stdout, stderr
 		return [@cwd.path, stdout, stderr]
 
@@ -256,7 +262,6 @@ class BashyOS
 		return [stdout, stderr]
 
 	sed: (args) ->
-		# TODO
 		[stdout, stderr] = ["", ""]
 		if args.length != 2
 			stderr = "sed: invalid or missing arguments."
@@ -280,6 +285,21 @@ class BashyOS
 			lines = file.contents.split "\n"
 			newLines = (line.replace pattern, replacement for line in lines)
 			stdout = newLines.join "\n"
+		return [stdout, stderr]
+
+	rm: (args) ->
+		[stdout, stderr] = ["", ""]
+		if args.length < 1
+			stderr = "rm: please specify a path"
+			return [stdout, stderr]
+		path = args[0]
+		file = @getFileFromPath path
+		if not file
+			stderr = "rm: #{path}: No such file or directory"
+		else
+			[dirPath, filename] = @fileSystem.splitPath path
+			parentDirectory = @getDirectoryFromPath dirPath
+			parentDirectory.removeFile filename
 		return [stdout, stderr]
 		
 	# Take path as a string, remove extra or trailing slashes

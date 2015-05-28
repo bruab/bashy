@@ -78,6 +78,22 @@
       return "";
     };
 
+    Directory.prototype.removeFile = function(name) {
+      var f;
+      return this.files = (function() {
+        var j, len1, ref, results;
+        ref = this.files;
+        results = [];
+        for (j = 0, len1 = ref.length; j < len1; j++) {
+          f = ref[j];
+          if (f.name !== name) {
+            results.push(f);
+          }
+        }
+        return results;
+      }).call(this);
+    };
+
     return Directory;
 
   })();
@@ -195,14 +211,14 @@
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
       this.runCommand = bind(this.runCommand, this);
-      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc", "grep", "sed"];
+      this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc", "grep", "sed", "rm"];
       this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
       this.man = new Man();
     }
 
     BashyOS.prototype.runCommand = function(command, args) {
-      var ref, ref1, ref10, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
+      var ref, ref1, ref10, ref11, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       if (indexOf.call(this.validCommands, command) < 0) {
         stderr = "Invalid command: " + command;
@@ -226,6 +242,8 @@
         ref9 = this.grep(args[0], args[1]), stdout = ref9[0], stderr = ref9[1];
       } else if (command === 'sed') {
         ref10 = this.sed(args), stdout = ref10[0], stderr = ref10[1];
+      } else if (command === 'rm') {
+        ref11 = this.rm(args), stdout = ref11[0], stderr = ref11[1];
       }
       return [this.cwd.path, stdout, stderr];
     };
@@ -396,6 +414,25 @@
           return results;
         })();
         stdout = newLines.join("\n");
+      }
+      return [stdout, stderr];
+    };
+
+    BashyOS.prototype.rm = function(args) {
+      var dirPath, file, filename, parentDirectory, path, ref, ref1, stderr, stdout;
+      ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      if (args.length < 1) {
+        stderr = "rm: please specify a path";
+        return [stdout, stderr];
+      }
+      path = args[0];
+      file = this.getFileFromPath(path);
+      if (!file) {
+        stderr = "rm: " + path + ": No such file or directory";
+      } else {
+        ref1 = this.fileSystem.splitPath(path), dirPath = ref1[0], filename = ref1[1];
+        parentDirectory = this.getDirectoryFromPath(dirPath);
+        parentDirectory.removeFile(filename);
       }
       return [stdout, stderr];
     };
