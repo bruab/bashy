@@ -379,6 +379,9 @@
         if (splitCommand[0] !== 's') {
           stderr = "sed: sorry, command must start with 's'";
           return [stdout, stderr];
+        } else if (splitCommand.length !== 4) {
+          stderr = "sed: incomplete command: " + command;
+          return [stdout, stderr];
         }
         pattern = splitCommand[1];
         replacement = splitCommand[2];
