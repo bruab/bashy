@@ -599,7 +599,10 @@
         prompt: '$ ',
         onBlur: false,
         name: 'bashyTerminal',
-        height: 300
+        height: 300,
+        exceptionHandler: function(error) {
+          return console.log(error);
+        }
       });
     }
 

@@ -8,5 +8,6 @@ class Terminal
 			  prompt: '$ ',\
 			  onBlur: false,\
 			  name: 'bashyTerminal',\
-			  height: 300
+			  height: 300,
+			  exceptionHandler: (error) -> console.log error
 			})
