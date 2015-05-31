@@ -8,7 +8,7 @@ body {
 }
 
 .terminal {
-  height: 120px;
+  overflow: auto;
 }
 
 #menu {
