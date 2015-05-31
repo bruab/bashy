@@ -571,7 +571,7 @@
 
   Terminal = (function() {
     function Terminal(callback) {
-      $('#terminal').terminal(callback, {
+      $('#terminalDiv').terminal(callback, {
         greetings: "",
         prompt: '$ ',
         onBlur: false,
