@@ -3035,7 +3035,9 @@
                         if (result !== undefined) {
                             // was lines after echo_command (by interpreter)
                             if (position === lines.length-1) {
-                                lines.pop();
+				// Disabling this because it causes weird issues with scrolling
+				// I probably broke the terminal, sorry. --bdh
+                                // lines.pop();
                                 if (result !== false) {
                                     self.echo(result);
                                 }
