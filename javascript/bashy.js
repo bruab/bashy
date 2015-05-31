@@ -575,7 +575,8 @@
         greetings: "",
         prompt: '$ ',
         onBlur: false,
-        name: 'bashyTerminal'
+        name: 'bashyTerminal',
+        height: 300
       });
     }
 

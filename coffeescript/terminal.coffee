@@ -4,4 +4,9 @@ class Terminal
 		# Create Terminal object
 		# 'onBlur: false' guarantees the terminal always stays in focus
 		$('#terminal').terminal(callback,
-			{ greetings: "", prompt: '$ ', onBlur: false, name: 'bashyTerminal' })
+			{ greetings: "",\
+			  prompt: '$ ',\
+			  onBlur: false,\
+			  name: 'bashyTerminal',\
+			  height: 300
+			})
