@@ -306,8 +306,8 @@
           directory = ref2[l];
           stdout += directory.name() + "\t";
         }
-        stdout += "\n\n";
         if (recursive) {
+          stdout += "\n\n";
           ref3 = dir.subdirectories;
           for (m = 0, len4 = ref3.length; m < len4; m++) {
             directory = ref3[m];

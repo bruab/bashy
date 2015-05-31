@@ -212,8 +212,8 @@ class BashyOS
 			for directory in dir.subdirectories
 				# name is a method on Directory
 				stdout += directory.name() + "\t"
-			stdout += "\n\n"
 			if recursive
+				stdout += "\n\n"
 				for directory in dir.subdirectories
 					stdout += directory.path + ":\n"
 					[newStdout, newStderr] = @ls ["-R", directory.path]
