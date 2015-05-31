@@ -51,3 +51,23 @@ body {
     top:-7px;
     right:-7px;
 }
+
+.terminal .terminal-output div div, .cmd .prompt {
+    display: block;
+    line-height: 24px;
+    height: auto;
+}
+.cmd .prompt {
+    float: left;
+}
+.terminal, .cmd {
+    font-family: FreeMono, monospace;
+    color: #aaa;
+    background-color: #000;
+    font-size: 22px;
+    line-height: 24px;
+}
+.terminal-output > div {
+    /*padding-top: 3px;*/
+    min-height: 24px;
+}
