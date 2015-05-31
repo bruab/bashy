@@ -277,9 +277,17 @@
     };
 
     BashyOS.prototype.ls = function(args) {
-      var dir, directory, file, j, k, len1, len2, path, ref, ref1, ref2, stderr, stdout;
+      var arg, dir, directory, file, j, k, l, len1, len2, len3, len4, m, newStderr, newStdout, path, recursive, ref, ref1, ref2, ref3, ref4, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
-      path = args[args.length - 1];
+      recursive = false;
+      for (j = 0, len1 = args.length; j < len1; j++) {
+        arg = args[j];
+        if (arg === "-R") {
+          recursive = true;
+        } else {
+          path = arg;
+        }
+      }
       if (path == null) {
         dir = this.cwd;
       } else {
@@ -289,14 +297,25 @@
         stderr = "ls: " + path + ": No such file or directory";
       } else {
         ref1 = dir.files;
-        for (j = 0, len1 = ref1.length; j < len1; j++) {
-          file = ref1[j];
+        for (k = 0, len2 = ref1.length; k < len2; k++) {
+          file = ref1[k];
           stdout += file.name + "\t";
         }
         ref2 = dir.subdirectories;
-        for (k = 0, len2 = ref2.length; k < len2; k++) {
-          directory = ref2[k];
+        for (l = 0, len3 = ref2.length; l < len3; l++) {
+          directory = ref2[l];
           stdout += directory.name() + "\t";
+        }
+        stdout += "\n\n";
+        if (recursive) {
+          ref3 = dir.subdirectories;
+          for (m = 0, len4 = ref3.length; m < len4; m++) {
+            directory = ref3[m];
+            stdout += directory.path + ":\n";
+            ref4 = this.ls(["-R", directory.path]), newStdout = ref4[0], newStderr = ref4[1];
+            stdout += newStdout;
+            stderr += newStderr;
+          }
         }
       }
       return [stdout, stderr];
@@ -368,7 +387,6 @@
         stderr = "grep: " + path + ": open: No such file or directory";
       } else {
         lines = file.contents.split("\n");
-        console.log(lines);
         matchingLines = (function() {
           var j, len1, results;
           results = [];
@@ -380,7 +398,6 @@
           }
           return results;
         })();
-        console.log(matchingLines);
         stdout = matchingLines.join("\n");
       }
       return [stdout, stderr];

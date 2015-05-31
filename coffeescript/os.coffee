@@ -190,7 +190,14 @@ class BashyOS
 
 	ls: (args) ->
 		[stdout, stderr] = ["", ""]
-		path = args[args.length-1] # last argument
+		# TODO function to parse args into flags and path or whatever
+		# should be a pretty generic function
+		recursive = false
+		for arg in args
+			if arg == "-R"
+				recursive = true
+			else
+				path = arg
 		if not path?
 			# No path provided; use cwd
 			dir = @cwd
@@ -205,6 +212,13 @@ class BashyOS
 			for directory in dir.subdirectories
 				# name is a method on Directory
 				stdout += directory.name() + "\t"
+			stdout += "\n\n"
+			if recursive
+				for directory in dir.subdirectories
+					stdout += directory.path + ":\n"
+					[newStdout, newStderr] = @ls ["-R", directory.path]
+					stdout += newStdout
+					stderr += newStderr
 		return [stdout, stderr]
 
 	cat: (path) ->
@@ -260,9 +274,7 @@ class BashyOS
 			stderr = "grep: #{path}: open: No such file or directory"
 		else
 			lines = file.contents.split "\n"
-			console.log lines
 			matchingLines = (line for line in lines when line.match pattern)
-			console.log matchingLines
 			stdout = matchingLines.join "\n"
 		return [stdout, stderr]
 
