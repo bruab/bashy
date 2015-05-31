@@ -142,7 +142,7 @@ class BashyOS
 		else if command == 'pwd'
 			[stdout, stderr] = @pwd()
 		else if command == 'ls'
-			[stdout, stderr] = @ls args[0]
+			[stdout, stderr] = @ls args
 		else if command == 'cat'
 			[stdout,stderr] = @cat args[0]
 		else if command == 'head'
@@ -188,8 +188,9 @@ class BashyOS
 		stdout = @cwd.path
 		return [stdout, stderr]
 
-	ls: (path) ->
+	ls: (args) ->
 		[stdout, stderr] = ["", ""]
+		path = args[args.length-1] # last argument
 		if not path?
 			# No path provided; use cwd
 			dir = @cwd

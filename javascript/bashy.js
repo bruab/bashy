@@ -229,7 +229,7 @@
       } else if (command === 'pwd') {
         ref3 = this.pwd(), stdout = ref3[0], stderr = ref3[1];
       } else if (command === 'ls') {
-        ref4 = this.ls(args[0]), stdout = ref4[0], stderr = ref4[1];
+        ref4 = this.ls(args), stdout = ref4[0], stderr = ref4[1];
       } else if (command === 'cat') {
         ref5 = this.cat(args[0]), stdout = ref5[0], stderr = ref5[1];
       } else if (command === 'head') {
@@ -276,9 +276,10 @@
       return [stdout, stderr];
     };
 
-    BashyOS.prototype.ls = function(path) {
-      var dir, directory, file, j, k, len1, len2, ref, ref1, ref2, stderr, stdout;
+    BashyOS.prototype.ls = function(args) {
+      var dir, directory, file, j, k, len1, len2, path, ref, ref1, ref2, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      path = args[args.length - 1];
       if (path == null) {
         dir = this.cwd;
       } else {
