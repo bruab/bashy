@@ -294,7 +294,12 @@
         dir = this.getDirectoryFromPath(path);
       }
       if (dir == null) {
-        stderr = "ls: " + path + ": No such file or directory";
+        file = this.getFileFromPath(path);
+        if (file != null) {
+          stdout = path;
+        } else {
+          stderr = "ls: " + path + ": No such file or directory";
+        }
       } else {
         ref1 = dir.files;
         for (k = 0, len2 = ref1.length; k < len2; k++) {

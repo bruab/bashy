@@ -204,7 +204,12 @@ class BashyOS
 		else
 			dir = @getDirectoryFromPath path
 		if not dir?
-			stderr = "ls: #{path}: No such file or directory"
+			# Is it a file?
+			file = @getFileFromPath path
+			if file?
+				stdout = path
+			else
+				stderr = "ls: #{path}: No such file or directory"
 		else
 			for file in dir.files
 				# name is an attribute of File
