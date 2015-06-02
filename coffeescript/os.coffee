@@ -424,12 +424,13 @@ class BashyOS
 		else # It's a file
 			# Remove source file
 			[sourceDirPath, sourceFilename] = @fileSystem.splitPath sourcePath, @cwd
+			sourceDirPath = @cleanPath sourceDirPath
 			sourceDirectory = @getDirectoryFromPath sourceDirPath
 			sourceDirectory.removeFile sourceFilename
 			# Add file to target directory
 			[targetDirPath, targetFilename] = @fileSystem.splitPath targetPath, @cwd
 			targetDirectory = @getDirectoryFromPath targetDirPath
-			targetDirectory.files.push source
+			targetDirectory.files.push sourceFile
 		return [stdout, stderr]
 
 	cp: (args) ->

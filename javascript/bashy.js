@@ -577,11 +577,12 @@
         }
       } else {
         ref2 = this.fileSystem.splitPath(sourcePath, this.cwd), sourceDirPath = ref2[0], sourceFilename = ref2[1];
+        sourceDirPath = this.cleanPath(sourceDirPath);
         sourceDirectory = this.getDirectoryFromPath(sourceDirPath);
         sourceDirectory.removeFile(sourceFilename);
         ref3 = this.fileSystem.splitPath(targetPath, this.cwd), targetDirPath = ref3[0], targetFilename = ref3[1];
         targetDirectory = this.getDirectoryFromPath(targetDirPath);
-        targetDirectory.files.push(source);
+        targetDirectory.files.push(sourceFile);
       }
       return [stdout, stderr];
     };
