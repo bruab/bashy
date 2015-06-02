@@ -96,6 +96,22 @@
       }).call(this);
     };
 
+    Directory.prototype.removeDirectory = function(name) {
+      var d;
+      return this.subdirectories = (function() {
+        var j, len1, ref, results;
+        ref = this.subdirectories;
+        results = [];
+        for (j = 0, len1 = ref.length; j < len1; j++) {
+          d = ref[j];
+          if (d.name !== name) {
+            results.push(d);
+          }
+        }
+        return results;
+      }).call(this);
+    };
+
     return Directory;
 
   })();
@@ -171,8 +187,34 @@
       return false;
     };
 
-    FileSystem.prototype.splitPath = function(path) {
+    FileSystem.prototype.removeLastPart = function(path) {
+      var splitPath;
+      splitPath = path.split("/");
+      return splitPath.slice(0, +splitPath.length(-2) + 1 || 9e9).join("/");
+    };
+
+    FileSystem.prototype.relativeToAbsolute = function(path, cwd) {
+      var dir, dirs, j, len1;
+      dirs = path.split("/");
+      path = cwd.getPath();
+      for (j = 0, len1 = dirs.length; j < len1; j++) {
+        dir = dirs[j];
+        if (dir === "..") {
+          path = this.removeLastPart(path);
+        } else if (dir === ".") {
+          continue;
+        } else {
+          path = path + "/" + dir;
+        }
+      }
+      return path;
+    };
+
+    FileSystem.prototype.splitPath = function(path, cwd) {
       var dirPath, filename, len, splitPath;
+      if (path[0] !== "/") {
+        path = this.relativeToAbsolute(path, cwd);
+      }
       splitPath = path.split("/");
       len = splitPath.length;
       filename = splitPath[len - 1];
@@ -180,7 +222,7 @@
       return [dirPath, filename];
     };
 
-    FileSystem.prototype.getDirectory = function(path) {
+    FileSystem.prototype.getDirectory = function(path, cwd) {
       var currentParent, dirName, j, len1, ref, splitPath;
       if (path === "/") {
         return this.root;
@@ -195,9 +237,9 @@
       return currentParent;
     };
 
-    FileSystem.prototype.getFile = function(path) {
+    FileSystem.prototype.getFile = function(path, cwd) {
       var dir, dirPath, file, filename, j, len1, ref, ref1;
-      ref = this.splitPath(path), dirPath = ref[0], filename = ref[1];
+      ref = this.splitPath(path, cwd), dirPath = ref[0], filename = ref[1];
       dir = this.getDirectory(dirPath);
       ref1 = dir.files;
       for (j = 0, len1 = ref1.length; j < len1; j++) {
@@ -463,7 +505,7 @@
       if (!file) {
         stderr = "rm: " + path + ": No such file or directory";
       } else {
-        ref1 = this.fileSystem.splitPath(path), dirPath = ref1[0], filename = ref1[1];
+        ref1 = this.fileSystem.splitPath(path, this.cwd), dirPath = ref1[0], filename = ref1[1];
         parentDirectory = this.getDirectoryFromPath(dirPath);
         parentDirectory.removeFile(filename);
       }
@@ -471,22 +513,48 @@
     };
 
     BashyOS.prototype.mv = function(args) {
-      var ref, ref1, ref2, source, sourceDirPath, sourceDirectory, sourceFilename, sourcePath, stderr, stdout, targetDirPath, targetDirectory, targetFilename, targetPath;
+      var filename, parent, parentPath, ref, ref1, ref2, ref3, sourceDirPath, sourceDirectory, sourceFile, sourceFilename, sourcePath, stderr, stdout, targetDirPath, targetDirectory, targetFilename, targetPath;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       if (args.length < 2) {
         stderr = "mv: please specify a source and a target";
         return [stdout, stderr];
       }
       sourcePath = args[0];
-      source = this.getFileFromPath(sourcePath);
-      if (!source) {
-        stderr = "mv: " + path + ": No such file or directory";
+      targetPath = args[1];
+      sourceFile = this.getFileFromPath(sourcePath);
+      if (!sourceFile) {
+        sourceDirectory = this.getDirectoryFromPath(sourcePath);
+        if (!sourceDirectory) {
+          stderr = "mv: " + path + ": No such file or directory";
+        } else {
+          sourceDirectory.parent.removeDirectory(sourceDirectory.name);
+          targetDirectory = this.getDirectoryFromPath(targetPath);
+          if (!targetDirectory) {
+            ref1 = this.fileSystem.splitPath(targetPath, this.cwd), parentPath = ref1[0], filename = ref1[1];
+            sourceDirectory.name = filename;
+            parent = this.getDirectoryFromPath(parentPath);
+            parent.subdirectories.push(sourceDirectory);
+            return [stdout, stderr];
+          }
+          if (targetPath[targetPath.length - 1] === "/") {
+            targetDirectory.subdirectories.push(sourceDirectory);
+          } else {
+            console.log("targetDirectory is " + targetDirectory);
+            if (targetDirectory.name !== "/") {
+              parent = targetDirectory.parent;
+            } else {
+              parent = targetDirectory;
+            }
+            parent.removeDirectory(targetDirectory.name);
+            parent.subdirectories.push(sourceDirectory);
+          }
+          return [stdout, stderr];
+        }
       } else {
-        ref1 = this.fileSystem.splitPath(sourcePath), sourceDirPath = ref1[0], sourceFilename = ref1[1];
+        ref2 = this.fileSystem.splitPath(sourcePath, this.cwd), sourceDirPath = ref2[0], sourceFilename = ref2[1];
         sourceDirectory = this.getDirectoryFromPath(sourceDirPath);
         sourceDirectory.removeFile(sourceFilename);
-        targetPath = args[1];
-        ref2 = this.fileSystem.splitPath(targetPath), targetDirPath = ref2[0], targetFilename = ref2[1];
+        ref3 = this.fileSystem.splitPath(targetPath, this.cwd), targetDirPath = ref3[0], targetFilename = ref3[1];
         targetDirectory = this.getDirectoryFromPath(targetDirPath);
         targetDirectory.files.push(source);
       }
@@ -506,7 +574,7 @@
         stderr = "cp: " + path + ": No such file or directory";
       } else {
         targetPath = args[1];
-        ref1 = this.fileSystem.splitPath(targetPath), targetDirPath = ref1[0], targetFilename = ref1[1];
+        ref1 = this.fileSystem.splitPath(targetPath, this.cwd), targetDirPath = ref1[0], targetFilename = ref1[1];
         targetDirectory = this.getDirectoryFromPath(targetDirPath);
         targetDirectory.files.push(source);
       }

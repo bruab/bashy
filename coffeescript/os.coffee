@@ -32,6 +32,9 @@ class Directory
 	removeFile: (name) ->
 		@files = (f for f in @files when f.name != name)
 
+	removeDirectory: (name) ->
+		@subdirectories = (d for d in @subdirectories when d.name != name)
+
 # FileSystem class stores and answers questions about directories and files
 class FileSystem
 	constructor: () ->
@@ -94,9 +97,32 @@ class FileSystem
 				return true
 		return false
 
+	removeLastPart: (path) ->
+		# takes something like /home/foo/bar
+		# and returns /home/foo
+		splitPath = path.split "/"
+		return splitPath[0..splitPath.length -2].join "/"
+
+	relativeToAbsolute: (path, cwd) ->
+		# DOES NOT VERIFY THAT PATH IS VALID
+		dirs = path.split "/"
+		path = cwd.getPath()
+		for dir in dirs
+			if dir == ".."
+				path = @removeLastPart path
+			else if dir == "."
+				continue
+			else
+				path = "#{path}/#{dir}"
+		return path
+
 	# Takes an absolute path such as /home/foo/bar.txt and returns the
-	# directory ("/home/foo") and the filename ("bar.txt")
-	splitPath: (path) ->
+	# directory ("/home/foo") and the filename ("bar.txt") paths
+	# TODO handle relative path
+	splitPath: (path, cwd) ->
+		if path[0] != "/"
+			# relative path provided; get absolute path
+			path = @relativeToAbsolute path, cwd
 		splitPath = path.split "/"
 		len = splitPath.length
 		filename = splitPath[len-1]
@@ -105,7 +131,7 @@ class FileSystem
 
 	# Takes absolute path as a string, returns Directory object
 	# Assumes path is valid!
-	getDirectory: (path) ->
+	getDirectory: (path, cwd) ->
 		if path == "/"
 			return @root
 		currentParent = @root
@@ -116,8 +142,8 @@ class FileSystem
 
 	# Takes absolute path as a string, returns File object
 	# Assumes path is valid!
-	getFile: (path) ->
-		[dirPath, filename] = @splitPath path
+	getFile: (path, cwd) ->
+		[dirPath, filename] = @splitPath path, cwd
 		dir = @getDirectory dirPath
 		for file in dir.files
 			if file.name == filename
@@ -330,7 +356,7 @@ class BashyOS
 		if not file
 			stderr = "rm: #{path}: No such file or directory"
 		else
-			[dirPath, filename] = @fileSystem.splitPath path
+			[dirPath, filename] = @fileSystem.splitPath path, @cwd
 			parentDirectory = @getDirectoryFromPath dirPath
 			parentDirectory.removeFile filename
 		return [stdout, stderr]
@@ -341,17 +367,46 @@ class BashyOS
 			stderr = "mv: please specify a source and a target"
 			return [stdout, stderr]
 		sourcePath = args[0]
-		source = @getFileFromPath sourcePath
-		if not source
-			stderr = "mv: #{path}: No such file or directory"
-		else
+		targetPath = args[1]
+		# Is it a file?
+		sourceFile = @getFileFromPath sourcePath
+		if not sourceFile
+			# Is it a directory?
+			sourceDirectory = @getDirectoryFromPath sourcePath
+			if not sourceDirectory
+				stderr = "mv: #{path}: No such file or directory"
+			else
+				# remove source from its parent
+				sourceDirectory.parent.removeDirectory sourceDirectory.name
+
+				# get target directory, if it already exists
+				targetDirectory = @getDirectoryFromPath targetPath
+				if not targetDirectory
+					# rename
+					[parentPath, filename] = @fileSystem.splitPath targetPath, @cwd
+					sourceDirectory.name = filename
+					parent = @getDirectoryFromPath parentPath
+					parent.subdirectories.push sourceDirectory
+					return [stdout, stderr]
+				if targetPath[targetPath.length-1] == "/"
+					# add source as a child of target
+					targetDirectory.subdirectories.push(sourceDirectory)
+				else
+					# replace target with source
+					if targetDirectory.name != "/"
+						parent = targetDirectory.parent
+					else
+						parent = targetDirectory
+					parent.removeDirectory targetDirectory.name
+					parent.subdirectories.push sourceDirectory
+				return [stdout, stderr]
+		else # It's a file
 			# Remove source file
-			[sourceDirPath, sourceFilename] = @fileSystem.splitPath sourcePath
+			[sourceDirPath, sourceFilename] = @fileSystem.splitPath sourcePath, @cwd
 			sourceDirectory = @getDirectoryFromPath sourceDirPath
 			sourceDirectory.removeFile sourceFilename
 			# Add file to target directory
-			targetPath = args[1]
-			[targetDirPath, targetFilename] = @fileSystem.splitPath targetPath
+			[targetDirPath, targetFilename] = @fileSystem.splitPath targetPath, @cwd
 			targetDirectory = @getDirectoryFromPath targetDirPath
 			targetDirectory.files.push source
 		return [stdout, stderr]
@@ -367,7 +422,7 @@ class BashyOS
 			stderr = "cp: #{path}: No such file or directory"
 		else
 			targetPath = args[1]
-			[targetDirPath, targetFilename] = @fileSystem.splitPath targetPath
+			[targetDirPath, targetFilename] = @fileSystem.splitPath targetPath, @cwd
 			targetDirectory = @getDirectoryFromPath targetDirPath
 			targetDirectory.files.push source
 		return [stdout, stderr]
