@@ -279,15 +279,15 @@
       } else if (command === 'ls') {
         ref4 = this.ls(args), stdout = ref4[0], stderr = ref4[1];
       } else if (command === 'cat') {
-        ref5 = this.cat(args[0]), stdout = ref5[0], stderr = ref5[1];
+        ref5 = this.cat(args), stdout = ref5[0], stderr = ref5[1];
       } else if (command === 'head') {
-        ref6 = this.head(args[0]), stdout = ref6[0], stderr = ref6[1];
+        ref6 = this.head(args), stdout = ref6[0], stderr = ref6[1];
       } else if (command === 'tail') {
-        ref7 = this.tail(args[0]), stdout = ref7[0], stderr = ref7[1];
+        ref7 = this.tail(args), stdout = ref7[0], stderr = ref7[1];
       } else if (command === 'wc') {
-        ref8 = this.wc(args[0]), stdout = ref8[0], stderr = ref8[1];
+        ref8 = this.wc(args), stdout = ref8[0], stderr = ref8[1];
       } else if (command === 'grep') {
-        ref9 = this.grep(args[0], args[1]), stdout = ref9[0], stderr = ref9[1];
+        ref9 = this.grep(args), stdout = ref9[0], stderr = ref9[1];
       } else if (command === 'sed') {
         ref10 = this.sed(args), stdout = ref10[0], stderr = ref10[1];
       } else if (command === 'rm') {
@@ -374,9 +374,14 @@
       return [stdout, stderr];
     };
 
-    BashyOS.prototype.cat = function(path) {
-      var file, ref, stderr, stdout;
+    BashyOS.prototype.cat = function(args) {
+      var file, path, ref, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      if (args.length === 0) {
+        stderr = "cat: please provide the path to a file";
+        return [stdout, stderr];
+      }
+      path = args[0];
       file = this.getFileFromPath(path);
       if (!file) {
         stderr = "cat: " + path + ": No such file or directory";
@@ -386,10 +391,15 @@
       return [stdout, stderr];
     };
 
-    BashyOS.prototype.head = function(path) {
-      var file, numberOfLines, ref, splitContents, stderr, stdout;
+    BashyOS.prototype.head = function(args) {
+      var file, numberOfLines, path, ref, splitContents, stderr, stdout;
       numberOfLines = 10;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      if (args.length === 0) {
+        stderr = "head: please provide the path to a file";
+        return [stdout, stderr];
+      }
+      path = args[0];
       file = this.getFileFromPath(path);
       if (!file) {
         stderr = "head: " + path + ": No such file or directory";
@@ -400,10 +410,15 @@
       return [stdout, stderr];
     };
 
-    BashyOS.prototype.tail = function(path) {
-      var file, numberOfLines, ref, splitContents, stderr, stdout, totalLines;
+    BashyOS.prototype.tail = function(args) {
+      var file, numberOfLines, path, ref, splitContents, stderr, stdout, totalLines;
       numberOfLines = 10;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      if (args.length === 0) {
+        stderr = "tail: please provide the path to a file";
+        return [stdout, stderr];
+      }
+      path = args[0];
       file = this.getFileFromPath(path);
       if (!file) {
         stderr = "tail: " + path + ": No such file or directory";
@@ -415,9 +430,14 @@
       return [stdout, stderr];
     };
 
-    BashyOS.prototype.wc = function(path) {
-      var file, lines, numberOfCharacters, numberOfLines, numberOfWords, ref, stderr, stdout, words;
+    BashyOS.prototype.wc = function(args) {
+      var file, lines, numberOfCharacters, numberOfLines, numberOfWords, path, ref, stderr, stdout, words;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      if (args.length === 0) {
+        stderr = "wc: please provide the path to a file";
+        return [stdout, stderr];
+      }
+      path = args[0];
       file = this.getFileFromPath(path);
       if (!file) {
         stderr = "wc: " + path + ": open: No such file or directory";
@@ -432,9 +452,15 @@
       return [stdout, stderr];
     };
 
-    BashyOS.prototype.grep = function(pattern, path) {
-      var file, line, lines, matchingLines, ref, stderr, stdout;
+    BashyOS.prototype.grep = function(args) {
+      var file, line, lines, matchingLines, path, pattern, ref, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
+      if (args.length !== 2) {
+        stderr = "grep: please provide a pattern and the path to a file";
+        return [stdout, stderr];
+      }
+      pattern = args[0];
+      path = args[1];
       file = this.getFileFromPath(path);
       if (!file) {
         stderr = "grep: " + path + ": open: No such file or directory";
@@ -539,7 +565,6 @@
           if (targetPath[targetPath.length - 1] === "/") {
             targetDirectory.subdirectories.push(sourceDirectory);
           } else {
-            console.log("targetDirectory is " + targetDirectory);
             if (targetDirectory.name !== "/") {
               parent = targetDirectory.parent;
             } else {

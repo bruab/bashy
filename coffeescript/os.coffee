@@ -181,15 +181,15 @@ class BashyOS
 		else if command == 'ls'
 			[stdout, stderr] = @ls args
 		else if command == 'cat'
-			[stdout,stderr] = @cat args[0]
+			[stdout,stderr] = @cat args
 		else if command == 'head'
-			[stdout, stderr] = @head args[0]
+			[stdout, stderr] = @head args
 		else if command == 'tail'
-			[stdout, stderr] = @tail args[0]
+			[stdout, stderr] = @tail args
 		else if command == 'wc'
-			[stdout, stderr] = @wc args[0]
+			[stdout, stderr] = @wc args
 		else if command == 'grep'
-			[stdout, stderr] = @grep args[0], args[1]
+			[stdout, stderr] = @grep args
 		else if command == 'sed'
 			[stdout, stderr] = @sed args
 		else if command == 'rm'
@@ -263,8 +263,12 @@ class BashyOS
 					stderr += newStderr
 		return [stdout, stderr]
 
-	cat: (path) ->
+	cat: (args) ->
 		[stdout, stderr] = ["", ""]
+		if args.length == 0
+			stderr = "cat: please provide the path to a file"
+			return [stdout, stderr]
+		path = args[0]
 		file = @getFileFromPath path
 		if not file
 			stderr = "cat: #{path}: No such file or directory"
@@ -272,9 +276,13 @@ class BashyOS
 			stdout = file.contents
 		return [stdout, stderr]
 
-	head: (path) ->
+	head: (args) ->
 		numberOfLines = 10
 		[stdout, stderr] = ["", ""]
+		if args.length == 0
+			stderr = "head: please provide the path to a file"
+			return [stdout, stderr]
+		path= args[0]
 		file = @getFileFromPath path
 		if not file
 			stderr = "head: #{path}: No such file or directory"
@@ -283,9 +291,13 @@ class BashyOS
 			stdout = splitContents[0..numberOfLines-1].join "\n"
 		return [stdout, stderr]
 
-	tail: (path) ->
+	tail: (args) ->
 		numberOfLines = 10
 		[stdout, stderr] = ["", ""]
+		if args.length == 0
+			stderr = "tail: please provide the path to a file"
+			return [stdout, stderr]
+		path= args[0]
 		file = @getFileFromPath path
 		if not file
 			stderr = "tail: #{path}: No such file or directory"
@@ -295,8 +307,12 @@ class BashyOS
 			stdout = splitContents[totalLines-numberOfLines..].join "\n"
 		return [stdout, stderr]
 
-	wc: (path) ->
+	wc: (args) ->
 		[stdout, stderr] = ["", ""]
+		if args.length == 0
+			stderr = "wc: please provide the path to a file"
+			return [stdout, stderr]
+		path= args[0]
 		file = @getFileFromPath path
 		if not file
 			stderr = "wc: #{path}: open: No such file or directory"
@@ -309,8 +325,13 @@ class BashyOS
 			stdout = "\t#{numberOfLines}\t#{numberOfWords}\t#{numberOfCharacters}"
 		return [stdout, stderr]
 		
-	grep: (pattern, path) ->
+	grep: (args) ->
 		[stdout, stderr] = ["", ""]
+		if args.length != 2
+			stderr = "grep: please provide a pattern and the path to a file"
+			return [stdout, stderr]
+		pattern = args[0]
+		path= args[1]
 		file = @getFileFromPath path
 		if not file
 			stderr = "grep: #{path}: open: No such file or directory"
