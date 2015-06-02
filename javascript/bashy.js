@@ -651,13 +651,13 @@
     TaskManager.prototype.getTasks = function() {
       var task1, task1Function, task2, task2Function, task3, task3Function;
       task1Function = function(os) {
-        return os.cwd.path === "/home";
+        return os.cwd.getPath() === "/home";
       };
       task2Function = function(os) {
-        return os.cwd.path === "/media";
+        return os.cwd.getPath() === "/media";
       };
       task3Function = function(os) {
-        return os.cwd.path === "/";
+        return os.cwd.getPath() === "/";
       };
       task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1Function);
       task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task2Function);
@@ -744,14 +744,12 @@
 
     DisplayManager.prototype.getCoordinatesForPath = function(path) {
       var item, j, lastChildDirName, len1, ref, splitPath;
-      console.log("getCoordinatesForPath: " + path);
       if (path === "/") {
         lastChildDirName = "/";
       } else {
         splitPath = path.split("/");
         lastChildDirName = splitPath[splitPath.length - 1];
       }
-      console.log("lastChildDirName " + lastChildDirName);
       ref = this.map.children;
       for (j = 0, len1 = ref.length; j < len1; j++) {
         item = ref[j];

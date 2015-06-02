@@ -36,11 +36,11 @@ class TaskManager
 	# Create and return Task objects
 	getTasks: () ->
 		task1Function = (os) ->
-			return os.cwd.path == "/home"
+			return os.cwd.getPath() == "/home"
 		task2Function = (os) ->
-			return os.cwd.path == "/media"
+			return os.cwd.getPath() == "/media"
 		task3Function = (os) ->
-			return os.cwd.path == "/"
+			return os.cwd.getPath() == "/"
 		task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1Function)
 		task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task2Function)
 		task3 = new Task("navigate to root", ["type 'cd /' and press enter"], task3Function)
