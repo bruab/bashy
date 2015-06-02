@@ -395,7 +395,7 @@ class BashyOS
 			# Is it a directory?
 			sourceDirectory = @getDirectoryFromPath sourcePath
 			if not sourceDirectory
-				stderr = "mv: #{path}: No such file or directory"
+				stderr = "mv: #{sourcePath}: No such file or directory"
 			else
 				# remove source from its parent
 				sourceDirectory.parent.removeDirectory sourceDirectory.name
@@ -420,6 +420,7 @@ class BashyOS
 						parent = targetDirectory
 					parent.removeDirectory targetDirectory.name
 					parent.subdirectories.push sourceDirectory
+					sourceDirectory.parent = parent
 				return [stdout, stderr]
 		else # It's a file
 			# Remove source file

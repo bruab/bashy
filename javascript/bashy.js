@@ -551,7 +551,7 @@
       if (!sourceFile) {
         sourceDirectory = this.getDirectoryFromPath(sourcePath);
         if (!sourceDirectory) {
-          stderr = "mv: " + path + ": No such file or directory";
+          stderr = "mv: " + sourcePath + ": No such file or directory";
         } else {
           sourceDirectory.parent.removeDirectory(sourceDirectory.name);
           targetDirectory = this.getDirectoryFromPath(targetPath);
@@ -570,8 +570,10 @@
             } else {
               parent = targetDirectory;
             }
+            alert(parent.getPath());
             parent.removeDirectory(targetDirectory.name);
             parent.subdirectories.push(sourceDirectory);
+            sourceDirectory.parent = parent;
           }
           return [stdout, stderr];
         }
@@ -789,24 +791,18 @@
   })();
 
   DisplayManager = (function() {
-    function DisplayManager() {
-      this.update = bind(this.update, this);
+    function DisplayManager(fileSystem) {
       var canvas;
+      this.fileSystem = fileSystem;
+      this.update = bind(this.update, this);
       canvas = $("#bashyCanvas")[0];
       this.stage = new createjs.Stage(canvas);
-      this.initializeMap();
+      this.map = this.fileSystemToMap(this.fileSystem);
+      this.stage.addChild(this.map);
+      this.centeredOn = "/";
       this.initializeSprite();
       return;
     }
-
-    DisplayManager.prototype.initializeMap = function() {
-      var ref, ref1;
-      ref = [130, 60], this.startingX = ref[0], this.startingY = ref[1];
-      this.centeredOn = "/";
-      this.map = new createjs.Container();
-      this.map.name = "map";
-      ref1 = [this.startingX, this.startingY], this.map.x = ref1[0], this.map.y = ref1[1];
-    };
 
     DisplayManager.prototype.initializeSprite = function() {
       var bashyImage;
@@ -824,8 +820,41 @@
       this.startTicker(this.stage);
     };
 
+    DisplayManager.prototype.fileSystemToMap = function(fs) {
+      var centeredOn, map, ref, ref1, startingX, startingY;
+      ref = [130, 60], startingX = ref[0], startingY = ref[1];
+      centeredOn = "/";
+      map = new createjs.Container();
+      map.name = "map";
+      ref1 = [startingX, startingY], map.x = ref1[0], map.y = ref1[1];
+      this.drawFile(map, fs.root, map.x, map.y);
+      this.drawChildren(map, fs.root, map.x, map.y);
+      return map;
+    };
+
+    DisplayManager.prototype.mapsEqual = function(oldMap, newMap) {
+      var i, j, ref;
+      if (oldMap.children.length !== newMap.children.length) {
+        return false;
+      } else {
+        for (i = j = 0, ref = oldMap.children.length - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
+          if (oldMap.children[i].text !== newMap.children[i].text) {
+            return false;
+          }
+        }
+      }
+      return true;
+    };
+
     DisplayManager.prototype.update = function(fs, newDir) {
-      var deltaX, deltaY, newX, newY, oldX, oldY, ref, ref1, ref2;
+      var deltaX, deltaY, equal, newMap, newX, newY, oldX, oldY, ref, ref1, ref2;
+      newMap = this.fileSystemToMap(fs);
+      equal = this.mapsEqual(this.map, newMap);
+      if (!equal) {
+        this.stage.removeChild(this.map);
+        this.stage.addChild(newMap);
+        this.map = newMap;
+      }
       ref = this.getCoordinatesForPath(this.centeredOn), oldX = ref[0], oldY = ref[1];
       ref1 = this.getCoordinatesForPath(newDir), newX = ref1[0], newY = ref1[1];
       ref2 = [oldX - newX, oldY - newY], deltaX = ref2[0], deltaY = ref2[1];
@@ -966,8 +995,7 @@
       this.handleInput = bind(this.handleInput, this);
       this.taskMgr = new TaskManager();
       this.os = new BashyOS();
-      this.displayMgr = new DisplayManager();
-      this.displayMgr.drawFileSystem(this.os.fileSystem);
+      this.displayMgr = new DisplayManager(this.os.fileSystem);
       this.terminal = new Terminal(this.handleInput);
       $("#helpButton").click((function(_this) {
         return function() {

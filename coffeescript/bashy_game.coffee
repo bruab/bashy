@@ -3,8 +3,7 @@ class BashyGame
 	constructor: ->
 		@taskMgr = new TaskManager()
 		@os = new BashyOS()
-		@displayMgr = new DisplayManager()
-		@displayMgr.drawFileSystem(@os.fileSystem)
+		@displayMgr = new DisplayManager(@os.fileSystem)
 		@terminal = new Terminal(@handleInput)
 		# Listen for help clicks
 		$("#helpButton").click => @help()

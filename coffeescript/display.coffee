@@ -1,23 +1,13 @@
 # Class to handle updating map, character sprite
 class DisplayManager
-	constructor: () ->
+	constructor: (@fileSystem) ->
 		# Create canvas and Stage object
 		canvas = $("#bashyCanvas")[0]
 		@stage = new createjs.Stage(canvas)
-		@initializeMap()
-		@initializeSprite()
-		return
-
-	# Create map as Container object which will hold text objects
-	# representing directory names and Shape objects for the 
-	# lines connecting the directories
-	initializeMap: () ->
-		# Starting positions for map are kind of arbitrary...
-		[@startingX, @startingY] = [130, 60]
+		@map = @fileSystemToMap @fileSystem
+		@stage.addChild @map
 		@centeredOn = "/"
-		@map = new createjs.Container()
-		@map.name = "map"
-		[@map.x, @map.y] = [@startingX, @startingY]
+		@initializeSprite()
 		return
 
 	# Load spritesheet image, trigger @spriteSheetLoaded() on load
@@ -33,11 +23,37 @@ class DisplayManager
 		@bashySprite = @createBashySprite(image, @stage)
 		@startTicker(@stage)
 		return
+
+	fileSystemToMap: (fs) ->
+		[startingX, startingY] = [130, 60]
+		centeredOn = "/"
+		map = new createjs.Container()
+		map.name = "map"
+		[map.x, map.y] = [startingX, startingY]
+		@drawFile(map, fs.root, map.x, map.y)
+		@drawChildren(map, fs.root, map.x, map.y)
+		return map
+
+	mapsEqual: (oldMap, newMap) ->
+		if oldMap.children.length != newMap.children.length
+			return false
+		else
+			for i in [0..oldMap.children.length-1]
+				if oldMap.children[i].text != newMap.children[i].text
+					return false
+		return true
 	
 	# Take a FileSystem object and newDir as a string
 	# Find location of newDir, then move map until it is centered
 	# on newDir
 	update: (fs, newDir) =>
+		newMap = @fileSystemToMap fs
+		equal =  @mapsEqual @map, newMap
+		if not equal
+			# remove old map, add new map
+			@stage.removeChild @map
+			@stage.addChild newMap
+			@map = newMap
 		[oldX, oldY] = @getCoordinatesForPath @centeredOn
 		[newX, newY] = @getCoordinatesForPath newDir
 		[deltaX, deltaY] = [oldX-newX, oldY-newY]
