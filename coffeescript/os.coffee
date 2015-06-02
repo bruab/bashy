@@ -5,25 +5,27 @@ class File
 # Directory class stores a folder and its files & subdirectories
 class Directory
 	# Instantiated with a string representing path
-	constructor: (@path) ->
+	constructor: (@name) ->
+		@parent = null
 		@subdirectories = []
 		@files = []
 
-	# Return the directory's name (not entire path)
-	name: () ->
-		if @path == "/"
-			return @path
+	getPath: ->
+		if @name == "/"
+			return "/"
 		else
-			splitPath = @path.split "/"
-			len = splitPath.length
-			return splitPath[len-1]
-
-	toString: () -> "Directory object with path=#{@path}"
+			parent = @parent
+			path = @name
+			while parent.name != "/"
+				path = "#{parent.name}/#{path}"
+				parent = parent.parent
+			path = "/#{path}"
+			return path
 
 	# Return child Directory object, or empty string if child not found
 	getChild: (name) ->
 		for child in @subdirectories
-			if child.name() == name
+			if child.name == name
 				return child
 		return ""
 
@@ -35,19 +37,28 @@ class FileSystem
 	constructor: () ->
 		@root = new Directory("/")
 
-		media = new Directory("/media")
-		pics = new Directory("/media/pics")
-		media.subdirectories.push(pics)
+		# TODO lots of repeated code here
+		media = new Directory("media")
+		media.parent = @root
 		@root.subdirectories.push(media)
 
-		home = new Directory("/home")
-		bashy = new Directory("/home/bashy")
+		pics = new Directory("pics")
+		pics.parent = media
+		media.subdirectories.push(pics)
+
+		home = new Directory("home")
+		home.parent = @root
+		@root.subdirectories.push(home)
+
+		bashy = new Directory("bashy")
+		bashy.parent = home
+		home.subdirectories.push(bashy)
+
 		foo = new File("foo.txt", "This is a simple text file.")
+		bashy.files.push(foo)
+
 		list = new File("list", "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20")
 		bashy.files.push(list)
-		bashy.files.push(foo)
-		home.subdirectories.push(bashy)
-		@root.subdirectories.push(home)
 
 	# Takes absolute path as a string, returns boolean
 	isValidDirectoryPath: (path) ->
@@ -162,7 +173,7 @@ class BashyOS
 		else if command == 'cp'
 			[stdout, stderr] = @cp args
 		# Return path, stdout, stderr
-		return [@cwd.path, stdout, stderr]
+		return [@cwd.getPath(), stdout, stderr]
 
 	# Take a list of command line args to 'cd' command;
 	# attempt to update @cwd and return stdout, stderr
@@ -185,7 +196,7 @@ class BashyOS
 	# Return @cwd as string to stdout, nothing to stderr
 	pwd: () =>
 		[stdout, stderr] = ["", ""]
-		stdout = @cwd.path
+		stdout = @cwd.getPath()
 		return [stdout, stderr]
 
 	ls: (args) ->
@@ -216,12 +227,12 @@ class BashyOS
 				stdout += file.name + "\t"
 			for directory in dir.subdirectories
 				# name is a method on Directory
-				stdout += directory.name() + "\t"
+				stdout += directory.name + "\t"
 			if recursive
 				stdout += "\n\n"
 				for directory in dir.subdirectories
-					stdout += directory.path + ":\n"
-					[newStdout, newStderr] = @ls ["-R", directory.path]
+					stdout += directory.getPath() + ":\n"
+					[newStdout, newStderr] = @ls ["-R", directory.getPath()]
 					stdout += newStdout
 					stderr += newStderr
 		return [stdout, stderr]
@@ -412,9 +423,9 @@ class BashyOS
 	# return absolute path of target directory
 	# e.g. parseRelativePath("../foo", "/home/bar") -> "/home/foo"
 	parseRelativePath: (relativePath) ->
-		cwd = @cwd.path
+		cwdPath = @cwd.getPath()
 		if relativePath == ".."
-			newPath = @getParentPath(cwd)
+			newPath = @getParentPath(cwdPath)
 			return newPath
 		fields = relativePath.split "/"
 		finished = false
@@ -426,8 +437,8 @@ class BashyOS
 				fields = fields[1..fields.length]
 				continue
 			else if dir == ".."
-				cwd = @getParentPath(cwd)
+				cwdPath = @getParentPath(cwdPath)
 			else
-				cwd = cwd + "/" + dir
+				cwdPath = cwdPath + "/" + dir
 			fields = fields[1..fields.length]
-		return cwd
+		return cwdPath

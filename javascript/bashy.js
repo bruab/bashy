@@ -45,25 +45,27 @@
   })();
 
   Directory = (function() {
-    function Directory(path1) {
-      this.path = path1;
+    function Directory(name1) {
+      this.name = name1;
+      this.parent = null;
       this.subdirectories = [];
       this.files = [];
     }
 
-    Directory.prototype.name = function() {
-      var len, splitPath;
-      if (this.path === "/") {
-        return this.path;
+    Directory.prototype.getPath = function() {
+      var parent, path;
+      if (this.name === "/") {
+        return "/";
       } else {
-        splitPath = this.path.split("/");
-        len = splitPath.length;
-        return splitPath[len - 1];
+        parent = this.parent;
+        path = this.name;
+        while (parent.name !== "/") {
+          path = parent.name + "/" + path;
+          parent = parent.parent;
+        }
+        path = "/" + path;
+        return path;
       }
-    };
-
-    Directory.prototype.toString = function() {
-      return "Directory object with path=" + this.path;
     };
 
     Directory.prototype.getChild = function(name) {
@@ -71,7 +73,7 @@
       ref = this.subdirectories;
       for (j = 0, len1 = ref.length; j < len1; j++) {
         child = ref[j];
-        if (child.name() === name) {
+        if (child.name === name) {
           return child;
         }
       }
@@ -102,18 +104,22 @@
     function FileSystem() {
       var bashy, foo, home, list, media, pics;
       this.root = new Directory("/");
-      media = new Directory("/media");
-      pics = new Directory("/media/pics");
-      media.subdirectories.push(pics);
+      media = new Directory("media");
+      media.parent = this.root;
       this.root.subdirectories.push(media);
-      home = new Directory("/home");
-      bashy = new Directory("/home/bashy");
+      pics = new Directory("pics");
+      pics.parent = media;
+      media.subdirectories.push(pics);
+      home = new Directory("home");
+      home.parent = this.root;
+      this.root.subdirectories.push(home);
+      bashy = new Directory("bashy");
+      bashy.parent = home;
+      home.subdirectories.push(bashy);
       foo = new File("foo.txt", "This is a simple text file.");
+      bashy.files.push(foo);
       list = new File("list", "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20");
       bashy.files.push(list);
-      bashy.files.push(foo);
-      home.subdirectories.push(bashy);
-      this.root.subdirectories.push(home);
     }
 
     FileSystem.prototype.isValidDirectoryPath = function(path) {
@@ -249,7 +255,7 @@
       } else if (command === 'cp') {
         ref13 = this.cp(args), stdout = ref13[0], stderr = ref13[1];
       }
-      return [this.cwd.path, stdout, stderr];
+      return [this.cwd.getPath(), stdout, stderr];
     };
 
     BashyOS.prototype.cd = function(args) {
@@ -272,7 +278,7 @@
     BashyOS.prototype.pwd = function() {
       var ref, stderr, stdout;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
-      stdout = this.cwd.path;
+      stdout = this.cwd.getPath();
       return [stdout, stderr];
     };
 
@@ -309,15 +315,15 @@
         ref2 = dir.subdirectories;
         for (l = 0, len3 = ref2.length; l < len3; l++) {
           directory = ref2[l];
-          stdout += directory.name() + "\t";
+          stdout += directory.name + "\t";
         }
         if (recursive) {
           stdout += "\n\n";
           ref3 = dir.subdirectories;
           for (m = 0, len4 = ref3.length; m < len4; m++) {
             directory = ref3[m];
-            stdout += directory.path + ":\n";
-            ref4 = this.ls(["-R", directory.path]), newStdout = ref4[0], newStderr = ref4[1];
+            stdout += directory.getPath() + ":\n";
+            ref4 = this.ls(["-R", directory.getPath()]), newStdout = ref4[0], newStderr = ref4[1];
             stdout += newStdout;
             stderr += newStderr;
           }
@@ -562,10 +568,10 @@
     };
 
     BashyOS.prototype.parseRelativePath = function(relativePath) {
-      var cwd, dir, fields, finished, newPath;
-      cwd = this.cwd.path;
+      var cwdPath, dir, fields, finished, newPath;
+      cwdPath = this.cwd.getPath();
       if (relativePath === "..") {
-        newPath = this.getParentPath(cwd);
+        newPath = this.getParentPath(cwdPath);
         return newPath;
       }
       fields = relativePath.split("/");
@@ -579,13 +585,13 @@
           fields = fields.slice(1, +fields.length + 1 || 9e9);
           continue;
         } else if (dir === "..") {
-          cwd = this.getParentPath(cwd);
+          cwdPath = this.getParentPath(cwdPath);
         } else {
-          cwd = cwd + "/" + dir;
+          cwdPath = cwdPath + "/" + dir;
         }
         fields = fields.slice(1, +fields.length + 1 || 9e9);
       }
-      return cwd;
+      return cwdPath;
     };
 
     return BashyOS;
@@ -737,11 +743,19 @@
     };
 
     DisplayManager.prototype.getCoordinatesForPath = function(path) {
-      var item, j, len1, ref;
+      var item, j, lastChildDirName, len1, ref, splitPath;
+      console.log("getCoordinatesForPath: " + path);
+      if (path === "/") {
+        lastChildDirName = "/";
+      } else {
+        splitPath = path.split("/");
+        lastChildDirName = splitPath[splitPath.length - 1];
+      }
+      console.log("lastChildDirName " + lastChildDirName);
       ref = this.map.children;
       for (j = 0, len1 = ref.length; j < len1; j++) {
         item = ref[j];
-        if (item.name === path) {
+        if (item.name === lastChildDirName) {
           return [item.x, item.y];
         }
       }
@@ -813,10 +827,10 @@
       return coords;
     };
 
-    DisplayManager.prototype.drawFile = function(map, file, x, y) {
+    DisplayManager.prototype.drawFile = function(map, directory, x, y) {
       var ref, text;
-      text = new createjs.Text(file.name(), "20px Arial", "black");
-      text.name = file.path;
+      text = new createjs.Text(directory.name, "20px Arial", "black");
+      text.name = directory.name;
       ref = [x, y], text.x = ref[0], text.y = ref[1];
       text.textBaseline = "alphabetic";
       map.addChild(text);

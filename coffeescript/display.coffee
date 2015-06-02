@@ -48,9 +48,15 @@ class DisplayManager
 	# Take path as a string, search through @map to find the text object
 	# that corresponds; return its [x, y] coordinates
 	getCoordinatesForPath: (path) ->
+		if path == "/"
+			lastChildDirName = "/"
+		else
+			splitPath = path.split "/"
+			lastChildDirName = splitPath[splitPath.length-1]
 		# TODO if no match, what do we return?
 		for item in @map.children
-			if item.name == path
+			# TODO this is not right, /media/foo and /home/foo are treated the same
+			if item.name == lastChildDirName
 				return [item.x, item.y]
 
 	# Take a FileSystem object; draw text for each directory's name
@@ -119,9 +125,10 @@ class DisplayManager
 
 	# Take a map Container object, a Directory object and an x, y pair
 	# Add a Text object to the map with the appropriate coordinates
-	drawFile: (map, file, x, y) ->
-		text = new createjs.Text(file.name(), "20px Arial", "black")
-		text.name = file.path
+	drawFile: (map, directory, x, y) ->
+		text = new createjs.Text(directory.name, "20px Arial", "black")
+		# TODO get directory.path?
+		text.name = directory.name
 		[text.x, text.y] = [x, y]
 		text.textBaseline = "alphabetic"
 		map.addChild(text)
