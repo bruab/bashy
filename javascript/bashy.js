@@ -593,21 +593,28 @@
     };
 
     BashyOS.prototype.cp = function(args) {
-      var ref, ref1, source, sourcePath, stderr, stdout, targetDirPath, targetDirectory, targetFilename, targetPath;
+      var ref, ref1, sourceFile, sourcePath, stderr, stdout, targetDir, targetDirPath, targetDirectory, targetFile, targetFilename, targetPath;
       ref = ["", ""], stdout = ref[0], stderr = ref[1];
       if (args.length < 2) {
         stderr = "cp: please specify a source and a target";
         return [stdout, stderr];
       }
       sourcePath = args[0];
-      source = this.getFileFromPath(sourcePath);
-      if (!source) {
+      sourceFile = this.getFileFromPath(sourcePath);
+      if (!sourceFile) {
         stderr = "cp: " + path + ": No such file or directory";
       } else {
         targetPath = args[1];
-        ref1 = this.fileSystem.splitPath(targetPath, this.cwd), targetDirPath = ref1[0], targetFilename = ref1[1];
-        targetDirectory = this.getDirectoryFromPath(targetDirPath);
-        targetDirectory.files.push(source);
+        targetDir = this.getDirectoryFromPath(targetPath);
+        if (targetDir != null) {
+          targetFile = new File(sourceFile.name, sourceFile.contents);
+          targetDir.files.push(targetFile);
+        } else {
+          ref1 = this.fileSystem.splitPath(targetPath, this.cwd), targetDirPath = ref1[0], targetFilename = ref1[1];
+          targetFile = new File(targetFilename, sourceFile.contents);
+          targetDirectory = this.getDirectoryFromPath(targetDirPath);
+          targetDirectory.files.push(targetFile);
+        }
       }
       return [stdout, stderr];
     };

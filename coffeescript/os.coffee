@@ -440,14 +440,22 @@ class BashyOS
 			stderr = "cp: please specify a source and a target"
 			return [stdout, stderr]
 		sourcePath = args[0]
-		source = @getFileFromPath sourcePath
-		if not source
+		sourceFile = @getFileFromPath sourcePath
+		if not sourceFile
 			stderr = "cp: #{path}: No such file or directory"
 		else
 			targetPath = args[1]
-			[targetDirPath, targetFilename] = @fileSystem.splitPath targetPath, @cwd
-			targetDirectory = @getDirectoryFromPath targetDirPath
-			targetDirectory.files.push source
+			targetDir = @getDirectoryFromPath targetPath
+			if targetDir?
+				# targetPath is a director
+				targetFile = new File(sourceFile.name, sourceFile.contents)
+				targetDir.files.push targetFile
+			else
+				# targetPath points to a filename
+				[targetDirPath, targetFilename] = @fileSystem.splitPath targetPath, @cwd
+				targetFile = new File(targetFilename, sourceFile.contents)
+				targetDirectory = @getDirectoryFromPath targetDirPath
+				targetDirectory.files.push targetFile
 		return [stdout, stderr]
 
 		
