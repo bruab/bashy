@@ -7,14 +7,14 @@
   Man = (function() {
     function Man() {
       this.entries = {
-        "cd": "\ncd - move to a new dir\n" + "\nUSAGE\n\tcd [dir]\n" + "\tType 'cd /' to go to the top.\n" + "\tType 'cd' by itself to go home.\n" + "\tType 'cd ..' to go up one level.\n",
+        "cd": "\ncd - move to a new dir\n" + "\nUSAGE\n\tcd [DIR]\n" + "\tType 'cd /' to go to the top.\n" + "\tType 'cd' by itself to go home.\n" + "\tType 'cd ..' to go up one level.\n",
         "pwd": "\npwd - tell what dir you're in\n" + "\nUSAGE\n\tpwd\n",
-        "man": "\nman - explain how commands work\n" + "\nUSAGE\n\tman <command>\n" + "\tType 'man cd' to learn about the 'cd' command\n",
-        "ls": "This command tells you the contents of a dir.\n" + "Type 'ls' by itself to see the contents of your " + "current working dir.\n" + "Type 'ls' followed by a path to see the contents of " + "that dir",
-        "cat": "\ncat - show the contents of a file\n" + "\nUSAGE\n\tcat <file>\n",
-        "head": "\nhead - show the first part of a file\n" + "\nUSAGE\n\thead <file>\n",
-        "tail": "\ntail - show the last part of a file\n" + "\nUSAGE\n\ttail <file>\n",
-        "wc": "\nwc - count the number of lines, words and characters in a file.\n" + "\nUSAGE\n\twc <file>\n",
+        "man": "\nman - explain how commands work\n" + "\nUSAGE\n\tman <COMMAND>\n" + "\tType 'man cd' to learn about the 'cd' command\n",
+        "ls": "\nls - list contents of a dir\n" + "\nUSAGE\n\tls [OPTION] [FILE]\n" + "\tType 'ls' by itself to see the contents of your " + "current working dir.\n" + "\nOPTIONS\n\t-R\n" + "\t\tlist subdirectories recursively\n",
+        "cat": "\ncat - show the contents of a file\n" + "\nUSAGE\n\tcat <FILE>\n",
+        "head": "\nhead - show the first part of a file\n" + "\nUSAGE\n\thead <FILE>\n",
+        "tail": "\ntail - show the last part of a file\n" + "\nUSAGE\n\ttail <FILE>\n",
+        "wc": "\nwc - count the number of lines, words and characters in a file.\n" + "\nUSAGE\n\twc <FILE>\n",
         "grep": "This command displays every line of a file that matches " + "a pattern that you provide.",
         "sed": "This command allows you to change the contents of a text " + "file by substituting one pattern for another."
       };
