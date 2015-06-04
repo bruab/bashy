@@ -16,7 +16,10 @@
         "tail": "\ntail - show the last part of a file\n" + "\nUSAGE\n\ttail <FILE>\n",
         "wc": "\nwc - count the number of lines, words and characters in a file.\n" + "\nUSAGE\n\twc <FILE>\n",
         "grep": "\ngrep - show lines matching a pattern\n" + "\nUSAGE\n\tgrep <PATTERN> <FILE>\n",
-        "sed": "\nsed - substitute contents of a file\n" + "\nUSAGE\n\tsed 's/PATTERN/REPLACEMENT/' <FILE>\n"
+        "sed": "\nsed - substitute contents of a file\n" + "\nUSAGE\n\tsed 's/PATTERN/REPLACEMENT/' <FILE>\n",
+        "rm": "\nrm - remove a file\n" + "\nUSAGE\n\trm <FILE>\n",
+        "mv": "mv - move or rename a file or dir\n" + "\nUSAGE\n\tmv <SOURCE> <DESTINATION>\n",
+        "cp": "cp - copy a file\n" + "\nUSAGE\n\tcp <SOURCE> <DESTINATION>\n"
       };
     }
 
