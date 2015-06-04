@@ -15,8 +15,8 @@
         "head": "\nhead - show the first part of a file\n" + "\nUSAGE\n\thead <FILE>\n",
         "tail": "\ntail - show the last part of a file\n" + "\nUSAGE\n\ttail <FILE>\n",
         "wc": "\nwc - count the number of lines, words and characters in a file.\n" + "\nUSAGE\n\twc <FILE>\n",
-        "grep": "This command displays every line of a file that matches " + "a pattern that you provide.",
-        "sed": "This command allows you to change the contents of a text " + "file by substituting one pattern for another."
+        "grep": "\ngrep - show lines matching a pattern\n" + "\nUSAGE\n\tgrep <PATTERN> <FILE>\n",
+        "sed": "\nsed - substitute contents of a file\n" + "\nUSAGE\n\tsed 's/PATTERN/REPLACEMENT/' <FILE>\n"
       };
     }
 
