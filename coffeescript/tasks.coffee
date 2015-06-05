@@ -2,9 +2,9 @@
 class TaskManager
 	constructor: () ->
 		@winner = false
-		@tasks = @getTasks()
-		@currentTask = @tasks[0]
-		@showTask(@currentTask)
+		@levels = @getLevels()
+		@currentLevel = @levels[0]
+		@showLevel(@currentLevel)
 
 	# Take a BashyOS object and query it based on the currentTask
 	# to see if the task is completed.
@@ -12,11 +12,10 @@ class TaskManager
 	# If all tasks are completed (@winner == true), do nothing
 	update: (os) ->
 		if not @winner
-			if @currentTask.done(os)
-				if @tasks.length > 1
-					@tasks = @tasks[1..]
-					@currentTask = @tasks[0]
-					@showTask(@currentTask)
+			if @currentLevel.tasks[0].done(os) # TODO oh, ugly
+				if @currentLevel.tasks.length > 1
+					@currentLevel.tasks = @currentLevel.tasks[1..]
+					@showLevel @currentLevel
 				else
 					@winner = true
 					@win()
@@ -24,8 +23,12 @@ class TaskManager
 
 	# Take a Task object and display it in the onscreen menu
 	showTask: (task) ->
-		$("#menu").html(task.name)
+		$("#menu").html("Current task: #{task.name}")
 		return
+
+	showLevel: (level) ->
+		$("#menuHeader").html("<h3>#{level.name}</h3>")
+		@showTask level.tasks[0]
 
 	getHint: () ->
 		return @currentTask.hints[0]
@@ -49,6 +52,15 @@ class TaskManager
 		task3 = new Task("navigate to root", ["type 'cd /' and press enter"], task3Function)
 		return [task1, task2, task3]
 
+	# Create and return Level objects
+	getLevels: () ->
+		levelOneTasks = @getTasks()
+		levelOne = new Level("Level One - Moving Around",\
+				"In this level you'll learn how to navigate",
+					levelOneTasks)
+		return [levelOne]
+
+
 # Task class encapsulates a task name, hint(s) and a manner of
 # checking the Task for completion, implemented as any number of
 # os queries and their desired responses
@@ -68,3 +80,6 @@ class Task
 			return @isComplete
 
 	toString: () -> @name
+
+class Level
+	constructor: (@name, @description, @tasks) ->
