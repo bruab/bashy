@@ -270,6 +270,10 @@
       this.history = [];
     }
 
+    BashyOS.prototype.getFileSystem = function() {
+      return this.fileSystem;
+    };
+
     BashyOS.prototype.parseCommand = function(input) {
       var args, command, splitInput;
       input = input.replace(/^\s+|\s+$/g, "");
@@ -1091,7 +1095,7 @@
       this.handleInput = bind(this.handleInput, this);
       this.taskMgr = new TaskManager();
       this.os = new BashyOS();
-      this.displayMgr = new DisplayManager(this.os.fileSystem);
+      this.displayMgr = new DisplayManager(this.os.getFileSystem());
       this.terminal = new Terminal(this.handleInput, this.handleTab);
       $("#helpButton").click((function(_this) {
         return function() {
@@ -1108,7 +1112,7 @@
 
     BashyGame.prototype.executeCommand = function(command) {
       var cwd, fs, ref, stderr, stdout;
-      fs = this.os.fileSystem;
+      fs = this.os.getFileSystem();
       ref = this.os.runCommand(command), cwd = ref[0], stdout = ref[1], stderr = ref[2];
       this.taskMgr.update(this.os);
       this.displayMgr.update(fs, cwd);

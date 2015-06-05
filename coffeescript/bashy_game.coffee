@@ -3,7 +3,7 @@ class BashyGame
 	constructor: ->
 		@taskMgr = new TaskManager()
 		@os = new BashyOS()
-		@displayMgr = new DisplayManager(@os.fileSystem)
+		@displayMgr = new DisplayManager(@os.getFileSystem())
 		@terminal = new Terminal(@handleInput, @handleTab)
 		# Listen for help clicks
 		$("#helpButton").click => @help()
@@ -17,7 +17,7 @@ class BashyGame
 	# taskMgr and displayMgr
 	executeCommand: (command) ->
 		# Get a copy of the current file system
-		fs = @os.fileSystem
+		fs = @os.getFileSystem()
 		# @os updates and returns context, stdout, stderr
 		# @os.fileSystem may be modified by this command
 		[cwd, stdout, stderr] = @os.runCommand(command)

@@ -11,6 +11,9 @@ class BashyOS
 		# @history is a list of (command, args) tuples
 		@history = []
 
+	getFileSystem: ->
+		return @fileSystem
+
 	# Take raw input, trim whitespace, return command and list of args
 	parseCommand: (input) ->
 		# Trim leading and trailing whitespace
