@@ -4,7 +4,7 @@ class BashyGame
 		@taskMgr = new TaskManager()
 		@os = new BashyOS()
 		@displayMgr = new DisplayManager(@os.fileSystem)
-		@terminal = new Terminal(@handleInput)
+		@terminal = new Terminal(@handleInput, @handleTab)
 		# Listen for help clicks
 		$("#helpButton").click => @help()
 
@@ -47,3 +47,7 @@ class BashyGame
 		# Strip leading and trailing whitespace
 		[command, args] = @parseCommand(input)
 		return @executeCommand(command, args)
+
+	# Tab completion function
+	handleTab: (term, input) =>
+		term.insert @os.handleTab input

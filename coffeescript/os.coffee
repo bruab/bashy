@@ -528,3 +528,12 @@ class BashyOS
 				cwdPath = cwdPath + "/" + dir
 			fields = fields[1..fields.length]
 		return cwdPath
+
+	handleTab: (input) ->
+		# TODO handle paths
+		len = input.length
+		for command in @validCommands
+			if command[0..len-1] == input
+				console.log "returning #{command[len..]}"
+				return command[len..]
+		return ""

@@ -700,13 +700,27 @@
       return cwdPath;
     };
 
+    BashyOS.prototype.handleTab = function(input) {
+      var command, j, len, len1, ref;
+      len = input.length;
+      ref = this.validCommands;
+      for (j = 0, len1 = ref.length; j < len1; j++) {
+        command = ref[j];
+        if (command.slice(0, +(len - 1) + 1 || 9e9) === input) {
+          console.log("returning " + command.slice(len));
+          return command.slice(len);
+        }
+      }
+      return "";
+    };
+
     return BashyOS;
 
   })();
 
   Terminal = (function() {
-    function Terminal(callback) {
-      $('#terminalDiv').terminal(callback, {
+    function Terminal(inputCallback, tabCallback) {
+      $('#terminalDiv').terminal(inputCallback, {
         greetings: "",
         prompt: '$ ',
         onBlur: false,
@@ -714,7 +728,8 @@
         height: 300,
         exceptionHandler: function(error) {
           return console.log(error);
-        }
+        },
+        completion: tabCallback
       });
     }
 
@@ -1002,11 +1017,12 @@
 
   BashyGame = (function() {
     function BashyGame() {
+      this.handleTab = bind(this.handleTab, this);
       this.handleInput = bind(this.handleInput, this);
       this.taskMgr = new TaskManager();
       this.os = new BashyOS();
       this.displayMgr = new DisplayManager(this.os.fileSystem);
-      this.terminal = new Terminal(this.handleInput);
+      this.terminal = new Terminal(this.handleInput, this.handleTab);
       $("#helpButton").click((function(_this) {
         return function() {
           return _this.help();
@@ -1048,6 +1064,10 @@
       var args, command, ref;
       ref = this.parseCommand(input), command = ref[0], args = ref[1];
       return this.executeCommand(command, args);
+    };
+
+    BashyGame.prototype.handleTab = function(term, input) {
+      return term.insert(this.os.handleTab(input));
     };
 
     return BashyGame;
