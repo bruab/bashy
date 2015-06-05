@@ -13,8 +13,7 @@ class Task
 		if @isComplete
 			return true
 		else
-			@isComplete = @completeFunction(os)
+			@isComplete = @completeFunction os
 			return @isComplete
 
 	toString: () -> @name
-
