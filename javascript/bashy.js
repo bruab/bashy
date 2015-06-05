@@ -764,6 +764,10 @@
       $("#menu").html(task.name);
     };
 
+    TaskManager.prototype.getHint = function() {
+      return this.currentTask.hints[0];
+    };
+
     TaskManager.prototype.win = function() {
       $("#menuHeader").html("");
       $("#menu").html("<h4>You Win!</h4>");
@@ -1032,7 +1036,7 @@
 
     BashyGame.prototype.help = function() {
       var currentHint;
-      currentHint = this.taskMgr.currentTask.hints[0];
+      currentHint = this.taskMgr.getHint();
       return this.displayMgr.helpScreen(currentHint);
     };
 

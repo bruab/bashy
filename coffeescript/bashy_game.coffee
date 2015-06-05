@@ -10,7 +10,7 @@ class BashyGame
 
 	# Fetch a hint for the current task, pass it to displayMgr
 	help: ->
-		currentHint = @taskMgr.currentTask.hints[0]
+		currentHint = @taskMgr.getHint()
 		@displayMgr.helpScreen currentHint
 
 	# Take raw input, trim whitespace, return command and list of args

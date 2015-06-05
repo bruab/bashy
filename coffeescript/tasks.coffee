@@ -26,6 +26,9 @@ class TaskManager
 	showTask: (task) ->
 		$("#menu").html(task.name)
 		return
+
+	getHint: () ->
+		return @currentTask.hints[0]
 	
 	# Change the onscreen menu to indicate that all tasks are complete
 	win: () ->
