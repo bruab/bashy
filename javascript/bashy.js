@@ -267,39 +267,51 @@
       this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
       this.man = new Man();
+      this.history = [];
     }
 
-    BashyOS.prototype.runCommand = function(command, args) {
-      var ref, ref1, ref10, ref11, ref12, ref13, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
-      ref = ["", ""], stdout = ref[0], stderr = ref[1];
+    BashyOS.prototype.parseCommand = function(input) {
+      var args, command, splitInput;
+      input = input.replace(/^\s+|\s+$/g, "");
+      splitInput = input.split(/\s+/);
+      command = splitInput[0];
+      args = splitInput.slice(1);
+      return [command, args];
+    };
+
+    BashyOS.prototype.runCommand = function(input) {
+      var args, command, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
+      this.history.push(input);
+      ref = this.parseCommand(input), command = ref[0], args = ref[1];
+      ref1 = ["", ""], stdout = ref1[0], stderr = ref1[1];
       if (indexOf.call(this.validCommands, command) < 0) {
         stderr = "Invalid command: " + command;
       } else if (command === 'man') {
-        ref1 = this.man.getEntry(args[0]), stdout = ref1[0], stderr = ref1[1];
+        ref2 = this.man.getEntry(args[0]), stdout = ref2[0], stderr = ref2[1];
       } else if (command === 'cd') {
-        ref2 = this.cd(args), stdout = ref2[0], stderr = ref2[1];
+        ref3 = this.cd(args), stdout = ref3[0], stderr = ref3[1];
       } else if (command === 'pwd') {
-        ref3 = this.pwd(), stdout = ref3[0], stderr = ref3[1];
+        ref4 = this.pwd(), stdout = ref4[0], stderr = ref4[1];
       } else if (command === 'ls') {
-        ref4 = this.ls(args), stdout = ref4[0], stderr = ref4[1];
+        ref5 = this.ls(args), stdout = ref5[0], stderr = ref5[1];
       } else if (command === 'cat') {
-        ref5 = this.cat(args), stdout = ref5[0], stderr = ref5[1];
+        ref6 = this.cat(args), stdout = ref6[0], stderr = ref6[1];
       } else if (command === 'head') {
-        ref6 = this.head(args), stdout = ref6[0], stderr = ref6[1];
+        ref7 = this.head(args), stdout = ref7[0], stderr = ref7[1];
       } else if (command === 'tail') {
-        ref7 = this.tail(args), stdout = ref7[0], stderr = ref7[1];
+        ref8 = this.tail(args), stdout = ref8[0], stderr = ref8[1];
       } else if (command === 'wc') {
-        ref8 = this.wc(args), stdout = ref8[0], stderr = ref8[1];
+        ref9 = this.wc(args), stdout = ref9[0], stderr = ref9[1];
       } else if (command === 'grep') {
-        ref9 = this.grep(args), stdout = ref9[0], stderr = ref9[1];
+        ref10 = this.grep(args), stdout = ref10[0], stderr = ref10[1];
       } else if (command === 'sed') {
-        ref10 = this.sed(args), stdout = ref10[0], stderr = ref10[1];
+        ref11 = this.sed(args), stdout = ref11[0], stderr = ref11[1];
       } else if (command === 'rm') {
-        ref11 = this.rm(args), stdout = ref11[0], stderr = ref11[1];
+        ref12 = this.rm(args), stdout = ref12[0], stderr = ref12[1];
       } else if (command === 'mv') {
-        ref12 = this.mv(args), stdout = ref12[0], stderr = ref12[1];
+        ref13 = this.mv(args), stdout = ref13[0], stderr = ref13[1];
       } else if (command === 'cp') {
-        ref13 = this.cp(args), stdout = ref13[0], stderr = ref13[1];
+        ref14 = this.cp(args), stdout = ref14[0], stderr = ref14[1];
       }
       return [this.cwd.getPath(), stdout, stderr];
     };
@@ -700,6 +712,22 @@
       return cwdPath;
     };
 
+    BashyOS.prototype.historyContains = function(command) {
+      var item, j, len1, ref;
+      ref = this.history;
+      for (j = 0, len1 = ref.length; j < len1; j++) {
+        item = ref[j];
+        if (item === command) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    BashyOS.prototype.lastCommand = function() {
+      return this.history[this.history.length - 1];
+    };
+
     BashyOS.prototype.handleTab = function(input) {
       var command, j, len, len1, ref;
       len = input.length;
@@ -707,7 +735,6 @@
       for (j = 0, len1 = ref.length; j < len1; j++) {
         command = ref[j];
         if (command.slice(0, +(len - 1) + 1 || 9e9) === input) {
-          console.log("returning " + command.slice(len));
           return command.slice(len);
         }
       }
@@ -767,7 +794,7 @@
     };
 
     TaskManager.prototype.getHint = function() {
-      return this.currentTask.hints[0];
+      return this.currentLevel.getHint();
     };
 
     TaskManager.prototype.win = function() {
@@ -776,20 +803,24 @@
     };
 
     TaskManager.prototype.getTasks = function() {
-      var task1, task1Function, task2, task2Function, task3, task3Function;
+      var task1, task1Function, task2, task2Function, task3, task3Function, task4, task4Function;
       task1Function = function(os) {
         return os.cwd.getPath() === "/home";
       };
       task2Function = function(os) {
-        return os.cwd.getPath() === "/media";
-      };
-      task3Function = function(os) {
         return os.cwd.getPath() === "/";
       };
+      task3Function = function(os) {
+        return os.cwd.getPath() === "/media";
+      };
+      task4Function = function(os) {
+        return os.lastCommand() === "cd ..";
+      };
       task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1Function);
-      task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task2Function);
-      task3 = new Task("navigate to root", ["type 'cd /' and press enter"], task3Function);
-      return [task1, task2, task3];
+      task2 = new Task("navigate to root", ["type 'cd /' and press enter"], task2Function);
+      task3 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task3Function);
+      task4 = new Task("type 'cd ..' to go up one dir", ["type 'cd ..' and press enter"], task4Function);
+      return [task1, task2, task3, task4];
     };
 
     TaskManager.prototype.getLevels = function() {
@@ -844,6 +875,10 @@
           return this.isComplete = true;
         }
       }
+    };
+
+    Level.prototype.getHint = function() {
+      return this.tasks[0].hints[0];
     };
 
     return Level;
@@ -1071,19 +1106,10 @@
       return this.displayMgr.helpScreen(currentHint);
     };
 
-    BashyGame.prototype.parseCommand = function(input) {
-      var args, command, splitInput;
-      input = input.replace(/^\s+|\s+$/g, "");
-      splitInput = input.split(/\s+/);
-      command = splitInput[0];
-      args = splitInput.slice(1);
-      return [command, args];
-    };
-
-    BashyGame.prototype.executeCommand = function(command, args) {
+    BashyGame.prototype.executeCommand = function(command) {
       var cwd, fs, ref, stderr, stdout;
       fs = this.os.fileSystem;
-      ref = this.os.runCommand(command, args), cwd = ref[0], stdout = ref[1], stderr = ref[2];
+      ref = this.os.runCommand(command), cwd = ref[0], stdout = ref[1], stderr = ref[2];
       this.taskMgr.update(this.os);
       this.displayMgr.update(fs, cwd);
       if (stderr) {
@@ -1096,9 +1122,7 @@
     };
 
     BashyGame.prototype.handleInput = function(input) {
-      var args, command, ref;
-      ref = this.parseCommand(input), command = ref[0], args = ref[1];
-      return this.executeCommand(command, args);
+      return this.executeCommand(input);
     };
 
     BashyGame.prototype.handleTab = function(term, input) {

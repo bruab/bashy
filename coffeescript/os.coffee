@@ -159,6 +159,17 @@ class BashyOS
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
 		@man = new Man()
+		# @history is a list of (command, args) tuples
+		@history = []
+
+	# Take raw input, trim whitespace, return command and list of args
+	parseCommand: (input) ->
+		# Trim leading and trailing whitespace
+		input = input.replace /^\s+|\s+$/g, ""
+		splitInput = input.split /\s+/
+		command = splitInput[0]
+		args = splitInput[1..]
+		return [command, args]
 
 	# Function called every time a user types a valid command
 	# Takes command as string, args as list of strings;
@@ -167,7 +178,10 @@ class BashyOS
 	# TODO refactor, hecka duplicated code. can handle by making all commands
 	#   take "args" even if they don't need it (?)
 	#   Or can have dictionary of commands as strings to methods & args (?)
-	runCommand: (command, args) =>
+	runCommand: (input) =>
+		@history.push input
+		[command, args] = @parseCommand input
+
 		# No output by default
 		[stdout, stderr] = ["", ""]
 		if command not in @validCommands
@@ -529,11 +543,19 @@ class BashyOS
 			fields = fields[1..fields.length]
 		return cwdPath
 
+	historyContains: (command) ->
+		for item in @history
+			if item == command
+				return true
+		return false
+
+	lastCommand: ->
+		return @history[@history.length-1]
+
 	handleTab: (input) ->
 		# TODO handle paths
 		len = input.length
 		for command in @validCommands
 			if command[0..len-1] == input
-				console.log "returning #{command[len..]}"
 				return command[len..]
 		return ""

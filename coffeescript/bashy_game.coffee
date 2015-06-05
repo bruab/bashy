@@ -13,23 +13,14 @@ class BashyGame
 		currentHint = @taskMgr.getHint()
 		@displayMgr.helpScreen currentHint
 
-	# Take raw input, trim whitespace, return command and list of args
-	parseCommand: (input) ->
-		# Trim leading and trailing whitespace
-		input = input.replace /^\s+|\s+$/g, ""
-		splitInput = input.split /\s+/
-		command = splitInput[0]
-		args = splitInput[1..]
-		return [command, args]
-
 	# Take command and list of args; have OS perform command, update
 	# taskMgr and displayMgr
-	executeCommand: (command, args) ->
+	executeCommand: (command) ->
 		# Get a copy of the current file system
 		fs = @os.fileSystem
 		# @os updates and returns context, stdout, stderr
 		# @os.fileSystem may be modified by this command
-		[cwd, stdout, stderr] = @os.runCommand(command, args)
+		[cwd, stdout, stderr] = @os.runCommand(command)
 		# TaskManager checks for completed tasks
 		@taskMgr.update(@os)
 		# DisplayManager updates map
@@ -44,9 +35,7 @@ class BashyGame
 	# Function called each time user types a command
 	# Take user input string, update system, return text to terminal
 	handleInput: (input) =>
-		# Strip leading and trailing whitespace
-		[command, args] = @parseCommand(input)
-		return @executeCommand(command, args)
+		return @executeCommand(input)
 
 	# Tab completion function
 	handleTab: (term, input) =>

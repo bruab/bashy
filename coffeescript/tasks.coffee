@@ -30,7 +30,7 @@ class TaskManager
 		@showTask level.tasks[0]
 
 	getHint: () ->
-		return @currentTask.hints[0]
+		return @currentLevel.getHint()
 	
 	# Change the onscreen menu to indicate that all tasks are complete
 	win: () ->
@@ -43,13 +43,16 @@ class TaskManager
 		task1Function = (os) ->
 			return os.cwd.getPath() == "/home"
 		task2Function = (os) ->
-			return os.cwd.getPath() == "/media"
-		task3Function = (os) ->
 			return os.cwd.getPath() == "/"
+		task3Function = (os) ->
+			return os.cwd.getPath() == "/media"
+		task4Function = (os) ->
+			return os.lastCommand() == "cd .."
 		task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1Function)
-		task2 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task2Function)
-		task3 = new Task("navigate to root", ["type 'cd /' and press enter"], task3Function)
-		return [task1, task2, task3]
+		task2 = new Task("navigate to root", ["type 'cd /' and press enter"], task2Function)
+		task3 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task3Function)
+		task4 = new Task("type 'cd ..' to go up one dir", ["type 'cd ..' and press enter"], task4Function)
+		return [task1, task2, task3, task4]
 
 	# Create and return Level objects
 	getLevels: () ->
@@ -90,3 +93,6 @@ class Level
 				@tasks = @tasks[1..]
 			else
 				@isComplete = true
+
+	getHint: ->
+		return @tasks[0].hints[0]
