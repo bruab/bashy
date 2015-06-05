@@ -768,6 +768,57 @@
 
   })();
 
+  Task = (function() {
+    function Task(name1, hints, completeFunction) {
+      this.name = name1;
+      this.hints = hints;
+      this.completeFunction = completeFunction;
+      this.isComplete = false;
+    }
+
+    Task.prototype.done = function(os) {
+      if (this.isComplete) {
+        return true;
+      } else {
+        this.isComplete = this.completeFunction(os);
+        return this.isComplete;
+      }
+    };
+
+    Task.prototype.toString = function() {
+      return this.name;
+    };
+
+    return Task;
+
+  })();
+
+  Level = (function() {
+    function Level(name1, description, tasks) {
+      this.name = name1;
+      this.description = description;
+      this.tasks = tasks;
+      this.isComplete = false;
+    }
+
+    Level.prototype.update = function(os) {
+      if (this.tasks[0].done(os)) {
+        if (this.tasks.length > 1) {
+          return this.tasks = this.tasks.slice(1);
+        } else {
+          return this.isComplete = true;
+        }
+      }
+    };
+
+    Level.prototype.getHint = function() {
+      return this.tasks[0].hints[0];
+    };
+
+    return Level;
+
+  })();
+
   TaskManager = (function() {
     function TaskManager() {
       this.winner = false;
@@ -835,57 +886,6 @@
     };
 
     return TaskManager;
-
-  })();
-
-  Task = (function() {
-    function Task(name1, hints, completeFunction) {
-      this.name = name1;
-      this.hints = hints;
-      this.completeFunction = completeFunction;
-      this.isComplete = false;
-    }
-
-    Task.prototype.done = function(os) {
-      if (this.isComplete) {
-        return true;
-      } else {
-        this.isComplete = this.completeFunction(os);
-        return this.isComplete;
-      }
-    };
-
-    Task.prototype.toString = function() {
-      return this.name;
-    };
-
-    return Task;
-
-  })();
-
-  Level = (function() {
-    function Level(name1, description, tasks) {
-      this.name = name1;
-      this.description = description;
-      this.tasks = tasks;
-      this.isComplete = false;
-    }
-
-    Level.prototype.update = function(os) {
-      if (this.tasks[0].done(os)) {
-        if (this.tasks.length > 1) {
-          return this.tasks = this.tasks.slice(1);
-        } else {
-          return this.isComplete = true;
-        }
-      }
-    };
-
-    Level.prototype.getHint = function() {
-      return this.tasks[0].hints[0];
-    };
-
-    return Level;
 
   })();
 

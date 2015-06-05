@@ -8,6 +8,8 @@ appFiles  = [
   'os'
   'terminal'
   'tasks'
+  'level'
+  'task_mgr'
   'display'
   'main'
   'bashy_game'
