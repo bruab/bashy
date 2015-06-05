@@ -15,16 +15,16 @@ class BashyGame
 
 	# Take command and list of args; have OS perform command, update
 	# taskMgr and displayMgr
-	executeCommand: (command) ->
+	handleInput: (command) =>
 		# Get a copy of the current file system
 		fs = @os.getFileSystem()
 		# @os updates and returns context, stdout, stderr
 		# @os.fileSystem may be modified by this command
-		[cwd, stdout, stderr] = @os.runCommand(command)
+		[cwd, stdout, stderr] = @os.runCommand command
 		# TaskManager checks for completed tasks
-		@taskMgr.update(@os)
+		@taskMgr.update @os
 		# DisplayManager updates map
-		@displayMgr.update(fs, cwd)
+		@displayMgr.update fs, cwd
 		if stderr
 			return stderr
 		else if stdout
@@ -32,11 +32,6 @@ class BashyGame
 		else
 			return
 		
-	# Function called each time user types a command
-	# Take user input string, update system, return text to terminal
-	handleInput: (input) =>
-		return @executeCommand(input)
-
 	# Tab completion function
 	handleTab: (term, input) =>
 		term.insert @os.handleTab input

@@ -1110,7 +1110,7 @@
       return this.displayMgr.helpScreen(currentHint);
     };
 
-    BashyGame.prototype.executeCommand = function(command) {
+    BashyGame.prototype.handleInput = function(command) {
       var cwd, fs, ref, stderr, stdout;
       fs = this.os.getFileSystem();
       ref = this.os.runCommand(command), cwd = ref[0], stdout = ref[1], stderr = ref[2];
@@ -1123,10 +1123,6 @@
       } else {
 
       }
-    };
-
-    BashyGame.prototype.handleInput = function(input) {
-      return this.executeCommand(input);
     };
 
     BashyGame.prototype.handleTab = function(term, input) {
