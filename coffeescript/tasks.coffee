@@ -12,13 +12,12 @@ class TaskManager
 	# If all tasks are completed (@winner == true), do nothing
 	update: (os) ->
 		if not @winner
-			if @currentLevel.tasks[0].done(os) # TODO oh, ugly
-				if @currentLevel.tasks.length > 1
-					@currentLevel.tasks = @currentLevel.tasks[1..]
-					@showLevel @currentLevel
-				else
-					@winner = true
-					@win()
+			@currentLevel.update os
+			if @currentLevel.isComplete
+				@winner = true
+				@win()
+			else
+				@showLevel @currentLevel
 		return
 
 	# Take a Task object and display it in the onscreen menu
@@ -83,3 +82,11 @@ class Task
 
 class Level
 	constructor: (@name, @description, @tasks) ->
+		@isComplete = false
+
+	update: (os) ->
+		if @tasks[0].done(os)
+			if @tasks.length > 1
+				@tasks = @tasks[1..]
+			else
+				@isComplete = true

@@ -741,21 +741,18 @@
     function TaskManager() {
       this.winner = false;
       this.levels = this.getLevels();
-      console.log(this.levels);
       this.currentLevel = this.levels[0];
       this.showLevel(this.currentLevel);
     }
 
     TaskManager.prototype.update = function(os) {
       if (!this.winner) {
-        if (this.currentLevel.tasks[0].done(os)) {
-          if (this.currentLevel.tasks.length > 1) {
-            this.currentLevel.tasks = this.currentLevel.tasks.slice(1);
-            this.showLevel(this.currentLevel);
-          } else {
-            this.winner = true;
-            this.win();
-          }
+        this.currentLevel.update(os);
+        if (this.currentLevel.isComplete) {
+          this.winner = true;
+          this.win();
+        } else {
+          this.showLevel(this.currentLevel);
         }
       }
     };
@@ -836,7 +833,18 @@
       this.name = name1;
       this.description = description;
       this.tasks = tasks;
+      this.isComplete = false;
     }
+
+    Level.prototype.update = function(os) {
+      if (this.tasks[0].done(os)) {
+        if (this.tasks.length > 1) {
+          return this.tasks = this.tasks.slice(1);
+        } else {
+          return this.isComplete = true;
+        }
+      }
+    };
 
     return Level;
 
