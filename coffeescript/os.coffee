@@ -8,7 +8,7 @@ class BashyOS
 		# @cwd is a Directory object
 		@cwd = @fileSystem.root
 		@man = new Man()
-		# @history is a list of (command, args) tuples
+		# @history is a list of [command, args] lists
 		@history = []
 
 	getFileSystem: ->

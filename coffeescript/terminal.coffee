@@ -2,11 +2,10 @@
 class Terminal
 	constructor: (inputCallback, tabCallback) ->
 		# Create Terminal object
-		# 'onBlur: false' guarantees the terminal always stays in focus
 		$('#terminalDiv').terminal(inputCallback,
 			{ greetings: "",\
 			  prompt: '$ ',\
-			  onBlur: false,\
+			  onBlur: false,\ # keeps terminal in focus
 			  name: 'bashyTerminal',\
 			  height: 300,
 			  exceptionHandler: (error) -> console.log error,
