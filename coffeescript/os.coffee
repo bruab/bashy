@@ -11,62 +11,10 @@ class BashyOS
 		# @history is a list of [command, args] lists
 		@history = []
 
-	getFileSystem: ->
-		return @fileSystem
-
-	# Take raw input, trim whitespace, return command and list of args
-	parseCommand: (input) ->
-		# Trim leading and trailing whitespace
-		input = input.replace /^\s+|\s+$/g, ""
-		splitInput = input.split /\s+/
-		command = splitInput[0]
-		args = splitInput[1..]
-		return [command, args]
-
-	# Function called every time a user types a valid command
-	# Takes command as string, args as list of strings;
-	# returns a list of three strings -- path to cwd,
-	# stdout and stderr
-	# TODO refactor, hecka duplicated code. can handle by making all commands
-	#   take "args" even if they don't need it (?)
-	#   Or can have dictionary of commands as strings to methods & args (?)
-	runCommand: (input) =>
-		@history.push input
-		[command, args] = @parseCommand input
-
-		# No output by default
-		[stdout, stderr] = ["", ""]
-		if command not in @validCommands
-			stderr = "Invalid command: #{command}"
-		else if command == 'man'
-			[stdout, stderr] = @man.getEntry args[0]
-		else if command == 'cd'
-			[stdout, stderr] = @cd args
-		else if command == 'pwd'
-			[stdout, stderr] = @pwd()
-		else if command == 'ls'
-			[stdout, stderr] = @ls args
-		else if command == 'cat'
-			[stdout,stderr] = @cat args
-		else if command == 'head'
-			[stdout, stderr] = @head args
-		else if command == 'tail'
-			[stdout, stderr] = @tail args
-		else if command == 'wc'
-			[stdout, stderr] = @wc args
-		else if command == 'grep'
-			[stdout, stderr] = @grep args
-		else if command == 'sed'
-			[stdout, stderr] = @sed args
-		else if command == 'rm'
-			[stdout, stderr] = @rm args
-		else if command == 'mv'
-			[stdout, stderr] = @mv args
-		else if command == 'cp'
-			[stdout, stderr] = @cp args
-		# Return path, stdout, stderr
-		return [@cwd.getPath(), stdout, stderr]
-
+	########################################################################
+	######################## BASH FUNCTIONS ################################
+	########################################################################
+	
 	# Take a list of command line args to 'cd' command;
 	# attempt to update @cwd and return stdout, stderr
 	cd: (args) =>
@@ -91,6 +39,7 @@ class BashyOS
 		stdout = @cwd.getPath()
 		return [stdout, stderr]
 
+	# List directory contents
 	ls: (args) ->
 		[stdout, stderr] = ["", ""]
 		# TODO function to parse args into flags and path or whatever
@@ -129,6 +78,7 @@ class BashyOS
 					stderr += newStderr
 		return [stdout, stderr]
 
+	# Return contents of file as stdout
 	cat: (args) ->
 		[stdout, stderr] = ["", ""]
 		if args.length == 0
@@ -142,6 +92,7 @@ class BashyOS
 			stdout = file.contents
 		return [stdout, stderr]
 
+	# Return first 10 lines of a file as stdout
 	head: (args) ->
 		numberOfLines = 10
 		[stdout, stderr] = ["", ""]
@@ -157,6 +108,7 @@ class BashyOS
 			stdout = splitContents[0..numberOfLines-1].join "\n"
 		return [stdout, stderr]
 
+	# Return last 10 lines of a file as stdout
 	tail: (args) ->
 		numberOfLines = 10
 		[stdout, stderr] = ["", ""]
@@ -173,6 +125,7 @@ class BashyOS
 			stdout = splitContents[totalLines-numberOfLines..].join "\n"
 		return [stdout, stderr]
 
+	# Return count of lines, words and chars for a file
 	wc: (args) ->
 		[stdout, stderr] = ["", ""]
 		if args.length == 0
@@ -191,6 +144,7 @@ class BashyOS
 			stdout = "\t#{numberOfLines}\t#{numberOfWords}\t#{numberOfCharacters}"
 		return [stdout, stderr]
 		
+	# Return lines matching a pattern as stdout
 	grep: (args) ->
 		[stdout, stderr] = ["", ""]
 		if args.length != 2
@@ -207,6 +161,7 @@ class BashyOS
 			stdout = matchingLines.join "\n"
 		return [stdout, stderr]
 
+	# Return contents of a file with pattern replaced
 	sed: (args) ->
 		[stdout, stderr] = ["", ""]
 		if args.length != 2
@@ -233,6 +188,7 @@ class BashyOS
 			stdout = newLines.join "\n"
 		return [stdout, stderr]
 
+	# Remove a file
 	rm: (args) ->
 		[stdout, stderr] = ["", ""]
 		if args.length < 1
@@ -248,6 +204,7 @@ class BashyOS
 			parentDirectory.removeFile filename
 		return [stdout, stderr]
 
+	# Move or rename a file
 	mv: (args) ->
 		[stdout, stderr] = ["", ""]
 		if args.length < 2
@@ -300,6 +257,7 @@ class BashyOS
 			targetDirectory.files.push sourceFile
 		return [stdout, stderr]
 
+	# Make a copy of a file's contents and place it in a destination directory
 	cp: (args) ->
 		[stdout, stderr] = ["", ""]
 		if args.length < 2
@@ -323,6 +281,11 @@ class BashyOS
 				targetDirectory = @getDirectoryFromPath targetDirPath
 				targetDirectory.files.push targetFile
 		return [stdout, stderr]
+
+
+	########################################################################
+	###################### UTILITY FUNCTIONS ###############################
+	########################################################################
 
 		
 	# Take path as a string, remove extra or trailing slashes
@@ -395,12 +358,15 @@ class BashyOS
 			fields = fields[1..fields.length]
 		return cwdPath
 
+	# Return boolean indicating whether a command is found in history
+	# TODO strip strings before comparison
 	historyContains: (command) ->
 		for item in @history
 			if item == command
 				return true
 		return false
 
+	# Return the last command input
 	lastCommand: ->
 		return @history[@history.length-1]
 
@@ -411,3 +377,55 @@ class BashyOS
 			if command[0..len-1] == input
 				return command[len..]
 		return ""
+
+	# Getter so BashyGame object keeps its grubby hands off the OS properties
+	getFileSystem: ->
+		return @fileSystem
+
+	# Take raw input, trim whitespace, return command and list of args
+	parseCommand: (input) ->
+		# Trim leading and trailing whitespace
+		input = input.replace /^\s+|\s+$/g, ""
+		splitInput = input.split /\s+/
+		command = splitInput[0]
+		args = splitInput[1..]
+		return [command, args]
+
+	# Takes command as string, args as list of strings;
+	# returns a list of three strings -- path to cwd, stdout, stderr
+	runCommand: (input) =>
+		@history.push input
+		[command, args] = @parseCommand input
+
+		# No output by default
+		[stdout, stderr] = ["", ""]
+		if command not in @validCommands
+			stderr = "Invalid command: #{command}"
+		else if command == 'man'
+			[stdout, stderr] = @man.getEntry args[0]
+		else if command == 'cd'
+			[stdout, stderr] = @cd args
+		else if command == 'pwd'
+			[stdout, stderr] = @pwd()
+		else if command == 'ls'
+			[stdout, stderr] = @ls args
+		else if command == 'cat'
+			[stdout,stderr] = @cat args
+		else if command == 'head'
+			[stdout, stderr] = @head args
+		else if command == 'tail'
+			[stdout, stderr] = @tail args
+		else if command == 'wc'
+			[stdout, stderr] = @wc args
+		else if command == 'grep'
+			[stdout, stderr] = @grep args
+		else if command == 'sed'
+			[stdout, stderr] = @sed args
+		else if command == 'rm'
+			[stdout, stderr] = @rm args
+		else if command == 'mv'
+			[stdout, stderr] = @mv args
+		else if command == 'cp'
+			[stdout, stderr] = @cp args
+		# Return path, stdout, stderr
+		return [@cwd.getPath(), stdout, stderr]

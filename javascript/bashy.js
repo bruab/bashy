@@ -260,65 +260,15 @@
 
   BashyOS = (function() {
     function BashyOS() {
+      this.runCommand = bind(this.runCommand, this);
       this.pwd = bind(this.pwd, this);
       this.cd = bind(this.cd, this);
-      this.runCommand = bind(this.runCommand, this);
       this.validCommands = ["man", "cd", "pwd", "ls", "cat", "head", "tail", "wc", "grep", "sed", "rm", "mv", "cp"];
       this.fileSystem = new FileSystem();
       this.cwd = this.fileSystem.root;
       this.man = new Man();
       this.history = [];
     }
-
-    BashyOS.prototype.getFileSystem = function() {
-      return this.fileSystem;
-    };
-
-    BashyOS.prototype.parseCommand = function(input) {
-      var args, command, splitInput;
-      input = input.replace(/^\s+|\s+$/g, "");
-      splitInput = input.split(/\s+/);
-      command = splitInput[0];
-      args = splitInput.slice(1);
-      return [command, args];
-    };
-
-    BashyOS.prototype.runCommand = function(input) {
-      var args, command, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
-      this.history.push(input);
-      ref = this.parseCommand(input), command = ref[0], args = ref[1];
-      ref1 = ["", ""], stdout = ref1[0], stderr = ref1[1];
-      if (indexOf.call(this.validCommands, command) < 0) {
-        stderr = "Invalid command: " + command;
-      } else if (command === 'man') {
-        ref2 = this.man.getEntry(args[0]), stdout = ref2[0], stderr = ref2[1];
-      } else if (command === 'cd') {
-        ref3 = this.cd(args), stdout = ref3[0], stderr = ref3[1];
-      } else if (command === 'pwd') {
-        ref4 = this.pwd(), stdout = ref4[0], stderr = ref4[1];
-      } else if (command === 'ls') {
-        ref5 = this.ls(args), stdout = ref5[0], stderr = ref5[1];
-      } else if (command === 'cat') {
-        ref6 = this.cat(args), stdout = ref6[0], stderr = ref6[1];
-      } else if (command === 'head') {
-        ref7 = this.head(args), stdout = ref7[0], stderr = ref7[1];
-      } else if (command === 'tail') {
-        ref8 = this.tail(args), stdout = ref8[0], stderr = ref8[1];
-      } else if (command === 'wc') {
-        ref9 = this.wc(args), stdout = ref9[0], stderr = ref9[1];
-      } else if (command === 'grep') {
-        ref10 = this.grep(args), stdout = ref10[0], stderr = ref10[1];
-      } else if (command === 'sed') {
-        ref11 = this.sed(args), stdout = ref11[0], stderr = ref11[1];
-      } else if (command === 'rm') {
-        ref12 = this.rm(args), stdout = ref12[0], stderr = ref12[1];
-      } else if (command === 'mv') {
-        ref13 = this.mv(args), stdout = ref13[0], stderr = ref13[1];
-      } else if (command === 'cp') {
-        ref14 = this.cp(args), stdout = ref14[0], stderr = ref14[1];
-      }
-      return [this.cwd.getPath(), stdout, stderr];
-    };
 
     BashyOS.prototype.cd = function(args) {
       var path, ref, stderr, stdout, targetDirectory;
@@ -743,6 +693,56 @@
         }
       }
       return "";
+    };
+
+    BashyOS.prototype.getFileSystem = function() {
+      return this.fileSystem;
+    };
+
+    BashyOS.prototype.parseCommand = function(input) {
+      var args, command, splitInput;
+      input = input.replace(/^\s+|\s+$/g, "");
+      splitInput = input.split(/\s+/);
+      command = splitInput[0];
+      args = splitInput.slice(1);
+      return [command, args];
+    };
+
+    BashyOS.prototype.runCommand = function(input) {
+      var args, command, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stderr, stdout;
+      this.history.push(input);
+      ref = this.parseCommand(input), command = ref[0], args = ref[1];
+      ref1 = ["", ""], stdout = ref1[0], stderr = ref1[1];
+      if (indexOf.call(this.validCommands, command) < 0) {
+        stderr = "Invalid command: " + command;
+      } else if (command === 'man') {
+        ref2 = this.man.getEntry(args[0]), stdout = ref2[0], stderr = ref2[1];
+      } else if (command === 'cd') {
+        ref3 = this.cd(args), stdout = ref3[0], stderr = ref3[1];
+      } else if (command === 'pwd') {
+        ref4 = this.pwd(), stdout = ref4[0], stderr = ref4[1];
+      } else if (command === 'ls') {
+        ref5 = this.ls(args), stdout = ref5[0], stderr = ref5[1];
+      } else if (command === 'cat') {
+        ref6 = this.cat(args), stdout = ref6[0], stderr = ref6[1];
+      } else if (command === 'head') {
+        ref7 = this.head(args), stdout = ref7[0], stderr = ref7[1];
+      } else if (command === 'tail') {
+        ref8 = this.tail(args), stdout = ref8[0], stderr = ref8[1];
+      } else if (command === 'wc') {
+        ref9 = this.wc(args), stdout = ref9[0], stderr = ref9[1];
+      } else if (command === 'grep') {
+        ref10 = this.grep(args), stdout = ref10[0], stderr = ref10[1];
+      } else if (command === 'sed') {
+        ref11 = this.sed(args), stdout = ref11[0], stderr = ref11[1];
+      } else if (command === 'rm') {
+        ref12 = this.rm(args), stdout = ref12[0], stderr = ref12[1];
+      } else if (command === 'mv') {
+        ref13 = this.mv(args), stdout = ref13[0], stderr = ref13[1];
+      } else if (command === 'cp') {
+        ref14 = this.cp(args), stdout = ref14[0], stderr = ref14[1];
+      }
+      return [this.cwd.getPath(), stdout, stderr];
     };
 
     return BashyOS;
