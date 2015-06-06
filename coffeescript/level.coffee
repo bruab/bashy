@@ -10,7 +10,12 @@ getLevels = ->
 		"Level Two - Exploring Dirs",
 		"In this level you'll learn to look inside dirs",
 		levelTwoTasks)
-	return [levelOne, levelTwo]
+	levelThreeTasks = getLevelThreeTasks()
+	levelThree = new Level(
+		"Level Three - Exploring Files",
+		"Now it's time to see what's in a file",
+		levelThreeTasks)
+	return [levelOne, levelTwo, levelThree]
 
 class Level
 	constructor: (@name, @description, @tasks) ->
