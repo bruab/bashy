@@ -29,11 +29,9 @@ getLevelTwoTasks = ->
 
 getLevelThreeTasks = ->
 	task1Function = (os) ->
-		# even if path fails? need to check last command successful
-		return os.lastCommand()[0..2] == "cat" # args don't matter
+		return os.lastCommand()[0..2] == "cat" and os.lastCommandSucceeded
 	task2Function = (os) ->
-		# TODO this is a placeholder; should be able to verify a particular arg
-		return os.lastCommand()[0..2] == "cat"
+		return os.lastCommand()[0..2] == "cat" and os.lastCommandSucceeded
 	task1 = new Task("use the 'cat' command to see the contents of a file", ["type 'cat /home/bashy/foo.txt' and press enter"], task1Function)
 	task2 = new Task("try 'cat' on another file", ["type 'cat /home/bashy/list' and press enter"], task2Function)
 	return [task1, task2]

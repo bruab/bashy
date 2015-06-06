@@ -10,6 +10,7 @@ class BashyOS
 		@man = new Man()
 		# @history is a list of [command, args] lists
 		@history = []
+		@lastCommandSucceeded = false
 
 	########################################################################
 	######################## BASH FUNCTIONS ################################
@@ -428,4 +429,8 @@ class BashyOS
 		else if command == 'cp'
 			[stdout, stderr] = @cp args
 		# Return path, stdout, stderr
+		if stderr
+			@lastCommandSucceeded = false
+		else
+			@lastCommandSucceeded = true
 		return [@cwd.getPath(), stdout, stderr]

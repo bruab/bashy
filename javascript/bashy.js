@@ -268,6 +268,7 @@
       this.cwd = this.fileSystem.root;
       this.man = new Man();
       this.history = [];
+      this.lastCommandSucceeded = false;
     }
 
     BashyOS.prototype.cd = function(args) {
@@ -742,6 +743,11 @@
       } else if (command === 'cp') {
         ref14 = this.cp(args), stdout = ref14[0], stderr = ref14[1];
       }
+      if (stderr) {
+        this.lastCommandSucceeded = false;
+      } else {
+        this.lastCommandSucceeded = true;
+      }
       return [this.cwd.getPath(), stdout, stderr];
     };
 
@@ -809,7 +815,7 @@
   getLevelThreeTasks = function() {
     var task1, task1Function, task2, task2Function;
     task1Function = function(os) {
-      return os.lastCommand().slice(0, 3) === "cat";
+      return os.lastCommand().slice(0, 3) === "cat" && os.lastCommandSucceeded;
     };
     task2Function = function(os) {
       return os.lastCommand().slice(0, 3) === "cat";
