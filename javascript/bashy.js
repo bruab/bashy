@@ -122,14 +122,14 @@
 
   FileSystem = (function() {
     function FileSystem() {
-      var bashy, foo, home, list, media, pics;
+      var bashy, conf, etc, foo, home, list;
       this.root = new Directory("/");
-      media = new Directory("media");
-      media.parent = this.root;
-      this.root.subdirectories.push(media);
-      pics = new Directory("pics");
-      pics.parent = media;
-      media.subdirectories.push(pics);
+      etc = new Directory("etc");
+      etc.parent = this.root;
+      this.root.subdirectories.push(etc);
+      conf = new Directory("conf");
+      conf.parent = etc;
+      etc.subdirectories.push(conf);
       home = new Directory("home");
       home.parent = this.root;
       this.root.subdirectories.push(home);
@@ -769,7 +769,7 @@
   })();
 
   getLevelOneTasks = function() {
-    var task1, task1Function, task2, task2Function, task3, task3Function, task4, task4Function;
+    var task1, task1Function, task2, task2Function, task3, task3Function, task4, task4Function, task5, task5Function;
     task1Function = function(os) {
       return os.cwd.getPath() === "/home";
     };
@@ -777,16 +777,20 @@
       return os.cwd.getPath() === "/";
     };
     task3Function = function(os) {
-      return os.cwd.getPath() === "/media";
+      return os.cwd.getPath() === "/etc";
     };
     task4Function = function(os) {
       return os.lastCommand() === "cd ..";
     };
+    task5Function = function(os) {
+      return os.cwd.getPath() === "/home/bashy";
+    };
     task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1Function);
     task2 = new Task("navigate to root", ["type 'cd /' and press enter"], task2Function);
-    task3 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task3Function);
+    task3 = new Task("navigate to /etc", ["type 'cd /etc' and press enter"], task3Function);
     task4 = new Task("type 'cd ..' to go up one dir", ["type 'cd ..' and press enter"], task4Function);
-    return [task1, task2, task3, task4];
+    task5 = new Task("navigate to /home/bashy", ["type 'cd /home/bashy' and press enter"], task5Function);
+    return [task1, task2, task3, task4, task5];
   };
 
   getLevelTwoTasks = function() {
@@ -795,10 +799,10 @@
       return os.lastCommand() === "ls";
     };
     task2Function = function(os) {
-      return os.lastCommand() === "ls -R";
+      return os.lastCommand() === "ls -R" && os.cwd.getPath() === "/";
     };
     task1 = new Task("use the 'ls' command to see contents of dir", ["type 'ls' and press enter"], task1Function);
-    task2 = new Task("use 'ls -R' to see contents of dir and all the dirs inside it", ["type 'ls -R' and press enter"], task2Function);
+    task2 = new Task("navigate back to root '/' and use 'ls -R' to see contents of dir and all the dirs inside it", ["type 'ls -R' and press enter"], task2Function);
     return [task1, task2];
   };
 

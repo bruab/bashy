@@ -41,13 +41,13 @@ class FileSystem
 		@root = new Directory("/")
 
 		# TODO lots of repeated code here
-		media = new Directory("media")
-		media.parent = @root
-		@root.subdirectories.push(media)
+		etc = new Directory("etc")
+		etc.parent = @root
+		@root.subdirectories.push(etc)
 
-		pics = new Directory("pics")
-		pics.parent = media
-		media.subdirectories.push(pics)
+		conf = new Directory("conf")
+		conf.parent = etc
+		etc.subdirectories.push(conf)
 
 		home = new Directory("home")
 		home.parent = @root
