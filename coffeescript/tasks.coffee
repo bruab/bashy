@@ -1,3 +1,19 @@
+# Static method to and return Task objects
+getTasks = () ->
+	task1Function = (os) ->
+		return os.cwd.getPath() == "/home"
+	task2Function = (os) ->
+		return os.cwd.getPath() == "/"
+	task3Function = (os) ->
+		return os.cwd.getPath() == "/media"
+	task4Function = (os) ->
+		return os.lastCommand() == "cd .."
+	task1 = new Task("navigate to home", ["type 'cd' and press enter"], task1Function)
+	task2 = new Task("navigate to root", ["type 'cd /' and press enter"], task2Function)
+	task3 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task3Function)
+	task4 = new Task("type 'cd ..' to go up one dir", ["type 'cd ..' and press enter"], task4Function)
+	return [task1, task2, task3, task4]
+
 # Task class encapsulates a task name, hint(s) and a manner of
 # checking the Task for completion, implemented as any number of
 # os queries and their desired responses
@@ -17,3 +33,4 @@ class Task
 			return @isComplete
 
 	toString: () -> @name
+
