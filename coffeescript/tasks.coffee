@@ -1,5 +1,5 @@
 # Static method to and return Task objects
-getTasks = () ->
+getLevelOneTasks = () ->
 	task1Function = (os) ->
 		return os.cwd.getPath() == "/home"
 	task2Function = (os) ->
@@ -13,6 +13,16 @@ getTasks = () ->
 	task3 = new Task("navigate to /media", ["type 'cd /media' and press enter"], task3Function)
 	task4 = new Task("type 'cd ..' to go up one dir", ["type 'cd ..' and press enter"], task4Function)
 	return [task1, task2, task3, task4]
+
+getLevelTwoTasks = () ->
+	task1Function = (os) ->
+		return os.lastCommand() == "ls"
+	task2Function = (os) ->
+		return os.lastCommand() == "ls -R"
+	task1 = new Task("use 'ls' command to see contents of dir", ["type 'ls' and press enter"], task1Function)
+	task2 = new Task("use 'ls -R' to see contents of dir and all the dirs inside it",
+		["type 'ls -R' and press enter"], task2Function)
+	return [task1, task2]
 
 # Task class encapsulates a task name, hint(s) and a manner of
 # checking the Task for completion, implemented as any number of

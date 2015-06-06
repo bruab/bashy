@@ -15,8 +15,13 @@ class TaskManager
 		if not @winner
 			@currentLevel.update os
 			if @currentLevel.isComplete
-				@winner = true
-				@win()
+				if @levels.length > 1
+					@levels = @levels[1..]
+					@currentLevel = @levels[0]
+					@showLevel @currentLevel
+				else
+					@winner = true
+					@win()
 			else
 				@showLevel @currentLevel
 		return

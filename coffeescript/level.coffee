@@ -1,10 +1,16 @@
 # Static method to and return Level objects
 getLevels = ->
-	levelOneTasks = getTasks() # in task.coffee
-	levelOne = new Level("Level One - Moving Around",\
-			"In this level you'll learn how to navigate",
-				levelOneTasks)
-	return [levelOne]
+	levelOneTasks = getLevelOneTasks() # in task.coffee
+	levelOne = new Level(
+		"Level One - Moving Around",\
+		"In this level you'll learn how to navigate",
+		levelOneTasks)
+	levelTwoTasks = getLevelTwoTasks()
+	levelTwo = new Level(
+		"Level Two - Exploring Dirs",
+		"In this level you'll learn to look inside dirs",
+		levelTwoTasks)
+	return [levelOne, levelTwo]
 
 class Level
 	constructor: (@name, @description, @tasks) ->
