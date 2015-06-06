@@ -961,6 +961,7 @@
       this.stage.addChild(this.map);
       this.centeredOn = "/";
       this.initializeSprite();
+      this.showIntro();
       return;
     }
 
@@ -1053,6 +1054,18 @@
       helpHtml = "<h3>B@shy Help</h3>";
       helpHtml += "<p>Hint: " + hint + "</p>";
       $('#helpText').html(helpHtml);
+      $('#helpScreen').foundation('reveal', 'open');
+    };
+
+    DisplayManager.prototype.showIntro = function() {
+      var introHtml;
+      introHtml = "<h2>Welcome to B@shy</h2>";
+      introHtml += "<p>You're in a strange place with a lot of dirs. ";
+      introHtml += "The first thing to do is learn to move from dir to dir.</p>";
+      introHtml += "<p>Do this by typing the 'cd' command, followed by the path to a dir.</p>";
+      introHtml += "<p>Typing 'cd' by itself and pressing enter will take you to your home dir. ";
+      introHtml += "Begin with this command.</p>";
+      $('#helpText').html(introHtml);
       $('#helpScreen').foundation('reveal', 'open');
     };
 
