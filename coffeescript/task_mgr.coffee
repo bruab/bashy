@@ -1,4 +1,5 @@
 # TaskManager class keeps track of Tasks, updates menu 
+# TODO shouldn't DisplayMgr handle the html stuff?
 class TaskManager
 	constructor: () ->
 		@winner = false

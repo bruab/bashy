@@ -14,14 +14,14 @@ class DisplayManager
 	initializeSprite: () ->
 		bashyImage = new Image()
 		bashyImage.onload = =>
-			@spriteSheetLoaded(bashyImage)
+			@spriteSheetLoaded bashyImage
 		bashyImage.src = "assets/bashy_sprite_sheet.png"
 		return
 	
 	# Create Sprite object and start Ticker
 	spriteSheetLoaded: (image) ->
-		@bashySprite = @createBashySprite(image, @stage)
-		@startTicker(@stage)
+		@bashySprite = @createBashySprite image, @stage
+		@startTicker @stage
 		return
 
 	fileSystemToMap: (fs) ->
@@ -30,8 +30,8 @@ class DisplayManager
 		map = new createjs.Container()
 		map.name = "map"
 		[map.x, map.y] = [startingX, startingY]
-		@drawFile(map, fs.root, map.x, map.y)
-		@drawChildren(map, fs.root, map.x, map.y)
+		@drawFile map, fs.root, map.x, map.y
+		@drawChildren map, fs.root, map.x, map.y
 		return map
 
 	mapsEqual: (oldMap, newMap) ->
@@ -78,17 +78,17 @@ class DisplayManager
 	# Take a FileSystem object; draw text for each directory's name
 	# and draw lines connecting directories to their children
 	drawFileSystem: (fs) ->
-		@drawFile(@map, fs.root, @map.x, @map.y)
-		@drawChildren(@map, fs.root, @map.x, @map.y)
-		@stage.addChild(@map)
+		@drawFile @map, fs.root, @map.x, @map.y
+		@drawChildren @map, fs.root, @map.x, @map.y
+		@stage.addChild @map
 		return
 
 	# Take a string representing a contextual hint; display a modal window
 	helpScreen: (hint) ->
 		helpHtml = "<h3>B@shy Help</h3>"
 		helpHtml += "<p>Hint: #{hint}</p>"
-		$('#helpText').html(helpHtml)
-		$('#helpScreen').foundation('reveal', 'open')
+		$('#helpText').html helpHtml
+		$('#helpScreen').foundation 'reveal', 'open'
 		return
 
 	# Take a spritesheet Image object, create a Sprite object,
@@ -114,7 +114,7 @@ class DisplayManager
 		sprite.currentFrame = 0
 		sprite.x = SPRITEX
 		sprite.y = SPRITEY
-		@stage.addChild(sprite)
+		@stage.addChild sprite
 		return sprite
 
 	# Set frame rate; call stage.update on each tick
@@ -124,9 +124,9 @@ class DisplayManager
 		# Set up Ticker, frame rate
 		tick = (event) ->
 			stage.update(event)
-		createjs.Ticker.addEventListener("tick", tick)
+		createjs.Ticker.addEventListener "tick", tick
 		createjs.Ticker.useRAF = true
-		createjs.Ticker.setFPS(15)
+		createjs.Ticker.setFPS 15
 		return
 
 	# Take a count of children and a parent's x, y coordinates
@@ -143,11 +143,10 @@ class DisplayManager
 	# Add a Text object to the map with the appropriate coordinates
 	drawFile: (map, directory, x, y) ->
 		text = new createjs.Text(directory.name, "20px Arial", "black")
-		# TODO get directory.path?
 		text.name = directory.name
 		[text.x, text.y] = [x, y]
 		text.textBaseline = "alphabetic"
-		map.addChild(text)
+		map.addChild text
 		return
 
 	# Take a map Container object, a parent Directory object
@@ -159,7 +158,7 @@ class DisplayManager
 		lineOffsetX = 20
 		lineOffsetY = 20
 		numChildren = parent.subdirectories.length
-		childCoords = @calculateChildCoords(numChildren, parentX, parentY)
+		childCoords = @calculateChildCoords numChildren, parentX, parentY
 		for i in [0..numChildren-1]
 			# Calculate coordinates
 			child = parent.subdirectories[i]
@@ -167,17 +166,17 @@ class DisplayManager
 			childY = childCoords[i][1]
 			# Draw children (recursion ftw)
 			if child.subdirectories.length > 0
-				@drawChildren(map, child, childX, childY)
+				@drawChildren map, child, childX, childY
 			# Draw text
-			@drawFile(map, child, childX, childY)
+			@drawFile map, child, childX, childY
 			# Draw line
 			# TODO center line under/above text it points to
 			# by calculating length of text, etc. fancy stuff.
 			line = new createjs.Shape()
-			line.graphics.setStrokeStyle(1)
-			line.graphics.beginStroke("gray")
-			line.graphics.moveTo(parentX, parentY+lineOffsetY)
-			line.graphics.lineTo(childX+lineOffsetX, childY-lineOffsetY)
+			line.graphics.setStrokeStyle 1
+			line.graphics.beginStroke "gray"
+			line.graphics.moveTo parentX, parentY+lineOffsetY
+			line.graphics.lineTo childX+lineOffsetX, childY-lineOffsetY
 			line.graphics.endStroke()
-			map.addChild(line)
+			map.addChild line
 		return
