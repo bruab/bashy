@@ -36,6 +36,15 @@ getLevelThreeTasks = ->
 	task2 = new Task("try 'cat' on another file", ["type 'cat /home/bashy/list' and press enter"], task2Function)
 	return [task1, task2]
 
+getLevelFourTasks = ->
+	task1Function = (os) ->
+		return os.lastCommand()[0..3] == "grep" and os.lastCommandSucceeded
+	task2Function = (os) ->
+		return os.lastCommand()[0..3] == "grep" and os.lastCommandSucceeded
+	task1 = new Task("use the 'grep' command to pull out certain lines in a file", ["type 'man grep' for instructions"], task1Function)
+	task2 = new Task("use 'grep' on another file", ["you're on your own :/"], task2Function)
+	return [task1, task2]
+
 # Task class encapsulates a task name, hint(s) and a manner of
 # checking the Task for completion, implemented as any number of
 # os queries and their desired responses

@@ -15,7 +15,12 @@ getLevels = ->
 		"Level Three - Exploring Files",
 		"Now it's time to see what's in a file",
 		levelThreeTasks)
-	return [levelOne, levelTwo, levelThree]
+	levelFourTasks = getLevelFourTasks()
+	levelFour = new Level(
+		"Level Four - Filtering Files",
+		"Get only the parts of a file that you want",
+		levelFourTasks)
+	return [levelOne, levelTwo, levelThree, levelFour]
 
 class Level
 	constructor: (@name, @description, @tasks) ->
