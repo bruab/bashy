@@ -294,6 +294,8 @@ class BashyOS
 	cleanPath: (path) ->
 		path = path.replace /\/+/g, "/"
 		path = path.replace /\/$/, ""
+		if path == ""
+			path = "/"
 		return path
 		
 	# Take path as a string, return parent path as a string
@@ -379,7 +381,7 @@ class BashyOS
 			return true # TODO should check if valid command in fields[0]?
 
 	handleTabPath: (input) ->
-		# TODO clean up, not handling completion when path is /home or /etc
+		# TODO clean up
 		splitInput = input.split /\s/
 		pathSoFar = splitInput[1]
 		# Determine directory pointed to by pathSoFar
@@ -387,7 +389,7 @@ class BashyOS
 			allDirs = pathSoFar.split "/"
 			dirs = []
 			for dir in allDirs[0..allDirs.length-2]
-				if dir?
+				if dir != ""
 					dirs.push dir
 			if pathSoFar[0] == "/"
 				# absolute path
@@ -424,7 +426,6 @@ class BashyOS
 	handleTab: (input) ->
 		input = input.replace /^\s+|\s+$/g, "" # trim whitespace
 		if @containsCommand input
-			result = @handleTabPath input
 			return @handleTabPath input
 		else
 			return @handleTabCommand input

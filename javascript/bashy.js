@@ -589,6 +589,9 @@
     BashyOS.prototype.cleanPath = function(path) {
       path = path.replace(/\/+/g, "/");
       path = path.replace(/\/$/, "");
+      if (path === "") {
+        path = "/";
+      }
       return path;
     };
 
@@ -700,12 +703,10 @@
       if (indexOf.call(pathSoFar, "/") >= 0) {
         allDirs = pathSoFar.split("/");
         dirs = [];
-        console.log("allDirs = " + allDirs);
-        console.log(allDirs.slice(0, +(allDirs.length - 2) + 1 || 9e9));
         ref = allDirs.slice(0, +(allDirs.length - 2) + 1 || 9e9);
         for (j = 0, len1 = ref.length; j < len1; j++) {
           dir = ref[j];
-          if (dir != null) {
+          if (dir !== "") {
             dirs.push(dir);
           }
         }
@@ -714,16 +715,12 @@
         } else {
           path = this.cwd.getPath() + "/";
         }
-        console.log("prepath = " + path);
-        console.log(dirs);
         for (k = 0, len2 = dirs.length; k < len2; k++) {
           dir = dirs[k];
           path += dir + "/";
         }
         path = this.cleanPath(path);
-        console.log("postpath = " + path);
         parentDir = this.getDirectoryFromPath(path);
-        console.log(parentDir.getPath());
         lastDirSoFar = allDirs[allDirs.length - 1];
         len = lastDirSoFar.length;
         ref1 = parentDir.subdirectories;
@@ -761,10 +758,8 @@
     };
 
     BashyOS.prototype.handleTab = function(input) {
-      var result;
       input = input.replace(/^\s+|\s+$/g, "");
       if (this.containsCommand(input)) {
-        result = this.handleTabPath(input);
         return this.handleTabPath(input);
       } else {
         return this.handleTabCommand(input);
