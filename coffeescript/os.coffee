@@ -371,13 +371,54 @@ class BashyOS
 	lastCommand: ->
 		return @history[@history.length-1]
 
-	handleTab: (input) ->
-		# TODO handle paths
+	containsCommand: (input) ->
+		fields = input.split /\s/
+		if fields.length == 1
+			return false
+		else
+			return true # TODO should check if valid command in fields[0]?
+
+	handleTabPath: (input) ->
+		# TODO clean up, not handling completion when path is /home or /etc
+		splitInput = input.split /\s/
+		pathSoFar = splitInput[1]
+		# Determine directory pointed to by pathSoFar
+		allDirs = pathSoFar.split "/"
+		dirs = []
+		for dir in allDirs[0..allDirs.length-2]
+			if dir?
+				dirs.push dir
+		if pathSoFar[0] == "/"
+			# absolute path
+			path = "/"
+		else
+			path = @cwd.getPath() + "/"
+		for dir in dirs
+			path += dir + "/"
+		path = @cleanPath path
+		parentDir = @getDirectoryFromPath path
+		lastDirSoFar = allDirs[allDirs.length-1]
+		len = lastDirSoFar.length
+		# Check parentDir for child directory with name matching text
+		for subdir in parentDir.subdirectories
+			if subdir.name[0..len-1] == lastDirSoFar
+				return subdir.name[len..]
+		return ""
+
+	handleTabCommand: (input) ->
 		len = input.length
 		for command in @validCommands
 			if command[0..len-1] == input
 				return command[len..]
 		return ""
+
+	handleTab: (input) ->
+		input = input.replace /^\s+|\s+$/g, "" # trim whitespace
+		if @containsCommand input
+			result = @handleTabPath input
+			return @handleTabPath input
+		else
+			return @handleTabCommand input
 
 	# Getter so BashyGame object keeps its grubby hands off the OS properties
 	getFileSystem: ->

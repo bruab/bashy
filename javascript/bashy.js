@@ -683,7 +683,53 @@
       return this.history[this.history.length - 1];
     };
 
-    BashyOS.prototype.handleTab = function(input) {
+    BashyOS.prototype.containsCommand = function(input) {
+      var fields;
+      fields = input.split(/\s/);
+      if (fields.length === 1) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    BashyOS.prototype.handleTabPath = function(input) {
+      var allDirs, dir, dirs, j, k, l, lastDirSoFar, len, len1, len2, len3, parentDir, path, pathSoFar, ref, ref1, splitInput, subdir;
+      splitInput = input.split(/\s/);
+      pathSoFar = splitInput[1];
+      allDirs = pathSoFar.split("/");
+      dirs = [];
+      ref = allDirs.slice(0, +(allDirs.length - 2) + 1 || 9e9);
+      for (j = 0, len1 = ref.length; j < len1; j++) {
+        dir = ref[j];
+        if (dir != null) {
+          dirs.push(dir);
+        }
+      }
+      if (pathSoFar[0] === "/") {
+        path = "/";
+      } else {
+        path = this.cwd.getPath() + "/";
+      }
+      for (k = 0, len2 = dirs.length; k < len2; k++) {
+        dir = dirs[k];
+        path += dir + "/";
+      }
+      path = this.cleanPath(path);
+      parentDir = this.getDirectoryFromPath(path);
+      lastDirSoFar = allDirs[allDirs.length - 1];
+      len = lastDirSoFar.length;
+      ref1 = parentDir.subdirectories;
+      for (l = 0, len3 = ref1.length; l < len3; l++) {
+        subdir = ref1[l];
+        if (subdir.name.slice(0, +(len - 1) + 1 || 9e9) === lastDirSoFar) {
+          return subdir.name.slice(len);
+        }
+      }
+      return "";
+    };
+
+    BashyOS.prototype.handleTabCommand = function(input) {
       var command, j, len, len1, ref;
       len = input.length;
       ref = this.validCommands;
@@ -694,6 +740,17 @@
         }
       }
       return "";
+    };
+
+    BashyOS.prototype.handleTab = function(input) {
+      var result;
+      input = input.replace(/^\s+|\s+$/g, "");
+      if (this.containsCommand(input)) {
+        result = this.handleTabPath(input);
+        return this.handleTabPath(input);
+      } else {
+        return this.handleTabCommand(input);
+      }
     };
 
     BashyOS.prototype.getFileSystem = function() {
@@ -961,7 +1018,6 @@
       this.stage.addChild(this.map);
       this.centeredOn = "/";
       this.initializeSprite();
-      this.showIntro();
       return;
     }
 
@@ -1200,6 +1256,7 @@
     };
 
     BashyGame.prototype.handleTab = function(term, input) {
+      input = term.get_command();
       return term.insert(this.os.handleTab(input));
     };
 

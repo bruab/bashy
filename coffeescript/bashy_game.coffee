@@ -34,4 +34,7 @@ class BashyGame
 		
 	# Tab completion function
 	handleTab: (term, input) =>
+		# 'input' is just the last whitespace-separated field,
+		# need to get all input
+		input = term.get_command()
 		term.insert @os.handleTab input
