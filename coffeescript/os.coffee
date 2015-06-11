@@ -383,26 +383,35 @@ class BashyOS
 		splitInput = input.split /\s/
 		pathSoFar = splitInput[1]
 		# Determine directory pointed to by pathSoFar
-		allDirs = pathSoFar.split "/"
-		dirs = []
-		for dir in allDirs[0..allDirs.length-2]
-			if dir?
-				dirs.push dir
-		if pathSoFar[0] == "/"
-			# absolute path
-			path = "/"
+		if "/" in pathSoFar
+			allDirs = pathSoFar.split "/"
+			dirs = []
+			for dir in allDirs[0..allDirs.length-2]
+				if dir?
+					dirs.push dir
+			if pathSoFar[0] == "/"
+				# absolute path
+				path = "/"
+			else
+				path = @cwd.getPath() + "/"
+			for dir in dirs
+				path += dir + "/"
+			path = @cleanPath path
+			parentDir = @getDirectoryFromPath path
+			lastDirSoFar = allDirs[allDirs.length-1]
+			len = lastDirSoFar.length
+			# Check parentDir for child directory with name matching text
+			for subdir in parentDir.subdirectories
+				if subdir.name[0..len-1] == lastDirSoFar
+					return subdir.name[len..]
 		else
-			path = @cwd.getPath() + "/"
-		for dir in dirs
-			path += dir + "/"
-		path = @cleanPath path
-		parentDir = @getDirectoryFromPath path
-		lastDirSoFar = allDirs[allDirs.length-1]
-		len = lastDirSoFar.length
-		# Check parentDir for child directory with name matching text
-		for subdir in parentDir.subdirectories
-			if subdir.name[0..len-1] == lastDirSoFar
-				return subdir.name[len..]
+			parentDir = @cwd
+			len = pathSoFar.length
+			# Check parentDir for child directory with name matching text
+			for subdir in parentDir.subdirectories
+				if subdir.name[0..len-1] == pathSoFar
+					return subdir.name[len..]
+			
 		return ""
 
 	handleTabCommand: (input) ->

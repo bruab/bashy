@@ -694,36 +694,54 @@
     };
 
     BashyOS.prototype.handleTabPath = function(input) {
-      var allDirs, dir, dirs, j, k, l, lastDirSoFar, len, len1, len2, len3, parentDir, path, pathSoFar, ref, ref1, splitInput, subdir;
+      var allDirs, dir, dirs, j, k, l, lastDirSoFar, len, len1, len2, len3, len4, m, parentDir, path, pathSoFar, ref, ref1, ref2, splitInput, subdir;
       splitInput = input.split(/\s/);
       pathSoFar = splitInput[1];
-      allDirs = pathSoFar.split("/");
-      dirs = [];
-      ref = allDirs.slice(0, +(allDirs.length - 2) + 1 || 9e9);
-      for (j = 0, len1 = ref.length; j < len1; j++) {
-        dir = ref[j];
-        if (dir != null) {
-          dirs.push(dir);
+      if (indexOf.call(pathSoFar, "/") >= 0) {
+        allDirs = pathSoFar.split("/");
+        dirs = [];
+        console.log("allDirs = " + allDirs);
+        console.log(allDirs.slice(0, +(allDirs.length - 2) + 1 || 9e9));
+        ref = allDirs.slice(0, +(allDirs.length - 2) + 1 || 9e9);
+        for (j = 0, len1 = ref.length; j < len1; j++) {
+          dir = ref[j];
+          if (dir != null) {
+            dirs.push(dir);
+          }
         }
-      }
-      if (pathSoFar[0] === "/") {
-        path = "/";
+        if (pathSoFar[0] === "/") {
+          path = "/";
+        } else {
+          path = this.cwd.getPath() + "/";
+        }
+        console.log("prepath = " + path);
+        console.log(dirs);
+        for (k = 0, len2 = dirs.length; k < len2; k++) {
+          dir = dirs[k];
+          path += dir + "/";
+        }
+        path = this.cleanPath(path);
+        console.log("postpath = " + path);
+        parentDir = this.getDirectoryFromPath(path);
+        console.log(parentDir.getPath());
+        lastDirSoFar = allDirs[allDirs.length - 1];
+        len = lastDirSoFar.length;
+        ref1 = parentDir.subdirectories;
+        for (l = 0, len3 = ref1.length; l < len3; l++) {
+          subdir = ref1[l];
+          if (subdir.name.slice(0, +(len - 1) + 1 || 9e9) === lastDirSoFar) {
+            return subdir.name.slice(len);
+          }
+        }
       } else {
-        path = this.cwd.getPath() + "/";
-      }
-      for (k = 0, len2 = dirs.length; k < len2; k++) {
-        dir = dirs[k];
-        path += dir + "/";
-      }
-      path = this.cleanPath(path);
-      parentDir = this.getDirectoryFromPath(path);
-      lastDirSoFar = allDirs[allDirs.length - 1];
-      len = lastDirSoFar.length;
-      ref1 = parentDir.subdirectories;
-      for (l = 0, len3 = ref1.length; l < len3; l++) {
-        subdir = ref1[l];
-        if (subdir.name.slice(0, +(len - 1) + 1 || 9e9) === lastDirSoFar) {
-          return subdir.name.slice(len);
+        parentDir = this.cwd;
+        len = pathSoFar.length;
+        ref2 = parentDir.subdirectories;
+        for (m = 0, len4 = ref2.length; m < len4; m++) {
+          subdir = ref2[m];
+          if (subdir.name.slice(0, +(len - 1) + 1 || 9e9) === pathSoFar) {
+            return subdir.name.slice(len);
+          }
         }
       }
       return "";
