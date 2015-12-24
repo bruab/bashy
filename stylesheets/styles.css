@@ -52,6 +52,10 @@ body {
     right:-7px;
 }
 
+#footer {
+  text-align: center;
+}
+
 .terminal .terminal-output div div, .cmd .prompt {
     display: block;
     line-height: 24px;

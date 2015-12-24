@@ -1031,6 +1031,7 @@
       this.stage.addChild(this.map);
       this.centeredOn = "/";
       this.initializeSprite();
+      this.showIntro();
       return;
     }
 
