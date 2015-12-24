@@ -1,94 +1,90 @@
 <!doctype html>
 
+
+
 <html class="no-js" lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-					(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-			ga('create', 'UA-53784915-4', 'auto');
-			ga('send', 'pageview');
-		</script>
-		<script src="javascript/vendor/jquery-1.11.1.js"></script>
-		<script src="javascript/vendor/jquery.terminal-0.8.8.js"></script>
-		<script src="javascript/vendor/easeljs-0.7.1.min.js"></script>
-		<script src="javascript/vendor/soundjs-0.6.0.combined.js"></script>
-		<script src="javascript/vendor/tweenjs-0.6.0.min.js"></script>
-		<script src="javascript/vendor/modernizr.js"></script>
-		<script src="javascript/vendor/foundation.js"></script>
-		<script src="javascript/vendor/foundation.reveal.js"></script>
-		<script src="javascript/bashy.js"></script>
-		<link rel="stylesheet" href="stylesheets/normalize.css" />
-		<link rel="stylesheet" href="stylesheets/foundation.min.css" />
-		<link rel="stylesheet" href="stylesheets/jquery.terminal.css">
-		<link rel="stylesheet" href="stylesheets/styles.css">
-		<title>B@shy | Command Line Adventures</title>
-	</head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-53784915-4', 'auto');
+      ga('send', 'pageview');
+    </script>
+    <script src="javascript/vendor/jquery-1.11.1.js"></script>
+    <script src="javascript/vendor/jquery.terminal-0.8.8.js"></script>
+    <script src="javascript/vendor/easeljs-0.7.1.min.js"></script>
+    <script src="javascript/vendor/soundjs-0.6.0.combined.js"></script>
+    <script src="javascript/vendor/tweenjs-0.6.0.min.js"></script>
+    <script src="javascript/vendor/modernizr.js"></script>
+    <script src="javascript/vendor/foundation.js"></script>
+    <script src="javascript/vendor/foundation.reveal.js"></script>
+    <script src="javascript/bashy.js"></script>
+    <link rel="stylesheet" href="stylesheets/normalize.css" />
+    <link rel="stylesheet" href="stylesheets/foundation.min.css" />
+    <link rel="stylesheet" href="stylesheets/jquery.terminal.css">
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <title>B@shy | Command Line Adventures</title>
+  </head>
 
-	<body>
+  <body>
 
-		<div id="helpScreen" class="reveal-modal" data-reveal>
-			<div id="helpText"></div>
-			<a class="close-reveal-modal">&#215;</a> 
-		</div>
+    <div id="helpScreen" class="reveal-modal" data-reveal>
+      <div id="helpText"></div>
+      <a class="close-reveal-modal">&#215;</a> 
+    </div>
 
-		<div id="playScreen">
+    <div id="playScreen">
 
-			<div class="row">
-				<div class="large-12 columns">
-					<div class="large-6 medium-6 small-6 columns">
-						<div class="callout panel">
-							<h1>B@shy</h1>
-							<div id="menuHeader">
-								<h3>Current Task:</h3>
-							</div>
-							<div id="menu">
-								<!-- MenuManager populates this div -->
-							</div>
+      <div class="row">
+	<div class="large-12 columns">
+	  <div class="large-6 medium-6 small-6 columns">
+	    <div class="callout panel">
+	      <h1>B@shy</h1>
+	      <div id="menuHeader">
+		<h3>Current Task:</h3>
+	      </div>
+	      <div id="menu">
+		<!-- MenuManager populates this div -->
+	      </div>
 
-							<hr />
+	      <hr />
 
-							<div id="helpButton">
-								<a href="#" class="small round button">Help</a><br/>            
-							</div>
-						</div>
+	      <div id="helpButton">
+		<a href="#" class="small round button">Help</a><br/>            
+	      </div>
+	    </div>
 
-					</div>
+	  </div>
 
-					<div class="large-6 medium-6 small-6 columns">
-						<div class="callout panel">
-							<div id="canvasDiv">
-								<canvas id="bashyCanvas" width="500" height="300"></canvas>
-							</div>
-						</div>
-					</div>
-				</div>
+	  <div class="large-6 medium-6 small-6 columns">
+	    <div class="callout panel">
+	      <div id="canvasDiv">
+		<canvas id="bashyCanvas" width="500" height="300"></canvas>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
-			</div>
-
-
-			<div class="row">
-				<div class="large-12 columns">
-					<div class="callout panel">
-						<div id="terminalDiv">
-							<!-- stick jqueryterm in here -->
-						</div>
-					</div>
-				</div>
-			</div>
+      </div>
 
 
+      <div class="row">
+	<div class="large-12 columns">
+	  <div class="callout panel">
+	    <div id="terminalDiv">
+	      <!-- stick jqueryterm in here -->
+	    </div>
+	  </div>
+	</div>
+      </div>
+    </div> <!-- end 'playScreen' -->
 
-
-
-
-		</div> <!-- end 'playScreen' -->
-
-		<script>
-			$(document).foundation();
-		</script>
-	</body>
+    <script>
+      $(document).foundation();
+    </script>
+  </body>
 </html>
